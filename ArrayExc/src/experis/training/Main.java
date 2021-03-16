@@ -115,6 +115,11 @@ public class Main {
         int aIndex = a.length - b.length - 1;
         int bIndex = b.length - 1;
 
+        if(a[aIndex] < b[0])
+        {
+            addingElements(a, b, bIndex + 1);
+        }
+
         while(aIndex >= 0 && bIndex >= 0){
            if(compareTwoElements(a, b, aIndex, bIndex)){
                insertElement(a, a[aIndex], updatedArrayIndex);
@@ -144,6 +149,12 @@ public class Main {
     public static void copy(int[] a, int[] b){
         for(int i = 0; i < a.length ; i++){
             a[i] = b[i];
+        }
+    }
+
+    public static void addingElements(int[] a, int[] b, int position){
+        for(int i = 0; i < a.length; i++){
+            a[position] = b[i];
         }
     }
 
