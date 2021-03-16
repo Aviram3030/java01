@@ -50,7 +50,7 @@ public class Main {
 
     // question #1
     public static int[] makeArray(int len, int start, int step){
-        if(len == 0)
+        if(len <= 0)
             return null;
 
         int[] v = new int[len];
@@ -103,8 +103,13 @@ public class Main {
             return;
         }
 
-        if(isLegalLength(a,b))
+        if(isEqualLength(a, b)){
+            copy(a, b);
+        }
+
+        if(isLegalLength(a, b)) {
             return;
+        }
 
         int updatedArrayIndex = a.length - 1;
         int aIndex = a.length - b.length - 1;
@@ -128,8 +133,18 @@ public class Main {
 
     }
 
+    public static Boolean isEqualLength(int[] a, int[] b){
+        return b.length == a.length;
+    }
+
     public static Boolean isLegalLength(int[] a, int[] b){
         return b.length > a.length;
+    }
+
+    public static void copy(int[] a, int[] b){
+        for(int i = 0; i < a.length ; i++){
+            a[i] = b[i];
+        }
     }
 
     public static Boolean compareTwoElements(int[] a, int[] b, int aIndex, int bIndex){
