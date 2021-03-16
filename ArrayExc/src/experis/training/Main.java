@@ -103,8 +103,13 @@ public class Main {
             return;
         }
 
+        if(a == b){
+            return;
+        }
+
         if(isEqualLength(a, b)){
             copy(a, b);
+            return;
         }
 
         if(isLegalLength(a, b)) {
@@ -290,7 +295,8 @@ public class Main {
         int[][] v = new int [n][m];
 
         int count = fillFromTheLeft(v, n, m);
-        fillFromTheBottom(v,n,m,count);
+        fillFromTheBottom(v, n, m, count);
+
         return v;
 
    }
@@ -301,9 +307,8 @@ public class Main {
 
        while (currentRow < n) {
            int rowIndex = currentRow;
-           int columnIndex = 0;
 
-           count = writingIntoTheCells(v, rowIndex, columnIndex, count, m);
+           count = writingIntoTheCells(v, rowIndex, 0, count, m);
            currentRow++;
        }
        return count;
@@ -313,10 +318,9 @@ public class Main {
         int currentColumn = 1;
 
         while(currentColumn < m){
-            int rowIndex = n - 1;
             int columnIndex = currentColumn;
 
-            count = writingIntoTheCells(v, rowIndex, columnIndex, count, m);
+            count = writingIntoTheCells(v, n-1, columnIndex, count, m);
             currentColumn++;
         }
    }
@@ -377,7 +381,7 @@ public class Main {
     print(a);
     System.out.println();
 
-    print(diagonalLine(4,2));
+    print(diagonalLine(5,4));
 
     mergeImportantElements(d , a);
     print(d);
