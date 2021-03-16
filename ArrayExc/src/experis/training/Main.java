@@ -309,7 +309,7 @@ public class Main {
    public static void shakeArray(int [] v){
         Random getNumber = new Random();
 
-        for(int i = 0; i < v.length; i++){
+        for(int i = v.length - 1; i >= 0; i--){
             int j = getNumber.nextInt(i + 1);
 
             shake(v, i, j);
