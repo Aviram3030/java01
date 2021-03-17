@@ -34,7 +34,7 @@ class IntStackMin extends IntStack{
     }
 
     public int min(){
-        if(tos == 0){
+        if(isEmpty()){
             System.out.println("There is no min since the stack is empty");
             return -1;
         }
