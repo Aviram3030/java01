@@ -103,16 +103,17 @@ public class Main {
             return;
         }
 
+        if(isLegalLength(a, b)) {
+            System.out.println("Illegal input");
+            return;
+        }
+
         if(a == b){
             return;
         }
 
         if(isEqualLength(a, b)){
             copy(a, b);
-            return;
-        }
-
-        if(isLegalLength(a, b)) {
             return;
         }
 
@@ -373,17 +374,19 @@ public class Main {
     System.out.println();
 
     int[] d = {7,3,2,6,5,9,20,8,4};
+
     bubbleSort(d);
     bubbleSort(a);
+
     print(d);
     System.out.println();
 
     print(a);
     System.out.println();
 
-    print(diagonalLine(5,4));
+    print(diagonalLine(1,3));
 
-    mergeImportantElements(d , a);
+    mergeImportantElements(d, a);
     print(d);
     System.out.println();
 
