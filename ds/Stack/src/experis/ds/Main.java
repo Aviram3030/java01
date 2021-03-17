@@ -46,7 +46,11 @@ class IntStack {
     }
 
     public int peek(){
-        return data[tos - 1];
+        if (tos > 1) {
+            return data[tos - 1];
+        }
+        System.out.println("the Stack is Empty");
+        return 0;
     }
 
     public void clear(){
@@ -64,12 +68,15 @@ class IntStack {
         for(int i = tos - 1; i >= 0; i--){
             System.out.print(data[i]+ "\t");
         }
+        System.out.println();
     }
 }
 
 public class Main{
     public static void main(String[] args){
-        test1();
+        //test1();
+        //test2();
+        test3();
     }
 
     public static void test1(){
@@ -77,15 +84,12 @@ public class Main{
         x.push(1);
         x.push(2);
         x.printElements();
-        System.out.println();
 
         x.pop();
         x.printElements();
-        System.out.println();
 
         x.push(3,4);
         x.printElements();
-        System.out.println();
 
         x.pop();
         x.pop();
@@ -98,5 +102,23 @@ public class Main{
 
     }
 
-    
+    public static void test2() {
+        IntStack x = new IntStack();
+        x.push(3);
+        x.push(4);
+        x.printElements();
+
+        x.clear();
+
+        x.printElements();
+
+    }
+
+    public static void test3(){
+        IntStack x = new IntStack(-1);
+        System.out.println(x.size());
+    }
+
+
+
 }
