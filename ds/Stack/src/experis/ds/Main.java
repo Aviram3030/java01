@@ -79,6 +79,7 @@ public class Main{
         System.out.println(x.dequeue());
         System.out.println(x.dequeue());
 
+
         x.enqueue(2);
         x.enqueue(1);
 
