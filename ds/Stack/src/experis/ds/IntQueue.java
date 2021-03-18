@@ -18,6 +18,9 @@ public class IntQueue {
             data = new int[len];
             capacity = len;
         }
+        else {
+            System.exit(1);
+        }
     }
 
     public void enqueue(int n){

@@ -12,6 +12,9 @@ public class IntQueueWithStack{
         if(size > 0) {
             stack = new IntStack(size);
         }
+        else {
+            System.exit(1);
+        }
     }
 
     public void enqueue(int n){
