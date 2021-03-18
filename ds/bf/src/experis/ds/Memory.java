@@ -4,6 +4,7 @@ public class Memory {
     private int[] data;
     private int head;
     private int size;
+    private Display print = new Display();
 
     public Memory(int size, int head){
         data = new int[size];
@@ -28,11 +29,15 @@ public class Memory {
     }
 
     public void printChar(){
-        System.out.println((char)data[head]);
+        System.out.println((char)getValue());
     }
 
     public void printValue(){
-        System.out.println(data[head]);
+        System.out.println(getValue());
+    }
+
+    public int getValue(){
+        return data[head];
     }
 
 

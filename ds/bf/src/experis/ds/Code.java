@@ -15,7 +15,7 @@ public class Code {
     public OpCodes getOp(){
         assert index < len : "End of the code";
 
-        switch(data[++index]){
+        switch(data[index++]){
             case '+':
                 return OpCodes.PLUS;
             case '-':
@@ -40,9 +40,40 @@ public class Code {
         }
     }
 
+    public int getIndex(){
+        return index;
+    }
+
     public Boolean isFinished(){
         return index == len - 1;
     }
+
+    public int checkIsIllegalBrackets(){
+        int balance = 1;
+        int start = index;
+
+        while(balance >= 0 && start < len){
+            if(data[start] == '['){
+                balance++;
+            }
+            else if(data[start] == ']'){
+                balance--;
+            }
+            start++;
+
+        }
+
+        if(balance == 0){
+            return start;
+        }
+
+        System.out.println("Error,unclosed brackets");
+        System.exit(1);
+
+        return start;
+
+    }
+
 
 
 }

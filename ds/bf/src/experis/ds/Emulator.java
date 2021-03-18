@@ -9,7 +9,9 @@ public class Emulator {
         this.code = code;
     }
 
-    public void execute(){
+    public void execute(int start, int end){
+        int closedBracket;
+
         while(!code.isFinished()){
             switch(code.getOp()){
                 case PLUS:
@@ -30,19 +32,24 @@ public class Emulator {
                 case EXCLAMATION_MARK:
                     memory.printValue();
                     break;
-                /* case OPEN_BRACKETS:
-                    memory.loop();
+                case OPEN_BRACKETS:
+                    closedBracket = code.checkIsIllegalBrackets();
+                    while(memory.getValue() != 0){
+                        int openBracket = code.getIndex();
+                        execute(openBracket, closedBracket - 1);
+                    }
                     break;
                 case CLOSED_BRACKETS:
                     System.out.println("ERROR,illegal input");
-                    System.exit(1); */
+                    System.exit(1);
 
 
             }
         }
 
-
     }
+
+
 
 
 }
