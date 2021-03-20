@@ -1,77 +1,47 @@
 package experis.ds;
 
 public class Code {
-    private char[] data;
-    private int index;
+    private int index = 0;
     private final int len;
-    private OpCodes op;
+    private final OpCodes[] op;
 
-    public Code(char [] data){
-        this.data = data;
-        index = 0;
-        len = data.length;
-    }
-
-    public OpCodes getOp(){
-        assert index < len : "End of the code";
-
-        switch(data[index++]){
-            case '+':
-                return OpCodes.PLUS;
-            case '-':
-                return OpCodes.MINUS;
-            case '<':
-                return OpCodes.LEFT;
-            case '>':
-                return OpCodes.RIGHT;
-            case '!':
-                return OpCodes.EXCLAMATION_MARK;
-            case '.':
-                return OpCodes.DOT;
-            case '[':
-                return OpCodes.OPEN_BRACKETS;
-            case ']':
-                return OpCodes.CLOSED_BRACKETS;
-            default:
-                System.out.println("ERROR,illegal input");
-                System.exit(1);
-                return OpCodes.DOT;
-
-        }
+    public Code(OpCodes[] op){
+        this.op = op;
+        len = op.length;
     }
 
     public int getIndex(){
         return index;
     }
 
-    public Boolean isFinished(){
-        return index == len - 1;
+    public void setIndex(int index){
+        this.index = index;
     }
 
-    public int checkIsIllegalBrackets(){
+    public int getSize(){
+        return len;
+    }
+
+    public OpCodes getOp(){
+        return op[index++];
+    }
+
+    public int getClosedBracket(){
         int balance = 1;
         int start = index;
 
-        while(balance >= 0 && start < len){
-            if(data[start] == '['){
+        while(balance > 0 && start < len){
+            if(op[start] == OpCodes.OPEN_BRACKETS){
                 balance++;
             }
-            else if(data[start] == ']'){
+            else if(op[start] == OpCodes.CLOSED_BRACKETS){
                 balance--;
             }
+
             start++;
-
         }
-
-        if(balance == 0){
-            return start;
-        }
-
-        System.out.println("Error,unclosed brackets");
-        System.exit(1);
 
         return start;
-
     }
 
 

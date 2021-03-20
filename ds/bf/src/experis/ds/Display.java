@@ -2,8 +2,25 @@ package experis.ds;
 
 public class Display {
 
-    public void print(int[] data, int index){
+    private static Display display = null;
 
+    private Display(){
+    }
+
+    public static Display getDisplay(){
+        if(display == null){
+            display = new Display();
+        }
+
+        return display;
+    }
+
+    public void printChar(Memory memory){
+        System.out.println((char)memory.getValue());
+    }
+
+    public void printValue(Memory memory){
+        System.out.println(memory.getValue());
     }
 
 }

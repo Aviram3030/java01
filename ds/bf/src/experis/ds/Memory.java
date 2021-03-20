@@ -1,43 +1,76 @@
 package experis.ds;
 
 public class Memory {
+    private int size = 1024;
     private int[] data;
     private int head;
-    private int size;
-    private Display print = new Display();
 
-    public Memory(int size, int head){
+
+    public Memory(){
         data = new int[size];
-        this.head = head;
-        this.size = size;
+        head = size / 2;
     }
 
-    public void increase(){
-        ++data[head];
+    public int read(){
+        return data[head];
     }
 
-    public void decrease(){
-        --data[head];
+    public void write(int n){
+        data[head] = n;
     }
+
 
     public void moveLeft(){
+        if(head - 1 < 0){
+            createNewArrayFromLeft();
+        }
+
         --head;
+
+
     }
 
     public void moveRight(){
-        ++head;
-    }
+        if(head + 1 >= size){
+            createNewArrayFromRight();
+        }
+        else{
+            ++head;
+        }
 
-    public void printChar(){
-        System.out.println((char)getValue());
-    }
-
-    public void printValue(){
-        System.out.println(getValue());
     }
 
     public int getValue(){
         return data[head];
+    }
+
+    protected void createNewArrayFromLeft(){
+        updateSizeAndHead();
+
+        int[] newData = new int[size];
+        fillTheArray(newData, head , newData.length);
+
+        this.data = newData;
+    }
+
+    protected void createNewArrayFromRight(){
+        updateSizeAndHead();
+
+        int[] newData = new int[size];
+        fillTheArray(newData, 0, head);
+
+        this.data = newData;
+    }
+
+    protected void updateSizeAndHead(){
+        size = size * 2;
+        head = size / 2;
+    }
+
+    protected void fillTheArray(int[] newData, int start, int end){
+        for(int i = start, j = 0 ;i < end; i++, j++){
+            newData[i] = this.data[j];
+        }
     }
 
 
