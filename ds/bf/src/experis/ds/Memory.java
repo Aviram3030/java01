@@ -2,7 +2,7 @@ package experis.ds;
 
 
 public class Memory {
-    private static final int size = 5;
+    private static final int size = 2;
     private int head;
     private ArrayNode data;
 
@@ -74,5 +74,5 @@ public class Memory {
         int[] newData = new int[size];
         return new ArrayNode(newData);
     }
-    
+
 }
