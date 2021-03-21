@@ -9,7 +9,7 @@ public class Display {
 
     public static Display getDisplay(){
         if(display == null){
-            display = new Display();
+            Display.display = new Display();
         }
 
         return display;
