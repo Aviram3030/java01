@@ -16,11 +16,11 @@ public class Display {
     }
 
     public void printChar(Memory memory){
-        System.out.println((char)memory.getValue());
+        System.out.print((char)memory.read());
     }
 
     public void printValue(Memory memory){
-        System.out.println(memory.getValue());
+        System.out.print(memory.read());
     }
 
 }

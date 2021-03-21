@@ -39,7 +39,7 @@ public class Emulator {
         int closedBracket = code.getClosedBracket();
         int openBracket = code.getIndex();
 
-        while(memory.getValue() != 0){
+        while(memory.read() != 0){
             code.setIndex(openBracket);
             run(openBracket, closedBracket - 1);
         }
