@@ -55,7 +55,7 @@ public class Memory {
 
     }
 
-    protected void createNewArrayFromLeft(){
+    private void createNewArrayFromLeft(){
         ArrayNode v = createNewArrayNode();
 
         data.setPrevious(v);
@@ -63,14 +63,14 @@ public class Memory {
 
     }
 
-    protected void createNewArrayFromRight(){
+    private void createNewArrayFromRight(){
         ArrayNode v = createNewArrayNode();
 
         data.setNext(v);
         data = data.getNext();
     }
 
-    protected ArrayNode createNewArrayNode(){
+    private ArrayNode createNewArrayNode(){
         int[] newData = new int[size];
         return new ArrayNode(newData);
     }
