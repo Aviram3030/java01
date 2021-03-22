@@ -42,7 +42,6 @@ public class DoublyLinkedList<T> {
         return head;
     }
 
-    // make another function
     public T get(int index) {
         if (index <= 0 || index >= size)
             return null;
