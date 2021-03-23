@@ -1,7 +1,7 @@
 package experis.ds;
 
 
-public class Memory {
+public class Memory implements IMemory{
     private static final int size = 2;
     private int head;
     private ArrayNode data;
@@ -73,6 +73,11 @@ public class Memory {
     private ArrayNode createNewArrayNode(){
         int[] newData = new int[size];
         return new ArrayNode(newData);
+    }
+
+
+    public int getCurrentValue(){
+        return data.getArray()[head];
     }
 
 }

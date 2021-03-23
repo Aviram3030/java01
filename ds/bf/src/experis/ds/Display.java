@@ -15,12 +15,12 @@ public class Display {
         return display;
     }
 
-    public void printChar(Memory memory){
-        System.out.print((char)memory.read());
+    public void printChar(int n){
+        System.out.print((char) n);
     }
 
-    public void printValue(Memory memory){
-        System.out.print(memory.read());
+    public void printValue(int n){
+        System.out.print(n +" ");
     }
 
 }

@@ -31,13 +31,22 @@ public class Code {
         int start = index;
 
         while(balance > 0 && start < len){
-            if(op[start] == OpCodes.OPEN_BRACKETS){
+            if(op[start] == OpCodes.BEGIN_LOOP){
                 balance++;
             }
-            else if(op[start] == OpCodes.CLOSED_BRACKETS){
+            else if(op[start] == OpCodes.END_LOOP){
                 balance--;
             }
 
+            start++;
+        }
+
+        return start;
+    }
+
+    public int getEndIf(){
+        int start = getIndex();
+        while(op[start] != OpCodes.END_IF){
             start++;
         }
 
