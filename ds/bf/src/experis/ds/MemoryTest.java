@@ -43,18 +43,18 @@ public class MemoryTest {
     }
 
     public static void calculate(String source){
-        source = Transistor.fixing(source);
+        source = Transpiler.fixing(source);
 
-        if(!Transistor.checkIllegalBrackets(source)){
+        if(!Transpiler.checkIllegalBrackets(source)){
             System.out.print("Error, illegal while brackets");
             return;
         }
-        if(!Transistor.checkIllegalIf(source)){
+        if(!Transpiler.checkIllegalIf(source)){
             System.out.print("Error,illegal if brackets");
             return;
         }
 
-        OpCodes[] binaryCode = Transistor.turnToOpCode(source);
+        OpCodes[] binaryCode = Transpiler.turnToOpCode(source);
         IDisplay display = new DisplayColor();
         Emulator test = new Emulator(display);
 
