@@ -2,10 +2,10 @@ package experis.ds;
 
 public class Emulator {
     private final Memory memory;
-    private final Display display;
+    private final IDisplay display;
     private Code code;
 
-    public Emulator(Display display){
+    public Emulator(IDisplay display){
         memory = new Memory();
         this.display = display;
     }

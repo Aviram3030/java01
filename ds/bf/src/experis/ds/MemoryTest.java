@@ -55,7 +55,7 @@ public class MemoryTest {
         }
 
         OpCodes[] binaryCode = Transistor.turnToOpCode(source);
-        Display display = Display.getDisplay();
+        IDisplay display = new DisplayColor();
         Emulator test = new Emulator(display);
 
         test.load(binaryCode);
