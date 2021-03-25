@@ -1,6 +1,7 @@
-package experis.ds;
+package experis.ds.input;
 
-import java.io.FileInputStream;
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -9,14 +10,12 @@ import java.nio.file.Paths;
 import java.util.Scanner;
 import java.util.stream.Stream;
 
-public class Encode implements OneInputEncryption{
-    @Override
-    public String stringInput(String txt) {
-        return txt;
-    }
+public class FileInput extends Input{
 
-    @Override
-    public String fileInput() throws FileNotFoundException {
+    private File myObj = new File("filename.txt");
+    Scanner myReader = new Scanner(myObj);
+
+    public void readFile() throws FileNotFoundException {
         Path path = Paths.get("input.txt");
         StringBuilder sb = new StringBuilder();
 
@@ -27,17 +26,19 @@ public class Encode implements OneInputEncryption{
             System.out.println("Unable to read the file");
         }
 
-        return sb.toString();
+        data = sb.toString();
     }
 
     @Override
-    public String scannerInput() {
-        Scanner myObj = new Scanner(System.in);
+    public String line() throws FileNotFoundException {
         StringBuilder sb = new StringBuilder();
-
-        sb.append(myObj.nextLine());
-
-        return sb.toString();
+        while(!isEnd()){
+            sb.append(myReader.nextLine());
+        }
     }
 
+    @Override
+    public boolean isEnd() {
+        return myReader.hasNext();
+    }
 }

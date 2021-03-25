@@ -1,4 +1,4 @@
-package experis.ds;
+package experis.ds.encryption;
 
 public class LowerCase extends OneStringEncryption{
 
