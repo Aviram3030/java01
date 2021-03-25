@@ -2,13 +2,11 @@ package experis.ds.encryption;
 
 public class ReplaceEncryption extends OneStringEncryption {
 
-    public ReplaceEncryption(){
-    }
-
-    public void load(String txt){
+    public ReplaceEncryption(String txt){
         assert txt != null : "input is null";
         this.txt = txt;
     }
+
 
     public String execute(){
         StringBuilder sb = new StringBuilder(txt);

@@ -2,10 +2,7 @@ package experis.ds.encryption;
 
 public class UpperCase extends OneStringEncryption {
 
-    public UpperCase(){
-    }
-
-    public void load(String txt){
+    public UpperCase(String txt){
         assert txt != null : "input is null";
         this.txt = txt;
     }

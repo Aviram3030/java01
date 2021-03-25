@@ -3,6 +3,9 @@ package experis.ds.encryption;
 public class XorEncryption extends OneStringEncryption{
     private String password;
 
+    public XorEncryption() {
+    }
+
     public XorEncryption(String txt){
         this.txt = txt;
     }

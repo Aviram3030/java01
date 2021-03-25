@@ -4,11 +4,11 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 
-public class outputFile {
+public class OutputFile {
 
     private BufferedWriter writer;
 
-    public outputFile(String fileName) throws IOException {
+    public OutputFile(String fileName) throws IOException {
         assert fileName != null: "Error, file name is null";
 
         writer = new BufferedWriter(new FileWriter(fileName));

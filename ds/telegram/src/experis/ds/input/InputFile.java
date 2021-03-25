@@ -10,10 +10,13 @@ import java.nio.file.Paths;
 import java.util.Scanner;
 import java.util.stream.Stream;
 
-public class FileInput extends Input{
+public class InputFile extends Input{
 
     private File myObj = new File("filename.txt");
     Scanner myReader = new Scanner(myObj);
+
+    public InputFile() throws FileNotFoundException {
+    }
 
     public void readFile() throws FileNotFoundException {
         Path path = Paths.get("input.txt");
@@ -35,6 +38,8 @@ public class FileInput extends Input{
         while(!isEnd()){
             sb.append(myReader.nextLine());
         }
+
+        return sb.toString();
     }
 
     @Override
