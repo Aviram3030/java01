@@ -43,7 +43,7 @@ public class DoublyLinkedList<T> {
     }
 
     public T get(int index) {
-        if (index <= 0 || index >= size)
+        if (index < 0 || index > size)
             return null;
 
         return getTheElement(index);
@@ -52,7 +52,7 @@ public class DoublyLinkedList<T> {
 
     private T getTheElement(int index){
         Node<T> obj = tail;
-        for (int i = 1; i < index; i++) {
+        for (int i = 0; i < index; i++) {
             obj = obj.getNext();
         }
 
@@ -150,7 +150,6 @@ public class DoublyLinkedList<T> {
             addAtHead(a);
             return;
         }
-
         insertElement(a, at);
 
     }
