@@ -1,45 +1,32 @@
 package experis.ds.input;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Scanner;
-import java.util.stream.Stream;
 
 public class InputFile extends Input{
 
-    private File myObj = new File("filename.txt");
-    Scanner myReader = new Scanner(myObj);
+    private File myObj;
+    Scanner myReader;
 
-    public InputFile() throws FileNotFoundException {
-    }
-
-    public void readFile() throws FileNotFoundException {
-        Path path = Paths.get("input.txt");
-        StringBuilder sb = new StringBuilder();
-
-        try (Stream<String> stream = Files.lines(path)) {
-            stream.forEach(s -> sb.append(s).append("\n"));
-
-        } catch (IOException ex) {
-            System.out.println("Unable to read the file");
-        }
-
-        data = sb.toString();
+    public InputFile(){
+        System.out.println("Enter file name");
+        Scanner fileName = new Scanner(System.in);
+        String s = fileName.nextLine();
+        myObj = new File(s);
     }
 
     @Override
     public String line() throws FileNotFoundException {
+        myReader = new Scanner(myObj);
         StringBuilder sb = new StringBuilder();
-        while(!isEnd()){
-            sb.append(myReader.nextLine());
+
+        while (isEnd()) {
+           sb.append(myReader.nextLine());
+           sb.append("\n");
         }
 
-        return sb.toString();
+        return deleteLastLine(sb);
     }
 
     @Override

@@ -7,30 +7,34 @@ public class ScannerInput extends Input{
 
     @Override
     public String line() {
-        System.out.println("Enter a string");
+        System.out.println("Enter input");
+        data = getTerminalInput();
+
+        return data;
+    }
+
+    public String getTerminalInput(){
         StringBuilder sb = new StringBuilder();
         String line = "";
 
         while(true){
-            if(line.equals(".")){
+            line = myObj.nextLine();
+
+            if(line.equals("")) {
                 line = myObj.nextLine();
-                if(line == "\n"){
-                    break;
+                if (line.equals(".")) {
+                    line = myObj.nextLine();
+                    if (line.equals("")) {
+                        break;
+                    }
                 }
-                sb.append(".");
-                sb.append("\n");
             }
 
-            line = myObj.nextLine();
-            System.out.println(line);
             sb.append(line);
             sb.append("\n");
         }
 
-        data = sb.toString();
-
-        System.out.println("data is "+ data);
-        return data;
+        return deleteLastLine(sb);
     }
 
     @Override

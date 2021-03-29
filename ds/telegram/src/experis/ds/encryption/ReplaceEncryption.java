@@ -1,6 +1,6 @@
 package experis.ds.encryption;
 
-public class ReplaceEncryption extends OneStringEncryption {
+public class ReplaceEncryption extends Encryption {
 
     public ReplaceEncryption(String txt){
         assert txt != null : "input is null";
@@ -21,6 +21,7 @@ public class ReplaceEncryption extends OneStringEncryption {
             }
         }
 
-        return sb.toString();
+        txt = sb.toString();
+        return txt;
     }
 }

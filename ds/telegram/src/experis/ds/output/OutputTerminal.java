@@ -1,8 +1,10 @@
 package experis.ds.output;
 
-public class OutputTerminal {
+public class OutputTerminal implements IOutput{
 
-    public void outputTerminal(String data){
+
+    @Override
+    public void write(String data) {
         System.out.println(data);
     }
 }

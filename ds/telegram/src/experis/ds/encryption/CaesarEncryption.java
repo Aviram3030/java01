@@ -1,6 +1,6 @@
 package experis.ds.encryption;
 
-public class CaesarEncryption extends OneStringEncryption {
+public class CaesarEncryption extends Encryption {
     private final int lowAsciiValue = 65;
     private final int highAsciiValue = 97;
     private final int numOfAlphaBet = 26;
@@ -12,7 +12,6 @@ public class CaesarEncryption extends OneStringEncryption {
 
     public void load(int val) {
         assert txt != null : "input is null";
-
         this.val = val;
     }
 
@@ -32,9 +31,6 @@ public class CaesarEncryption extends OneStringEncryption {
         return txt;
     }
 
-    private boolean checkOverFlow(int index) {
-        long sum = (long) txt.charAt(index) + (long) val;
-        return sum > Integer.MAX_VALUE;
-    }
+
 
 }

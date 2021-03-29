@@ -1,6 +1,7 @@
 package experis.ds.encryption;
 
-public class LowerCase extends OneStringEncryption{
+public class LowerCase extends Encryption {
+
 
     public LowerCase(String txt){
         assert txt != null : "input is null";
@@ -8,6 +9,7 @@ public class LowerCase extends OneStringEncryption{
     }
 
     public String execute(){
-        return txt.toLowerCase();
+        txt = txt.toLowerCase();
+        return txt;
     }
 }

@@ -3,5 +3,5 @@ package experis.ds.output;
 import java.io.IOException;
 
 public interface IOutput {
-    void write(String data);
+    void write(String data) throws IOException;
 }

@@ -4,7 +4,7 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 
-public class OutputFile {
+public class OutputFile implements IOutput{
 
     private BufferedWriter writer;
 
