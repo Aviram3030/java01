@@ -1,43 +1,53 @@
 package com.tryfinally.sort;
 
-import com.tryfinally.Point;
-import com.tryfinally.PointComparator;
 import experis.ds.DoublyLinkedList;
+import experis.ds.Node;
 
-abstract public class SortedPointList implements ISortedPointList{
-    protected DoublyLinkedList<Point> pointList;
-    protected PointComparator compare;
+public class SortedPointList<T> implements ISortedPointList<T>{
+    private DoublyLinkedList<T> pointList;
+    private Comparator comparator;
 
-    public SortedPointList(PointComparator compare){
-        pointList = new DoublyLinkedList<>();
-        this.compare = compare;
+    public SortedPointList(Comparator compare){
+        pointList = new DoublyLinkedList<T>();
+        this.comparator = compare;
     }
 
-    public SortedPointList(Point point, PointComparator compare){
-        pointList = new DoublyLinkedList<>(point);
-        this.compare = compare;
+    public SortedPointList(T point, Comparator compare){
+        pointList = new DoublyLinkedList(point);
+        this.comparator = compare;
     }
 
 
-    public void insert(Point point){
+    public void insert(T point){
         int size = pointList.size();
-        for(int i = 0; i < size ; i++){
-            System.out.println(i);
-            if(compareInteraction(point, pointList.get(i)) > 0){
-                pointList.insert(point, i);
+        int i;
+        for(i = 0; i < size ; i++){
+            if(comparator.compare(point, pointList.get(i)) > 0){
                 break;
             }
         }
 
-        if(compareInteraction(point , pointList.getHead().getData()) > 0){
-            pointList.addAtHead(point);
-        }
-
+        pointList.insert(point, i);
     }
 
-    public DoublyLinkedList<Point> get(){
+
+     public void reverse(){
+        comparator = new SortByDescending(comparator);
+        reverseElements(pointList.size());
+    }
+
+    public void reverseElements(int n){
+        if(n <= 1){
+            return;
+        }
+
+        Node<T> a = pointList.popHead();
+        reverseElements(n - 1);
+        pointList.addTail(a);
+    }
+
+    public DoublyLinkedList<T> get(){
         return pointList;
     }
 
-    abstract protected int compareInteraction(Point a, Point b);
 }

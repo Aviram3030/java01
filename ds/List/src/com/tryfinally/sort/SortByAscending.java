@@ -1,19 +1,17 @@
 package com.tryfinally.sort;
 
-import com.tryfinally.Point;
-import com.tryfinally.PointComparator;
 
-public class SortByAscending extends SortedPointList{
+public class SortByAscending<T> implements Comparator<T> {
 
-    public SortByAscending(Point a, PointComparator compare) {
-        super(a, compare);
+    private Comparator<T> comparator;
+
+    public SortByAscending(Comparator comparator) {
+        this.comparator = comparator;
     }
 
-    public SortByAscending(PointComparator compare) {
-        super(compare);
+    @Override
+    public int compare(T a, T b) {
+        return comparator.compare(a, b);
     }
 
-    public int compareInteraction(Point a, Point b){
-        return compare.compare(a,b);
-    }
 }

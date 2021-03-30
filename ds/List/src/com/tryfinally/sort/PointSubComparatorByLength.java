@@ -1,8 +1,9 @@
-package com.tryfinally;
+package com.tryfinally.sort;
 
-public class PointComparatorByLength implements PointComparator{
+import com.tryfinally.sort.Points.Point;
 
-    @Override
+public class PointSubComparatorByLength implements Comparator<Point> {
+
     public int compare(Point a, Point b) {
         return vectorLength(a) - vectorLength(b);
     }

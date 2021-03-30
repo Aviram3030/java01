@@ -1,8 +1,8 @@
-package com.tryfinally;
+package com.tryfinally.sort.Points;
 
 
 public class Main {
-    public static void main(String[] args) {
+    /*public static void main(String[] args) {
         comparatorTest();
 
     }
@@ -11,7 +11,12 @@ public class Main {
         var p1 = new Point(13, 7);
         var p2 = new Point(5, 31);
 
-        var c = new PointComparator(){
+        var c = new Comparator(){
+
+            @Override
+            public int compare(Object a, Object b) {
+                return 0;
+            }
 
             @Override
             public int compare(Point a, Point b) {
@@ -22,7 +27,7 @@ public class Main {
         var m = Utils.max(p1, p2, c);
         System.out.println(m);
 
-        Utils.max(p1, p2, new PointComparator() {
+        Utils.max(p1, p2, new Comparator() {
             @Override
             public int compare(Point a, Point b) {
                 return a.y - b.y;
@@ -35,7 +40,7 @@ public class Main {
         var p1 = new Point(13, 7);
         var p2 = new Point(5, 31);
 
-        class CompareByAdd implements PointComparator{
+        class CompareByAdd implements Comparator {
 
             @Override
             public int compare(Point a, Point b) {
@@ -54,5 +59,5 @@ public class Main {
 
         var m = Utils.max(p1, p2, new PointComparatorByX());
         System.out.println(m);
-    }
+    }*/
 }

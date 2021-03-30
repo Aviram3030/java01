@@ -1,9 +1,8 @@
 package com.tryfinally.sort;
 
-import com.tryfinally.Point;
+public interface ISortedPointList<T>{
 
-public interface ISortedPointList {
-
-    public void insert(Point point);
+    public void insert(T point);
+    public void reverse();
 
 }

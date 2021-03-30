@@ -1,4 +1,4 @@
-package com.tryfinally;
+package com.tryfinally.sort.Points;
 
 public class Point {
     public int x;

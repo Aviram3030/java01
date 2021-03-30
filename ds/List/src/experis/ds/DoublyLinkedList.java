@@ -1,9 +1,9 @@
 package experis.ds;
 
 public class DoublyLinkedList<T> {
+    private Node<T> tail;
     private Node<T> head;
     private int size;
-    private Node<T> tail;
 
     public DoublyLinkedList() {
         size = 0;
@@ -11,12 +11,12 @@ public class DoublyLinkedList<T> {
 
     public DoublyLinkedList(T val) {
         size = 1;
-        head = new Node<>(val);
-        tail = head;
+        tail = new Node<>(val);
+        head = tail;
     }
 
     public int find(T a) {
-        Node<T> obj = tail;
+        Node<T> obj = head;
         int i = 0;
         while (obj != null && !obj.getData().equals(a)) {
             obj = obj.getNext();
@@ -34,12 +34,12 @@ public class DoublyLinkedList<T> {
         return size;
     }
 
-    public Node<T> getTail() {
-        return tail;
-    }
-
     public Node<T> getHead() {
         return head;
+    }
+
+    public Node<T> getTail() {
+        return tail;
     }
 
     public T get(int index) {
@@ -51,29 +51,12 @@ public class DoublyLinkedList<T> {
     }
 
     private T getTheElement(int index){
-        Node<T> obj = tail;
+        Node<T> obj = head;
         for (int i = 0; i < index; i++) {
             obj = obj.getNext();
         }
 
         return obj.getData();
-    }
-
-    public void addAtHead(T a) {
-        if (isEmpty()) {
-            firstElement(a);
-            return;
-        }
-
-        executeAddHead(a);
-    }
-
-    private void executeAddHead(T a){
-        Node<T> obj = new Node<>(a);
-        obj.setPrevious(head);
-        head.setNext(obj);
-        head = obj;
-        changeSize(size + 1);
     }
 
     public void addAtTail(T a) {
@@ -82,21 +65,48 @@ public class DoublyLinkedList<T> {
             return;
         }
 
-        executeAddTail(a);
+        executeAddHead(a);
+    }
+
+    public void addTail(Node<T> a){
+        tail.setNext(a);
+        a.setPrevious(tail);
+        a.setNext(null);
+        tail = a;
+
+        changeSize(size + 1);
+
     }
 
     private void executeAddTail(T a){
         Node<T> obj = new Node<>(a);
-        obj.setNext(tail);
-        tail.setPrevious(obj);
+        obj.setPrevious(tail);
+        tail.setNext(obj);
         tail = obj;
+        changeSize(size + 1);
+    }
+
+    public void addAtHead(T a) {
+        if (isEmpty()) {
+            firstElement(a);
+            return;
+        }
+
+        executeAddTail(a);
+    }
+
+    private void executeAddHead(T a){
+        Node<T> obj = new Node<>(a);
+        obj.setNext(head);
+        head.setPrevious(obj);
+        head = obj;
         changeSize(size + 1);
     }
 
     private void firstElement(T a) {
         if (size == 0) {
-            head = new Node<>(a);
-            tail = head;
+            tail = new Node<>(a);
+            head = tail;
             changeSize(size + 1);
         }
     }
@@ -107,13 +117,13 @@ public class DoublyLinkedList<T> {
 
 
     public void remove(T a) {
-        if (a.equals(tail.getData())) {
-            tail = tail.getNext();
+        if (a.equals(head.getData())) {
+            head = head.getNext();
             changeSize(size - 1);
             return;
         }
-        if (a.equals(head.getData())) {
-            head = head.getNext();
+        if (a.equals(tail.getData())) {
+            tail = tail.getNext();
             changeSize(size - 1);
             return;
         }
@@ -123,7 +133,7 @@ public class DoublyLinkedList<T> {
 
 
     private void removeElement(T a) {
-        Node<T> obj = tail.getNext();
+        Node<T> obj = head.getNext();
 
         for (int i = 0; i < size - 1; i++) {
             if (a.equals(obj.getData())) {
@@ -136,17 +146,18 @@ public class DoublyLinkedList<T> {
         }
     }
 
+
     public void insert(T a, int at) {
-        if (at < 0 || at > size + 1) {
+        if (at < 0 || at > size ) {
             return;
         }
 
-        if (at == 1) {
+        if (at == 0) {
             addAtTail(a);
             return;
         }
 
-        if (at == size + 1) {
+        if (at == size) {
             addAtHead(a);
             return;
         }
@@ -155,40 +166,45 @@ public class DoublyLinkedList<T> {
     }
 
     private void insertElement(T a, int at){
-        Node<T> obj = tail;
+        Node<T> obj = head;
         for (int i = 0; i < at - 1; i++) {
             obj = obj.getNext();
         }
+
+        Node<T> temp = obj.getNext();
 
         Node<T> aNode = new Node<>(a);
         obj.setNext(aNode);
         aNode.setPrevious(obj);
 
-        obj = obj.getNext();
-        aNode.setNext(obj);
-        obj.setPrevious(aNode);
+        aNode.setNext(temp);
+        temp.setPrevious(aNode);
 
         changeSize(size + 1);
 
-    }
-
-    public Node<T> popHead() {
-        if (size == 0) {
-            return null;
-        }
-        Node<T> a = head;
-        head = head.getPrevious();
-        changeSize(size - 1);
-
-        return a;
     }
 
     public Node<T> popTail() {
         if (size == 0) {
             return null;
         }
+
         Node<T> a = tail;
-        tail = tail.getNext();
+        tail = tail.getPrevious();
+        changeSize(size - 1);
+
+        return a;
+    }
+
+    public Node<T> popHead() {
+        if (size == 0) {
+            return null;
+        }
+
+        Node<T> a = head;
+        head = head.getNext();
+        head.setPrevious(null);
+        a.setNext(null);
         changeSize(size - 1);
 
         return a;
@@ -204,7 +220,7 @@ public class DoublyLinkedList<T> {
     }
 
     public String toString() {
-        Node<T> obj = tail;
+        Node<T> obj = head;
         StringBuilder s = new StringBuilder();
         for (int i = 0; i < size; i++) {
             s.append(obj.getData().toString());
@@ -215,23 +231,23 @@ public class DoublyLinkedList<T> {
         return s.toString();
     }
 
-    public void addTail(DoublyLinkedList<T> a) {
-        changeSize(size + a.size());
-        tail.setPrevious(a.getHead());
-        a.getHead().setNext(tail);
-        tail = a.getTail();
-    }
-
     public void addHead(DoublyLinkedList<T> a) {
         changeSize(size + a.size());
-        head.setNext(a.getTail());
-        a.getTail().setPrevious(head);
+        head.setPrevious(a.getTail());
+        a.getTail().setNext(head);
         head = a.getHead();
+    }
+
+    public void addTail(DoublyLinkedList<T> a) {
+        changeSize(size + a.size());
+        tail.setNext(a.getHead());
+        a.getHead().setPrevious(tail);
+        tail = a.getTail();
     }
 
     public DoublyLinkedList<T> intersection(DoublyLinkedList<T> a) {
         DoublyLinkedList<T> newList = new DoublyLinkedList<>();
-        Node<T> obj = tail;
+        Node<T> obj = head;
 
         for (int i = 0; i < size; i++) {
             if(a.find(obj.getData()) != -1){
@@ -246,7 +262,7 @@ public class DoublyLinkedList<T> {
 
     public DoublyLinkedList<T> not(DoublyLinkedList<T> a) {
         DoublyLinkedList<T> newList = new DoublyLinkedList<>();
-        Node<T> obj = tail;
+        Node<T> obj = head;
 
         for (int i = 0; i < size; i++) {
             if(a.find(obj.getData()) == -1){
