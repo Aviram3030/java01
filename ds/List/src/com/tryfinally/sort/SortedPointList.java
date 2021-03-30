@@ -8,7 +8,7 @@ public class SortedPointList<T> implements ISortedPointList<T>{
     private Comparator comparator;
 
     public SortedPointList(Comparator compare){
-        pointList = new DoublyLinkedList<T>();
+        pointList = new DoublyLinkedList();
         this.comparator = compare;
     }
 
