@@ -6,9 +6,43 @@ import java.util.function.Function;
 public class BinarySearchTree<T>{
     private Node<T> root;
     private int size = 0;
-    private final Comparator comparator;
+    private final Comparator<T> comparator;
 
-    public BinarySearchTree(Comparator comparator){
+    static class Node<T>{
+        private Node<T> right;
+        T data;
+        private Node<T> left;
+
+        public Node(){
+        }
+
+        public Node(T data){
+            this.data = data;
+        }
+
+        public void setRight(Node<T> a){
+            right = a;
+        }
+
+        public void setLeft(Node<T> a){
+            left = a;
+        }
+
+        public Node<T> getRight(){
+            return right;
+        }
+
+        public Node<T> getLeft(){
+            return left;
+        }
+
+        public T getData(){
+            return data;
+        }
+
+    }
+
+    public BinarySearchTree(Comparator<T> comparator){
         this.comparator = comparator;
     }
 
@@ -32,7 +66,7 @@ public class BinarySearchTree<T>{
     }
 
     private void insertNode(Node<T> a, Node<T> currentNode){
-        if(comparator.compare(a, currentNode.getData()) > 0){
+        if(comparator.compare(a.getData(), currentNode.getData()) > 0){
             if(currentNode.getLeft() != null) {
                 insertNode(a, currentNode.getLeft());
             }
@@ -126,43 +160,6 @@ public class BinarySearchTree<T>{
 
         return a.getData();
     }
-
-
-}
-
-class Node<T>{
-    private Node<T> right;
-    T data;
-    private Node<T> left;
-
-    public Node(){
-    }
-
-    public Node(T data){
-        this.data = data;
-    }
-
-    public void setRight(Node<T> a){
-        right = a;
-    }
-
-    public void setLeft(Node<T> a){
-        left = a;
-    }
-
-    public Node<T> getRight(){
-        return right;
-    }
-
-    public Node<T> getLeft(){
-        return left;
-    }
-
-    public T getData(){
-        return data;
-    }
-
-
 
 
 }
