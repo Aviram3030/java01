@@ -3,6 +3,6 @@ package experis.ds;
 public class Main {
 
     public static void main(String[] args) {
-	// write your code here
+        Tests.fx1();
     }
 }
