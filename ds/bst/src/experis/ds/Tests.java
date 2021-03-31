@@ -3,21 +3,26 @@ package experis.ds;
 import java.util.Comparator;
 
 class Student{
-    public String name;
-    public int id;
+    private String name;
+    private int id;
 
     Student(String name, int id){
         this.name = name;
         this.id = id;
     }
 
+    public int getID(){
+        return id;
+    }
+
     public String toString(){
         return " name: " + name +
                 " id: " + id;
     }
+
 }
 
-public class Tests {
+/* public class Tests {
 
     public static void fx1(){
         Comparator<Integer> compare = new Comparator<Integer>() {
@@ -28,17 +33,13 @@ public class Tests {
         };
 
 
-        KeyExtractor extractor = new KeyExtractor<Student,Integer>();
+        KeyExtractor extractor = new KeyExtractorStudent();
 
         Student a = new Student("Student - 1", 1);
         Student b = new Student("Student - 2", 3);
         Student c = new Student("Student - 3", 4);
         Student d = new Student("Student - 4", 2);
 
-        extractor.add(a,1);
-        extractor.add(b,3);
-        extractor.add(c,4);
-        extractor.add(d,2);
 
         BinarySearchTree tree = new BinarySearchTree(compare, extractor);
         tree.insert(a);
@@ -48,7 +49,9 @@ public class Tests {
 
         System.out.println("Printing the students");
 
-        tree.forEach( (n) -> { System.out.println(n.toString()); return n; } );
+        Func<Student, Integer> func = (Func<Student, Integer>) (a1) -> {System.out.println(a1.toString()) ;return 0;};
+
+        tree.forEach(func, Traversals.INORDER);
 
         System.out.println();
 
@@ -59,16 +62,11 @@ public class Tests {
         c = new Student("Student - 7", 9);
         d = new Student("Student - 8", 0);
 
-        extractor.add(a,-2);
-        extractor.add(b,-8);
-        extractor.add(c,9);
-        extractor.add(d,0);
-
         tree.insert(a);
         tree.insert(b);
         tree.insert(c);
         tree.insert(d);
 
-        tree.forEach( (n) -> { System.out.println(n.toString()); return n; } );
+        tree.forEach(func, Traversals.INORDER);
     }
-}
+} */
