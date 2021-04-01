@@ -16,13 +16,12 @@ public class BinarySearchTree<K,T>{
         public String toString(){
             return data.toString();
         }
-
     }
 
     private static class Trio<T>{
-        private Node<T> node;
-        private Direction leftOrRight;
-        private Boolean isFound;
+        private final Node<T> node;
+        private final Direction leftOrRight;
+        private final Boolean isFound;
 
         public Trio(Node<T> node, Direction leftOrRight, Boolean isFound){
             this.node = node;
@@ -44,7 +43,7 @@ public class BinarySearchTree<K,T>{
     private int size = 0;
     private final Comparator<K> comparator;
     private final KeyExtractor<K,T> keyExtractor;
-    private static int count = 0;
+    private int count;
 
     public BinarySearchTree(Comparator<K> comparator, KeyExtractor<K,T> keyExtractor){
         this.comparator = comparator;
@@ -68,9 +67,9 @@ public class BinarySearchTree<K,T>{
             return true;
         }
 
-        changeSize(size + 1);
+        size++;
 
-        if(compareKeys(keyExtractor.extract(a),root) == 0){
+        if(compareNodeToKey(keyExtractor.extract(a), root) == 0){
             System.out.println("The element is already in the tree - at the root");
             return false;
         }
@@ -84,37 +83,45 @@ public class BinarySearchTree<K,T>{
         }
 
         if(trio.isLeft()){
-            insertLeft(newNode, trio.node, needle);
+            insertLeft(newNode, trio.node);
             return true;
         }
 
-        insertRight(newNode, trio.node, needle);
+        insertRight(newNode, trio.node);
         return true;
     }
 
-    private void changeSize(int n){
-        size = n;
-    }
-
-
-    private void insertLeft(Node<T> newNode, Node<T> node, K needle){
+    private void insertLeft(Node<T> newNode, Node<T> node){
         if(node.left == null){
             node.left = newNode;
             return;
         }
 
-        newNode.left = node.left;
-        node.left = newNode;
+        if(compareNodeToNode(newNode,node.left) > 0) {
+            newNode.left = node.left;
+            node.left = newNode;
+        }
+        else{
+            node.left.left = newNode;
+        }
     }
 
-    private void insertRight(Node<T> newNode, Node<T> node, K needle){
+    private void insertRight(Node<T> newNode, Node<T> node){
         if(node.right == null){
             node.right = newNode;
             return;
         }
+        if(compareNodeToNode(newNode,node.right) < 0) {
+            newNode.right = node.right;
+            node.right = newNode;
+        }
+        else{
+            node.right.right = newNode;
+        }
+    }
 
-        newNode.right = node.right;
-        node.right = newNode;
+    private int compareNodeToNode(Node<T> newNode, Node<T> node){
+        return comparator.compare(keyExtractor.extract(newNode.data),keyExtractor.extract(node.right.data));
     }
 
     public Boolean contains(T val){
@@ -128,7 +135,7 @@ public class BinarySearchTree<K,T>{
             return null;
         }
 
-        if(compareKeys(needle, root) == 0) {
+        if(compareNodeToKey(needle, root) == 0) {
             return root.data;
         }
 
@@ -148,7 +155,7 @@ public class BinarySearchTree<K,T>{
     private Trio<T> find_r(K needle, Node<T> currentNode) {
         Trio<T> pair;
 
-        if(compareKeys(needle, currentNode) < 0) {
+        if(compareNodeToKey(needle, currentNode) < 0) {
              pair = checkLeft(needle, currentNode);
         }
         else {
@@ -163,15 +170,13 @@ public class BinarySearchTree<K,T>{
             return new Trio<>(currentNode, Direction.LEFT, false);
         }
 
-        int compare = compareKeys(needle,currentNode.left);
+        int compare = compareNodeToKey(needle,currentNode.left);
         if (compare == 0) {
             return new Trio<>(currentNode, Direction.LEFT,true);
         }
-        if (compare < 0) {
+        else {
             return find_r(needle, currentNode.left);
         }
-
-        return new Trio<>(currentNode.left, Direction.RIGHT,false);
     }
 
     private Trio<T> checkRight(K needle, Node<T> currentNode){
@@ -179,54 +184,46 @@ public class BinarySearchTree<K,T>{
             return new Trio<>(currentNode, Direction.RIGHT, false);
         }
 
-        int compare = compareKeys(needle,currentNode.right);
+        int compare = compareNodeToKey(needle,currentNode.right);
         if(compare == 0){
             return new Trio<>(currentNode, Direction.RIGHT,true);
         }
-        if(compare > 0){
-            return find_r(needle,currentNode.right);
+        else {
+            return find_r(needle, currentNode.right);
         }
-
-        return new Trio<>(currentNode.right, Direction.LEFT,false);
     }
 
-    private int compareKeys(K needle, Node<T> currentNode) {
+    private int compareNodeToKey(K needle, Node<T> currentNode) {
         T val = currentNode.data;
-        var key = keyExtractor.extract(val);
+        K key = keyExtractor.extract(val);
         return comparator.compare(needle, key);
     }
 
-    public void forEach(Func func, Traversals order){
+    public void forEach(Func<T,K> func, Traversals order){
         if(isEmpty()) {
             return;
         }
 
-        switch(order){
-            case INORDER:
-                forEachInorder(func, root);
-                break;
-            case PREORDER:
-                forEachPreorder(func, root);
-                break;
-            case POSTORDER:
-                forEachPostorder(func, root);
-                break;
+        switch (order) {
+            case INORDER -> forEachInorder(func, root);
+            case PREORDER -> forEachPreorder(func, root);
+            case POSTORDER -> forEachPostorder(func, root);
         }
     }
 
-    private void forEachInorder(Func func, Node<T> a) {
+    private void forEachInorder(Func<T,K> func, Node<T> a) {
         if(a.left != null){
             forEachInorder(func, a.left);
         }
 
-        func.apply(a);
+        func.apply(a.data);
 
         if(a.right != null){
             forEachInorder(func, a.right);
         }
     }
 
-    private void forEachPostorder(Func func, Node<T> a) {
+    private void forEachPostorder(Func<T,K> func, Node<T> a) {
         if(a.left != null){
             forEachInorder(func, a.left);
         }
@@ -235,11 +232,11 @@ public class BinarySearchTree<K,T>{
             forEachInorder(func, a.right);
         }
 
-        func.apply(a);
+        func.apply(a.data);
     }
 
-    private void forEachPreorder(Func func, Node<T> a){
-        func.apply(a);
+    private void forEachPreorder(Func<T,K> func, Node<T> a){
+        func.apply(a.data);
 
         if(a.left != null){
             forEachPreorder(func, a.left);
@@ -250,29 +247,30 @@ public class BinarySearchTree<K,T>{
         }
     }
 
-    public int Height(){
-       return Height_r(root);
+    public int height(){
+       return height_r(root);
     }
 
-    private int Height_r(Node<T> a){
+    private int height_r(Node<T> a){
         if(a == null){
             return -1;
         }
-        int leftDepth = Height_r(a.left);
-        int rightDepth = Height_r(a.right);
+        int leftDepth = height_r(a.left);
+        int rightDepth = height_r(a.right);
 
         if(leftDepth > rightDepth){
             return leftDepth + 1;
         }
-        return rightDepth;
+        return rightDepth + 1;
     }
 
-    private boolean isPerfect(){
+    public boolean isPerfect(){
         if(size() == 0){
             return true;
         }
-        int height = Height_r(root);
-        return calculateSizeForPerfectTree(height) == size() - 1;
+
+        int height = height_r(root);
+        return calculateSizeForPerfectTree(height) == size() + 1;
     }
 
     private int calculateSizeForPerfectTree(int height){
@@ -292,7 +290,7 @@ public class BinarySearchTree<K,T>{
     }
 
     private boolean checkIsComplete(Node<T> a){
-        if(isOnlyOneNull(a.left, a.right) || isOnlyOneNull(a.right, a.left)){
+        if(isOnlyOneChildNull(a.left, a.right) || isOnlyOneChildNull(a.right, a.left)){
             return false;
         }
 
@@ -303,7 +301,7 @@ public class BinarySearchTree<K,T>{
         return checkIsComplete(a.left) && checkIsComplete(a.left);
     }
 
-    private boolean isOnlyOneNull(Node<T> a, Node<T> b){
+    private boolean isOnlyOneChildNull(Node<T> a, Node<T> b){
         return a == null && b != null;
     }
 
@@ -311,21 +309,20 @@ public class BinarySearchTree<K,T>{
         return a == null && b == null;
     }
 
-    public T max(){
-        if(isEmpty()){
+    public K reduce(BiFunc<K,T,K> func){
+        if(size == 0){
             return null;
         }
-
-        Node<T> a = root;
-        while(a.right != null){
-            a = a.right;
+        K keyManipulation = keyExtractor.extract(min());
+        for(int i = 0 ; i < size() - 1; i++){
+            keyManipulation = func.apply(this.nthOrder(i), keyManipulation);
         }
 
-        return a.data;
+        return keyManipulation;
     }
 
     public T nthOrder(int n){
-        count = 0;
+        count = size() - 1;
         return nthOrder_r(root, n).data;
     }
 
@@ -335,21 +332,27 @@ public class BinarySearchTree<K,T>{
         }
 
         Node<T> node = nthOrder_r(a.left, n);
-
         if(node != null){
             return node;
         }
 
-        count++;
         if(count == n)
             return a;
 
+        count--;
+
         node = nthOrder_r(a.right, n);
-        if(node != null){
-            return node;
+        return node;
+    }
+
+    public T max(){
+        if(isEmpty()){
+            return null;
         }
 
-        return null;
+        Func<Node<T>,Node<T>> f = (a -> a.right);
+        return getMinMax(f).data;
+
     }
 
     public T min(){
@@ -357,13 +360,17 @@ public class BinarySearchTree<K,T>{
             return null;
         }
 
-        Node<T> a = root;
-        while(a.left != null){
-            a = a.left;
-        }
-
-        return a.data;
+        Func<Node<T>,Node<T>> f = (a -> a.left);
+        return getMinMax(f).data;
     }
 
+    private Node<T> getMinMax(Func<Node<T>,Node<T>> func){
+        Node<T> child = root;
+        while(func.apply(child) != null){
+            child = func.apply(child);
+        }
+
+        return child;
+    }
 
 }

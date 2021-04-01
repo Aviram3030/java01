@@ -70,7 +70,7 @@ class BinarySearchTreeUnitTest {
 
     @Test
     void contains() {
-        assertFalse(tree.contains(students[0]));
+        assertFalse(tree.contains(students[1]));
         for(int i = 0; i < students.length; i++){
             tree.insert(students[i]);
         }
@@ -82,6 +82,15 @@ class BinarySearchTreeUnitTest {
 
     @Test
     void find() {
+        assertTrue(tree.find(students[0].getID()) == null);
+        for(int i = 0; i < students.length; i++){
+            tree.insert(students[i]);
+        }
+
+        for(int i = 0; i < students.length; i++){
+            assertTrue(tree.find(students[i].getID()) == students[i]);
+        }
+
     }
 
     @Test
@@ -90,21 +99,75 @@ class BinarySearchTreeUnitTest {
 
     @Test
     void height() {
+        assertTrue(tree.height() == -1);
+        insertTest();
+
+        assertTrue(tree.height() == 3);
     }
 
     @Test
     void isComplete() {
+        assertTrue(tree.isComplete());
+        tree.insert(students[0]);
+        tree.insert(students[1]);
+        tree.insert(students[3]);
+
+        assertTrue(tree.isComplete());
+    }
+
+    @Test
+    void isPerfect() {
+        assertTrue(tree.isPerfect());
+        tree.insert(students[0]);
+        tree.insert(students[1]);
+        tree.insert(students[3]);
+
+        assertTrue(tree.isPerfect());
     }
 
     @Test
     void max() {
+        insertTest();
+        assertEquals(tree.max(), students[3]);
     }
 
     @Test
     void nthOrder() {
+        insertTest();
+
+        assertTrue(tree.nthOrder(0).getID() == 10);
+        assertTrue(tree.nthOrder(2).getID() == 8);
+        assertTrue(tree.nthOrder(5).getID() == 4);
+        assertTrue(tree.nthOrder(9).getID() == -5);
     }
 
     @Test
     void min() {
+        insertTest();
+        assertEquals(tree.min(), students[4]);
+    }
+
+    @Test
+    void reduce(){
+        insertTest();
+        int sum = 0;
+        for(int i = 0; i < students.length; i++){
+            sum += students[i].getID();
+        }
+
+        BiFunc<Integer,Student,Integer> biFunc = new BiFunc<Integer, Student, Integer>() {
+            @Override
+            public Integer apply(Student student, Integer t) {
+                return student.getID() + t;
+            }
+        };
+
+        assertTrue(tree.reduce(biFunc) == sum);
+    }
+
+    public void insertTest(){
+        for(int i = 0; i < students.length; i++){
+            tree.insert(students[i]);
+        }
     }
 }
