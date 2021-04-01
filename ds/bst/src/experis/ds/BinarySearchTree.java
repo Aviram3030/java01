@@ -91,6 +91,36 @@ public class BinarySearchTree<K,T>{
         return true;
     }
 
+    public boolean remove(T a){
+        Trio<T> trio = find_r(keyExtractor.extract(a),new Node<>(a));
+        if(!trio.isFound){
+            return false;
+        }
+        if(trio.isLeft()){
+            if(trio.node.left.left != null){
+                trio.node.left = trio.node.left.left;
+            }
+            else if(trio.node.left.right != null){
+                trio.node.left = trio.node.left.right;
+            }
+            else{
+                trio.node.left = null;
+            }
+        }
+        else{
+            if(trio.node.right.right != null){
+                trio.node.right = trio.node.right.right;
+            }
+            else if(trio.node.right.left != null){
+                trio.node.right = trio.node.right.left;
+            }
+            else{
+                trio.node.right = null;
+            }
+        }
+        return true;
+    }
+
     private void insertLeft(Node<T> newNode, Node<T> node){
         if(node.left == null){
             node.left = newNode;
