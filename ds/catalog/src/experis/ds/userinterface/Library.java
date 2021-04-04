@@ -1,12 +1,14 @@
 package experis.ds;
 
-import experis.ds.books.*;
+import experis.ds.database.books.*;
+import experis.ds.database.persons.books.*;
 import experis.ds.commands.TitleSearchCommands;
 import experis.ds.input.FileData;
+import experis.ds.input.Input;
 import experis.ds.output.DisplayIsbnSearch;
 import experis.ds.output.DisplayTitlesSearch;
-import experis.ds.persons.AuthorsNameList;
-import experis.ds.persons.PublishersNameList;
+import experis.ds.database.creators.AuthorsNameList;
+import experis.ds.database.creators.PublishersNameList;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -15,15 +17,15 @@ import java.util.Scanner;
 public class Library {
 
     private Scanner myReader;
-    private FileData inputFile;
+    private Input input;
 
     public Library() throws FileNotFoundException {
         System.out.println("Enter File Name");
         myReader = new Scanner(System.in);
-        inputFile = new FileData(myReader.nextLine());
+        input = new FileData(myReader.nextLine());
     }
 
-    public void execute() {
+    public void execute() throws FileNotFoundException {
         IBookList books = new BookList();
         BookExtractor bookExtractor = new BookExtractor();
 
@@ -45,18 +47,18 @@ public class Library {
 
     }
 
-    private void getData(BookExtractor bookExtractor, IBookList books) {
-        String data = inputFile.line();
+    private void getData(BookExtractor bookExtractor, IBookList books) throws FileNotFoundException {
+        String data = input.line();
         AuthorsNameList authors = new AuthorsNameList();
         PublishersNameList publishers = new PublishersNameList();
 
         while(data != null){
-            BookDetails book = BookWrapper.wrap(data, authors, publishers);
+            BookDetails book = BookWrapper.wrap(data, authors, publishers,"\\|");
             if(book != null) {
                 books.addBook(book);
                 bookExtractor.addBook(book);
             }
-            data = inputFile.line();
+            data = input.line();
         }
     }
 

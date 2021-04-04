@@ -1,4 +1,4 @@
-package experis.ds.persons;
+package experis.ds.database.author;
 
 public class Author extends Person {
 

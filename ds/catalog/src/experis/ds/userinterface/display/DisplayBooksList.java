@@ -1,6 +1,6 @@
-package experis.ds.output;
+package experis.ds.userinterface.display;
 
-import experis.ds.books.BookDetails;
+import experis.ds.database.books.BookDetails;
 import java.util.ArrayList;
 
 public class DisplayTitlesSearch {

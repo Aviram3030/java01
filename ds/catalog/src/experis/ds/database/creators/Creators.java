@@ -1,4 +1,6 @@
-package experis.ds.persons;
+package experis.ds.database.author;
+
+import experis.ds.database.author.IPerson;
 
 public class Person implements IPerson {
     private final String name;

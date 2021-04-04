@@ -1,15 +1,15 @@
-package experis.ds.books;
+package experis.ds.database.persons.books;
 
-import experis.ds.persons.Author;
-import experis.ds.persons.AuthorsNameList;
-import experis.ds.persons.Publisher;
-import experis.ds.persons.PublishersNameList;
+import experis.ds.database.author.Author;
+import experis.ds.database.author.AuthorsNameList;
+import experis.ds.database.author.Publisher;
+import experis.ds.database.author.PublishersNameList;
 
 public class BookWrapper {
 
-    public static BookDetails wrap(String book, AuthorsNameList authors, PublishersNameList publishers){
+    public static BookDetails wrap(String book, AuthorsNameList authors, PublishersNameList publishers,String separate){
         BookDetails bookDetails;
-        String[] details = book.split("\\|");
+        String[] details = book.split(separate);
 
         if(details.length != 5){
             return null;

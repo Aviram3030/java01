@@ -1,7 +1,7 @@
-package experis.ds.books;
+package experis.ds.database.persons.books;
 
-import experis.ds.persons.Author;
-import experis.ds.persons.Publisher;
+import experis.ds.database.author.Author;
+import experis.ds.database.author.Publisher;
 
 public class BookDetails {
     private final String isbn;
