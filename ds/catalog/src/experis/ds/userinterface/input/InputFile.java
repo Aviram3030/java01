@@ -1,14 +1,14 @@
-package experis.ds.input;
+package experis.ds.userinterface.input;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
-public class FileData implements Input{
+public class InputFile implements Input{
     private File myObj;
     private Scanner myReader;
 
-    public FileData(String fileName) throws FileNotFoundException {
+    public InputFile(String fileName) throws FileNotFoundException {
         myObj = new File(fileName);
         myReader = new Scanner(myObj);
         myReader.nextLine();

@@ -1,7 +1,7 @@
 package experis.ds.tests;
 
-import experis.ds.persons.Author;
-import experis.ds.persons.AuthorsNameList;
+import experis.ds.database.creators.Author;
+import experis.ds.database.creators.AuthorsNameList;
 
 import static org.junit.jupiter.api.Assertions.*;
 

@@ -1,11 +1,13 @@
 package experis.ds.database.books;
 
+import experis.ds.database.creators.ISBN;
+
 import java.util.HashMap;
 
-public class BookExtractor {
-    private HashMap<String, BookDetails> extractor = new HashMap<>();
+public class BookExtractorIsbn {
+    private HashMap <ISBN, BookDetails> extractor = new HashMap<>();
 
-    public BookDetails getBook(String isbn){
+    public BookDetails getBook(ISBN isbn){
         return extractor.get(isbn);
     }
 

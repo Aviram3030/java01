@@ -1,6 +1,6 @@
-package experis.ds.database.persons.books;
+package experis.ds.database.books;
 
-import experis.ds.commands.TitleSearchCommands;
+import experis.ds.logic.Query.TitleSearchCommands;
 
 import java.util.ArrayList;
 

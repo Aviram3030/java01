@@ -1,6 +1,6 @@
-package experis.ds.database.author;
+package experis.ds.database.creators;
 
-public interface IPerson {
+public interface ICreators {
     String getName();
 
 }

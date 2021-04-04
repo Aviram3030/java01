@@ -1,8 +1,6 @@
-package experis.ds.database.author;
+package experis.ds.database.creators;
 
-import experis.ds.database.author.Person;
-
-public class Publisher extends Person {
+public class Publisher extends Creators {
     public Publisher(String name){
         super(name);
     }

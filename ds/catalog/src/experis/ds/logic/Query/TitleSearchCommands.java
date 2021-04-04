@@ -1,4 +1,7 @@
-package experis.ds.commands;
+package experis.ds.logic.Query;
+
+import experis.ds.logic.Query.Command;
+import experis.ds.logic.Query.CommandType;
 
 import java.util.ArrayList;
 

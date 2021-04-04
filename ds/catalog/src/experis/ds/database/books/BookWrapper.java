@@ -1,9 +1,6 @@
-package experis.ds.database.persons.books;
+package experis.ds.database.books;
 
-import experis.ds.database.author.Author;
-import experis.ds.database.author.AuthorsNameList;
-import experis.ds.database.author.Publisher;
-import experis.ds.database.author.PublishersNameList;
+import experis.ds.database.creators.*;
 
 public class BookWrapper {
 
@@ -16,7 +13,7 @@ public class BookWrapper {
         }
 
         try {
-            String isbn = details[0];
+            ISBN isbn = new ISBN(details[0]);
             String title = details[1];
             Author author = authors.add(details[2]);
             int year = Integer.parseInt(details[3]);

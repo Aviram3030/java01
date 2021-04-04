@@ -1,11 +1,9 @@
-package experis.ds.database.author;
+package experis.ds.database.creators;
 
-import experis.ds.database.author.IPerson;
-
-public class Person implements IPerson {
+public class Creators implements ICreators {
     private final String name;
 
-    public Person(String name){
+    public Creators(String name){
         this.name = name;
     }
     public String getName() {

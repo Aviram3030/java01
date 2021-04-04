@@ -1,12 +1,11 @@
-package experis.ds;
+package experis.ds.userinterface;
 
 import experis.ds.database.books.*;
-import experis.ds.database.persons.books.*;
-import experis.ds.commands.TitleSearchCommands;
-import experis.ds.input.FileData;
-import experis.ds.input.Input;
-import experis.ds.output.DisplayIsbnSearch;
-import experis.ds.output.DisplayTitlesSearch;
+import experis.ds.database.creators.ISBNList;
+import experis.ds.logic.Query.TitleSearchCommands;
+import experis.ds.userinterface.display.DisplayBook;
+import experis.ds.userinterface.display.DisplayBooksList;
+import experis.ds.userinterface.input.Input;
 import experis.ds.database.creators.AuthorsNameList;
 import experis.ds.database.creators.PublishersNameList;
 
@@ -16,30 +15,35 @@ import java.util.Scanner;
 
 public class Library {
 
-    private Scanner myReader;
     private Input input;
+    private AuthorsNameList authors;
+    private PublishersNameList publishers;
+    private ISBNList isbnList;
 
-    public Library() throws FileNotFoundException {
-        System.out.println("Enter File Name");
-        myReader = new Scanner(System.in);
-        input = new FileData(myReader.nextLine());
+    public Library(Input input){
+        this.input = input;
     }
 
     public void execute() throws FileNotFoundException {
+        Scanner myReader = new Scanner(System.in);
         IBookList books = new BookList();
-        BookExtractor bookExtractor = new BookExtractor();
+        BookExtractorIsbn bookExtractorIsbn = new BookExtractorIsbn();
+        BookExtractorAuthor bookExtractorAuthor = new BookExtractorAuthor();
+        isbnList = new ISBNList();
 
-        getData(bookExtractor, books);
+        setData(bookExtractorIsbn,bookExtractorAuthor, books, isbnList);
 
         Boolean isValid = true;
         while(isValid) {
             System.out.println("1.Search by ISBN");
-            System.out.println("2.Search By Title");
+            System.out.println("2.Search by title");
+            System.out.println("3.Search by author");
             System.out.println("Press any other key to quit");
 
             switch (myReader.nextLine()) {
-                case "1" -> searchByIsbn(bookExtractor);
+                case "1" -> searchByIsbn(bookExtractorIsbn);
                 case "2" -> searchByTitle(books);
+                case "3" -> searchByAuthor(bookExtractorAuthor);
                 default -> isValid = false;
             }
             System.out.println();
@@ -47,26 +51,44 @@ public class Library {
 
     }
 
-    private void getData(BookExtractor bookExtractor, IBookList books) throws FileNotFoundException {
+    private void setData(BookExtractorIsbn bookExtractorIsbn, BookExtractorAuthor bookExtractorAuthor, IBookList books, ISBNList isbnList) throws FileNotFoundException {
         String data = input.line();
-        AuthorsNameList authors = new AuthorsNameList();
-        PublishersNameList publishers = new PublishersNameList();
+        authors = new AuthorsNameList();
+        publishers = new PublishersNameList();
 
         while(data != null){
             BookDetails book = BookWrapper.wrap(data, authors, publishers,"\\|");
             if(book != null) {
                 books.addBook(book);
-                bookExtractor.addBook(book);
+                bookExtractorIsbn.addBook(book);
+                bookExtractorAuthor.addBook(book);
+                isbnList.add(book.getIsbn());
             }
             data = input.line();
         }
     }
 
-    private void searchByIsbn(BookExtractor bookExtractor){
+    private void searchByAuthor(BookExtractorAuthor bookExtractorAuthor) {
+        Scanner myReader = new Scanner(System.in);
         System.out.print(">");
-        DisplayIsbnSearch display = new DisplayIsbnSearch();
+        DisplayBooksList display = new DisplayBooksList();
+        String authorName = myReader.nextLine();
+        ArrayList<BookDetails> books = bookExtractorAuthor.getBooks(authors.get(authorName));
+
+        if(books == null){
+            System.out.println("Book not found");
+            return;
+        }
+
+        display.print(books);
+    }
+
+    private void searchByIsbn(BookExtractorIsbn bookExtractorIsbn){
+        Scanner myReader = new Scanner(System.in);
+        System.out.print(">");
+        DisplayBook display = new DisplayBook();
         String isbn = myReader.nextLine();
-        BookDetails book = bookExtractor.getBook(isbn);
+        BookDetails book = bookExtractorIsbn.getBook(isbnList.get(isbn));
 
         if(book == null){
             System.out.println("Book not found");
@@ -77,6 +99,7 @@ public class Library {
     }
 
     private void searchByTitle(IBookList books){
+        Scanner myReader = new Scanner(System.in);
         ArrayList<BookDetails> booksDetails;
         TitleSearchCommands commands = new TitleSearchCommands();
 
@@ -88,7 +111,7 @@ public class Library {
         }
 
         booksDetails = books.searchBooks(commands);
-        new DisplayTitlesSearch().print(booksDetails);
+        new DisplayBooksList().print(booksDetails);
     }
 
 }
