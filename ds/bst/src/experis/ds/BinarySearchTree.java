@@ -1,5 +1,7 @@
 package experis.ds;
 
+import experis.ds.exception.IllegalSizeException;
+
 import java.util.Comparator;
 
 public class BinarySearchTree<K,T>{
@@ -46,6 +48,9 @@ public class BinarySearchTree<K,T>{
     private int count;
 
     public BinarySearchTree(Comparator<K> comparator, KeyExtractor<K,T> keyExtractor){
+        if(comparator == null || keyExtractor == null){
+            throw new IllegalArgumentException("Constructor argument is null");
+        }
         this.comparator = comparator;
         this.keyExtractor = keyExtractor;
     }
@@ -91,34 +96,49 @@ public class BinarySearchTree<K,T>{
         return true;
     }
 
-    public boolean remove(T a){
+    public K remove(T a){
+        if(isEmpty()){
+            throw new IllegalSizeException("Can't remove since the tree is empty");
+        }
+
         Trio<T> trio = find_r(keyExtractor.extract(a),new Node<>(a));
         if(!trio.isFound){
-            return false;
+            return null;
         }
         if(trio.isLeft()){
-            if(trio.node.left.left != null){
-                trio.node.left = trio.node.left.left;
-            }
-            else if(trio.node.left.right != null){
-                trio.node.left = trio.node.left.right;
-            }
-            else{
-                trio.node.left = null;
-            }
+            removeLeft(trio);
         }
         else{
-            if(trio.node.right.right != null){
-                trio.node.right = trio.node.right.right;
-            }
-            else if(trio.node.right.left != null){
-                trio.node.right = trio.node.right.left;
-            }
-            else{
-                trio.node.right = null;
-            }
+            removeRight(trio);
         }
-        return true;
+
+        size--;
+        return keyExtractor.extract(trio.node.data);
+    }
+
+    private void removeLeft(Trio<T> trio){
+        if(trio.node.left.left != null){
+            trio.node.left = trio.node.left.left;
+        }
+        else if(trio.node.left.right != null){
+            trio.node.left = trio.node.left.right;
+        }
+        else{
+            trio.node.left = null;
+        }
+
+    }
+
+    private void removeRight(Trio<T> trio){
+        if(trio.node.right.right != null){
+            trio.node.right = trio.node.right.right;
+        }
+        else if(trio.node.left.right != null){
+            trio.node.left = trio.node.left.right;
+        }
+        else{
+            trio.node.left = null;
+        }
     }
 
     private void insertLeft(Node<T> newNode, Node<T> node){
@@ -358,7 +378,7 @@ public class BinarySearchTree<K,T>{
 
     private Node<T> nthOrder_r(Node<T> a, int n){
         if(a == null || n > size() || n < 0){
-            return null;
+            throw new IllegalSizeException("Illegal size input");
         }
 
         Node<T> node = nthOrder_r(a.left, n);

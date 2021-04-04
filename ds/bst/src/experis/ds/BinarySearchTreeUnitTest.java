@@ -1,5 +1,6 @@
 package experis.ds;
 
+import experis.ds.exception.IllegalSizeException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,7 +37,12 @@ class BinarySearchTreeUnitTest {
         };
 
         key = new KeyExtractorStudent();
-        tree = new BinarySearchTree<Integer,Student>(compare, key);
+        try {
+            tree = new BinarySearchTree<Integer, Student>(compare, key);
+        }
+        catch(IllegalArgumentException e){
+            e.printStackTrace();
+        }
 
     }
 
@@ -135,10 +141,15 @@ class BinarySearchTreeUnitTest {
     void nthOrder() {
         insertTest();
 
-        assertTrue(tree.nthOrder(0).getID() == 10);
-        assertTrue(tree.nthOrder(2).getID() == 8);
-        assertTrue(tree.nthOrder(5).getID() == 4);
-        assertTrue(tree.nthOrder(9).getID() == -5);
+        try {
+            assertTrue(tree.nthOrder(0).getID() == 10);
+            assertTrue(tree.nthOrder(2).getID() == 8);
+            assertTrue(tree.nthOrder(5).getID() == 4);
+            assertTrue(tree.nthOrder(9).getID() == -5);
+        }
+        catch(IllegalSizeException e){
+            e.printStackTrace();
+        }
     }
 
     @Test
@@ -163,6 +174,15 @@ class BinarySearchTreeUnitTest {
         };
 
         assertTrue(tree.reduce(biFunc) == sum);
+    }
+
+    void remove(){
+        insertTest();
+
+        assertTrue(tree.remove(students[0]) == students[0].getID());
+        assertFalse(tree.contains(students[0]));
+        assertTrue(tree.size() == 9);
+
     }
 
     public void insertTest(){
