@@ -1,10 +1,11 @@
-package experis.ds.database.books;
+package experis.ds.logic.query;
 
-import experis.ds.database.creators.*;
+import experis.ds.database.books.BookDetails;
+import experis.ds.database.fields.*;
 
-public class BookWrapper {
+public class BookHarvester {
 
-    public static BookDetails wrap(String book, AuthorsNameList authors, PublishersNameList publishers,String separate){
+    public static BookDetails harvest(String book, AuthorsNameList authors, PublishersNameList publishers, String separate){
         BookDetails bookDetails;
         String[] details = book.split(separate);
 

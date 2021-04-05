@@ -1,5 +1,6 @@
 package experis.ds.userinterface;
 
+import experis.ds.userinterface.catalog.Catalog;
 import experis.ds.userinterface.input.InputFile;
 
 import java.io.FileNotFoundException;
@@ -14,7 +15,7 @@ public class UserInterface {
         switch(myReader.nextLine()){
             case "1" : {
                 System.out.println("Enter file name");
-                new Library(new InputFile(myReader.nextLine())).execute();
+                new Catalog(new InputFile(myReader.nextLine())).execute();
             }
         }
 

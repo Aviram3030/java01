@@ -1,4 +1,4 @@
-package experis.ds.userinterface.display;
+package experis.ds.logic.display;
 
 import experis.ds.database.books.BookDetails;
 import java.util.ArrayList;

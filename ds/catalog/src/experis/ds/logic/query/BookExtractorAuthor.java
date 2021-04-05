@@ -1,6 +1,7 @@
-package experis.ds.database.books;
+package experis.ds.logic.query;
 
-import experis.ds.database.creators.Author;
+import experis.ds.database.books.BookDetails;
+import experis.ds.database.fields.Author;
 
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -1,7 +1,7 @@
 package experis.ds.tests;
 
-import experis.ds.database.creators.Publisher;
-import experis.ds.database.creators.PublishersNameList;
+import experis.ds.database.fields.Publisher;
+import experis.ds.database.fields.PublishersNameList;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

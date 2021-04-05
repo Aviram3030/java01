@@ -1,8 +1,8 @@
 package experis.ds.database.books;
 
-import experis.ds.database.creators.Author;
-import experis.ds.database.creators.ISBN;
-import experis.ds.database.creators.Publisher;
+import experis.ds.database.fields.Author;
+import experis.ds.database.fields.ISBN;
+import experis.ds.database.fields.Publisher;
 
 public class BookDetails {
     private final ISBN isbn;

@@ -1,9 +1,9 @@
-package experis.ds.database.creators;
+package experis.ds.database.fields;
 
-public class Creators implements ICreators {
+public class Creator {
     private final String name;
 
-    public Creators(String name){
+    public Creator(String name){
         this.name = name;
     }
     public String getName() {

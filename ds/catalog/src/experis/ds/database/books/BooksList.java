@@ -1,13 +1,13 @@
 package experis.ds.database.books;
 
-import experis.ds.logic.Query.TitleSearchCommands;
+import experis.ds.logic.query.TitleSearchCommands;
 
 import java.util.ArrayList;
 
-public class BookList implements IBookList{
+public class BooksList implements IBooksList {
     private ArrayList<BookDetails> books;
 
-    public BookList(){
+    public BooksList(){
         books = new ArrayList<>();
     }
 
@@ -17,7 +17,7 @@ public class BookList implements IBookList{
     }
 
     @Override
-    public ArrayList<BookDetails> searchBooks(TitleSearchCommands commands) {
+    public ArrayList<BookDetails> getBooks(TitleSearchCommands commands) {
         ArrayList<BookDetails> booksList = new ArrayList<>();
 
         for(BookDetails book: books){

@@ -1,4 +1,4 @@
-package experis.ds.database.creators;
+package experis.ds.database.fields;
 
 import java.util.HashMap;
 
@@ -14,10 +14,6 @@ public class AuthorsNameList {
         }
 
         return author;
-    }
-
-    public Author get(String authorName){
-         return authors.get(authorName);
     }
 
 }
