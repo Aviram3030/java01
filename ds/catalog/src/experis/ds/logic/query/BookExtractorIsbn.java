@@ -12,7 +12,7 @@ public class BookExtractorIsbn {
         return extractor.get(isbn);
     }
 
-    public void addBook(BookDetails book){
-        extractor.put(book.getIsbn(), book);
+    public void addBook(BookDetails book, ISBN isbn) {
+        extractor.put(isbn, book);
     }
 }

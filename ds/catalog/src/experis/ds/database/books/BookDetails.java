@@ -1,26 +1,22 @@
 package experis.ds.database.books;
 
-import experis.ds.database.fields.Author;
-import experis.ds.database.fields.ISBN;
-import experis.ds.database.fields.Publisher;
-
 public class BookDetails {
-    private final ISBN isbn;
+    private final String isbn;
     private final String title;
-    private final Author author;
-    private final int year;
-    private final Publisher publisher;
+    private final String author;
+    private final String year;
+    private final String publisher;
 
-    public BookDetails(ISBN isbn, String title, Author author, int year, Publisher publisher){
-        this.isbn = isbn;
-        this.title = title;
-        this.author = author;
-        this.year = year;
-        this.publisher = publisher;
+    public BookDetails(String[] details) throws Exception {
+        this.isbn = setISBN(details[0]);
+        this.title = details[1];
+        this.author = details[2];
+        this.year = details[3];
+        this.publisher = details[4];
     }
 
 
-    public ISBN getIsbn() {
+    public String getIsbn() {
         return isbn;
     }
 
@@ -28,18 +24,31 @@ public class BookDetails {
         return title;
     }
 
-    public Author getAuthor() {
+    public String getAuthor() {
         return author;
     }
 
-    public int getYear() {
+    public String getYear() {
         return year;
     }
 
-    public Publisher getPublisher() {
+    public String getPublisher() {
         return publisher;
     }
 
+    private String setISBN(String text) throws Exception {
+        if (text.length() != 9 && text.length() != 10 && text.length() != 13) {
+            throw new Exception();
+        }
+        if (text.length() == 9) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("0");
+            sb.append(text);
+            text = sb.toString();
+        }
+
+        return text;
+    }
 
 
 }

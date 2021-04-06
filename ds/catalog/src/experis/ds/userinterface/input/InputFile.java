@@ -16,10 +16,11 @@ public class InputFile implements Input{
 
     @Override
     public String line(){
-        if(!myReader.hasNext()){
-            return null;
-        }
-
         return myReader.nextLine();
+    }
+
+    @Override
+    public Boolean hasNext() {
+        return myReader.hasNext();
     }
 }

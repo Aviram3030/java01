@@ -13,8 +13,7 @@ public class BookExtractorAuthor {
         return extractor.get(author);
     }
 
-    public void addBook(BookDetails book){
-        Author author = book.getAuthor();
+    public void addBook(BookDetails book, Author author){
         ArrayList<BookDetails> bookList = extractor.get(author);
         if(bookList == null){
             bookList = new ArrayList<>();

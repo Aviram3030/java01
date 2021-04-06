@@ -12,6 +12,11 @@ public class BooksList implements IBooksList {
     }
 
     @Override
+    public int size() {
+        return books.size();
+    }
+
+    @Override
     public void addBook(BookDetails book) {
         books.add(book);
     }
@@ -27,5 +32,10 @@ public class BooksList implements IBooksList {
             }
         }
         return booksList;
+    }
+
+    @Override
+    public BookDetails getBook(int index){
+        return books.get(index);
     }
 }
