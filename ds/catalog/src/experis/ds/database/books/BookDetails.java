@@ -1,14 +1,14 @@
 package experis.ds.database.books;
 
 public class BookDetails {
-    private final String isbn;
+    private String isbn;
     private final String title;
     private final String author;
     private final String year;
     private final String publisher;
 
     public BookDetails(String[] details) throws Exception {
-        this.isbn = setISBN(details[0]);
+        setISBN(details[0]);
         this.title = details[1];
         this.author = details[2];
         this.year = details[3];
@@ -36,7 +36,7 @@ public class BookDetails {
         return publisher;
     }
 
-    private String setISBN(String text) throws Exception {
+    private void setISBN(String text) throws Exception {
         if (text.length() != 9 && text.length() != 10 && text.length() != 13) {
             throw new Exception();
         }
@@ -47,7 +47,7 @@ public class BookDetails {
             text = sb.toString();
         }
 
-        return text;
+        this.isbn = text;
     }
 
 
