@@ -1,8 +1,9 @@
 package experis.ds.logic.query;
 
 import experis.ds.database.books.BookDetails;
+import experis.ds.database.books.BooksList;
 import experis.ds.database.books.IBooksList;
-import experis.ds.database.books.NamesList;
+import experis.ds.database.fields.NamesList;
 import experis.ds.database.fields.*;
 
 import experis.ds.logic.display.DisplayBook;
@@ -16,25 +17,43 @@ public class Library {
     private final NamesList<String,Publisher> publishers = new NamesList<>();
     private final ISBNList isbnList = new ISBNList();
     private final BookExtractorIsbn bookExtractorIsbn = new BookExtractorIsbn();
-    private final BookExtractorAuthor bookExtractorAuthor = new BookExtractorAuthor();
+    private final BooksList booksList= new BooksList();
     private final Scanner myReader;
 
     public Library(Scanner myReader) {
         this.myReader = myReader;
     }
 
-    public void setData(IBooksList booksList)  {
-        for(int i = 0; i < booksList.size(); i++){
-            BookDetails bookDetails = booksList.getBook(i);
+    public BooksList setData(IBooksList booksListDetails)  {
+        for(int i = 0; i < booksListDetails.size(); i++){
+            BookDetails bookDetails = booksListDetails.getBook(i);
             if(!addIsbn(bookDetails)){
                 continue;
             }
-            addAuthor(bookDetails.getAuthor().toLowerCase(), bookDetails);
-            addPublisher(bookDetails.getPublisher());
+            try {
+                booksList.addBook(bookCreator(bookDetails));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
+        return booksList;
     }
 
-    public Boolean executeQueryType(String query,IBooksList booksList){
+    private Book bookCreator(BookDetails bookDetails) throws Exception {
+        ISBN isbn = new ISBN(bookDetails.getIsbn());
+        String title = bookDetails.getTitle();
+        Author author = addAuthor(bookDetails.getAuthor());
+        String year = bookDetails.getYear();
+        Publisher publisher = addPublisher(bookDetails.getPublisher());
+
+        Book book = new Book(isbn, title, author, year, publisher);
+        book.getAuthor().addBook(book);
+        book.getPublisher().addBook(book);
+
+        return book;
+    }
+
+    public Boolean executeQueryType(String query,BooksList booksList){
         switch (query) {
             case "1" -> {
                 System.out.print(">");
@@ -55,15 +74,14 @@ public class Library {
         return false;
     }
 
-    private void addAuthor(String authorName, BookDetails bookDetails){
+    private Author addAuthor(String authorName){
         authors.add(authorName, (x)-> new Author(x));
-        Author author = authors.get(authorName);
-        bookExtractorAuthor.addBook(bookDetails, author);
+        return authors.get(authorName);
     }
 
-    private void addPublisher(String publisherName){
+    private Publisher addPublisher(String publisherName){
         publishers.add(publisherName, (x)-> new Publisher(x));
-        Publisher publisher = publishers.get(publisherName);
+        return publishers.get(publisherName);
     }
 
     private Boolean addIsbn(BookDetails bookDetails){
@@ -82,7 +100,8 @@ public class Library {
         DisplayBooksList display = new DisplayBooksList();
         String authorName = myReader.nextLine();
         authors.add((authorName.toLowerCase()),(x)-> new Author(x));
-        ArrayList<BookDetails> books = bookExtractorAuthor.getBooks(authors.get((authorName.toLowerCase())));
+        Author author = authors.get(authorName);
+        ArrayList<Book> books = author.getBooks();
 
         if(books == null){
             System.out.println("Book not found");
@@ -105,8 +124,8 @@ public class Library {
         display.print(book);
     }
 
-    private void searchByTitle(IBooksList booksList){
-        ArrayList<BookDetails> booksDetails;
+    private void searchByTitle(BooksList booksList){
+        ArrayList<Book> books;
         TitleSearchCommands commands = new TitleSearchCommands();
 
         String getTitles = myReader.nextLine();
@@ -116,7 +135,7 @@ public class Library {
             commands.add(title);
         }
 
-        booksDetails = booksList.getBooks(commands);
-        new DisplayBooksList().print(booksDetails);
+        books = booksList.getBooks(commands);
+        new DisplayBooksList().print(books);
     }
 }

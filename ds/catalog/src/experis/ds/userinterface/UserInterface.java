@@ -23,8 +23,7 @@ public class UserInterface {
             }
         }
 
-
-
+        System.out.println("Good bye");
     }
 
 }

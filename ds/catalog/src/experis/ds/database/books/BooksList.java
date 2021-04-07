@@ -1,31 +1,29 @@
 package experis.ds.database.books;
 
+import experis.ds.logic.query.Book;
 import experis.ds.logic.query.TitleSearchCommands;
 
 import java.util.ArrayList;
 
-public class BooksDetailsList implements IBooksList {
-    private ArrayList<BookDetails> books;
+public class BooksList{
+    private ArrayList<Book> books;
 
-    public BooksDetailsList(){
+    public BooksList(){
         books = new ArrayList<>();
     }
 
-    @Override
     public int size() {
         return books.size();
     }
 
-    @Override
-    public void addBook(BookDetails book) {
+    public void addBook(Book book) {
         books.add(book);
     }
 
-    @Override
-    public ArrayList<BookDetails> getBooks(TitleSearchCommands commands) {
-        ArrayList<BookDetails> booksList = new ArrayList<>();
+    public ArrayList<Book> getBooks(TitleSearchCommands commands) {
+        ArrayList<Book> booksList = new ArrayList<>();
 
-        for(BookDetails book: books){
+        for(Book book: books){
             String title = book.getTitle();
             if(commands.search(title)){
                 booksList.add(book);
@@ -34,8 +32,7 @@ public class BooksDetailsList implements IBooksList {
         return booksList;
     }
 
-    @Override
-    public BookDetails getBook(int index){
+    public Book getBook(int index){
         return books.get(index);
     }
 }

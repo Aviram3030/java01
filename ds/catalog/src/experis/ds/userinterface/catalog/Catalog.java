@@ -1,6 +1,7 @@
 package experis.ds.userinterface.catalog;
 
 import experis.ds.database.books.BookDetails;
+import experis.ds.database.books.BooksDetailsList;
 import experis.ds.database.books.BooksList;
 import experis.ds.database.books.IBooksList;
 import experis.ds.logic.BookHarvester;
@@ -21,18 +22,19 @@ public class Catalog {
         Scanner myReader = new Scanner(System.in);
         Library library = new Library(myReader);
         BookHarvester harvester = new BookHarvester(input);
-        IBooksList booksList= new BooksList();
+        IBooksList booksList= new BooksDetailsList();
 
         BookDetails bookDetails = harvester.nextBook("\\|");
 
         while(harvester.hasNext()){
+
             if(bookDetails != null) {
                 booksList.addBook(bookDetails);
             }
             bookDetails = harvester.nextBook("\\|");
         }
 
-        library.setData(booksList);
+        BooksList books = library.setData(booksList);
 
         Boolean isValid = true;
         do{
@@ -41,7 +43,7 @@ public class Catalog {
             System.out.println("3.Search by author");
             System.out.println("Press any other key to quit");
 
-            if(!library.executeQueryType(myReader.nextLine(), booksList)){
+            if(!library.executeQueryType(myReader.nextLine(), books)){
                 break;
             }
             System.out.println();
