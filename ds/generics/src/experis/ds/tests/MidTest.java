@@ -2,6 +2,7 @@ package experis.ds.tests;
 
 import experis.ds.Ball;
 import experis.ds.Generics;
+import experis.ds.ListNumbersGenerator;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -36,5 +37,15 @@ class MidTest {
 
 
         assertEquals(Generics.mid(a).getArea(), 3.0);
+    }
+
+    @Test
+    void min_element_generator(){
+        ListNumbersGenerator a = new ListNumbersGenerator();
+
+
+        List list = a.generator(5.0,2,3, (x,y) -> x.doubleValue() + y.doubleValue());
+
+        assertEquals(Generics.mid(list), 7.0);
     }
 }

@@ -1,6 +1,7 @@
 package experis.ds.tests;
 
 import experis.ds.Generics;
+import experis.ds.ListNumbersGenerator;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -28,6 +29,16 @@ class AverageTest {
         double b = Generics.average(a);
         assertEquals((int) b, 3);
         assertEquals(b, calculateAverage(a));
+    }
+
+    @Test
+    void average_test_generator(){
+        ListNumbersGenerator a = new ListNumbersGenerator();
+
+
+        List list = a.generator(5.0,2,3, (x,y) -> x.doubleValue() + y.doubleValue());
+
+        assertEquals(Generics.average(list), 7.0);
     }
 
     double calculateAverage(List<Integer> a){

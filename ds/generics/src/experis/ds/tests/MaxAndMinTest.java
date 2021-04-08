@@ -1,7 +1,6 @@
 package experis.ds.tests;
 
-import experis.ds.Ball;
-import experis.ds.Generics;
+import experis.ds.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -32,16 +31,31 @@ class MaxAndMinTest {
 
         assertEquals(Generics.mid(a).getArea(), 3.0);
 
-        List<Ball> b = Generics.maxAndMin(a);
+        List<Ball> b = Generics.maxAndMin(a.iterator());
         assertEquals(b.get(0).getArea(), 10);
         assertEquals(-8.8, b.get(1).getArea());
 
         Generics.removeMin(a);
 
-        b = Generics.maxAndMin(a);
+        b = Generics.maxAndMin(a.iterator());
         assertEquals(b.get(0).getArea(), 10);
         assertEquals(b.get(1).getArea(), 0);
     }
 
 
+    @Test
+    void max_and_min_generator(){
+        ListObjectsGenerator<Ball> a = new ListObjectsGenerator<>();
+
+        Ball b = new Ball(5);
+        Ball c = new Ball(2);
+
+        IBiFuncObject<Ball> func= (x,y) -> new Ball(x.getArea() + y.getArea());
+
+        List list = a.generator(b,c,3, func);
+
+        List<Ball> d = Generics.maxAndMin(list.iterator());
+        assertEquals(d.get(0).getArea(), 9);
+        assertEquals(d.get(1).getArea(), 5);
+    }
 }
