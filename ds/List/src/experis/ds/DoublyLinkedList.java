@@ -1,5 +1,7 @@
 package experis.ds;
 
+import java.util.Iterator;
+
 public class DoublyLinkedList<T> {
     private Node<T> tail;
     private Node<T> head;
@@ -273,6 +275,31 @@ public class DoublyLinkedList<T> {
 
         return newList;
 
+    }
+
+    public Iterator<T> iterator(){
+        return new ListIterator();
+    }
+
+    private class ListIterator implements Iterator<T>{
+        private Node<T> node;
+
+        public ListIterator(){
+            node = head;
+        }
+        @Override
+        public boolean hasNext() {
+            return node.getNext() != null;
+        }
+
+        @Override
+        public T next() {
+            if(node == null){
+                return null;
+            }
+            node = node.getNext();
+            return node.data;
+        }
     }
 
 

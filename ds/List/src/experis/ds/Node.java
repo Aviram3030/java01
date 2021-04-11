@@ -1,9 +1,9 @@
 package experis.ds;
 
 public class Node<T>{
-    private Node next;
+    private Node<T> next;
     T data;
-    private Node previous;
+    private Node<T> previous;
 
     public Node(){
     }
@@ -12,19 +12,19 @@ public class Node<T>{
         this.data = data;
     }
 
-    public void setNext(Node a){
+    public void setNext(Node<T> a){
         next = a;
     }
 
-    public void setPrevious(Node a){
+    public void setPrevious(Node<T> a){
         previous = a;
     }
 
-    public Node getNext(){
+    public Node<T> getNext(){
         return next;
     }
 
-    public Node getPrevious(){
+    public Node<T> getPrevious(){
         return previous;
     }
 
