@@ -8,7 +8,7 @@ import java.util.List;
 public class Generics{
 
     public static Double average(List<? extends Number> elements){
-        if(elements == null){
+        if(elements == null || elements.isEmpty()){
             return null;
         }
 
@@ -64,7 +64,7 @@ public class Generics{
 
 
     public static <T> T mid(List<T> elements) {
-        if(elements == null || elements.size() == 0){
+        if(elements == null || elements.isEmpty()){
             return null;
         }
 
