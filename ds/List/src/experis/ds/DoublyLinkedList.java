@@ -285,8 +285,10 @@ public class DoublyLinkedList<T> {
         private Node<T> node;
 
         public ListIterator(){
-            node = head;
+            node = new Node<>();
+            node.setNext(head);
         }
+
         @Override
         public boolean hasNext() {
             return node.getNext() != null;
@@ -300,6 +302,7 @@ public class DoublyLinkedList<T> {
             node = node.getNext();
             return node.data;
         }
+
     }
 
 
