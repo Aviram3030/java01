@@ -296,10 +296,11 @@ public class DoublyLinkedList<T> {
 
         @Override
         public T next() {
-            node = node.getNext();
-            if (node == null) {
+            if (node == null || node.getNext() == null){
                 return null;
             }
+
+            node = node.getNext();
             return node.data;
         }
 
