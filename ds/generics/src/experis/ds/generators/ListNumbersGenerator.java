@@ -1,11 +1,11 @@
-package experis.ds;
+package experis.ds.generators;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ListNumbersGenerator {
-    public static List<Number> generator(Number start, Number stride, int size, IBiFuncNumber<Number> func){
-        List<Number> newList = new ArrayList<>();
+    public static List<Double> generator(Double start, Number stride, int size, IBiFuncNumber<Double,Number> func){
+        List<Double> newList = new ArrayList<>();
         newList.add(start);
         for(int i = 0; i < size - 1; i++){
             start = func.apply(start, stride);

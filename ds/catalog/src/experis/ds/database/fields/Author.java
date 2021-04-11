@@ -4,5 +4,4 @@ public class Author extends Creator {
     public Author(String name) {
         super(name);
     }
-
 }

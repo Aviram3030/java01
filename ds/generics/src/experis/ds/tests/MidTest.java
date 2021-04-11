@@ -2,7 +2,7 @@ package experis.ds.tests;
 
 import experis.ds.Ball;
 import experis.ds.Generics;
-import experis.ds.ListNumbersGenerator;
+import experis.ds.generators.ListNumbersGenerator;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -44,7 +44,7 @@ class MidTest {
         ListNumbersGenerator a = new ListNumbersGenerator();
 
 
-        List list = a.generator(5.0,2,3, (x,y) -> x.doubleValue() + y.doubleValue());
+        List<Double> list = a.generator(5.0,2,3, (x,y) -> x.doubleValue() + y.doubleValue());
 
         assertEquals(Generics.mid(list), 7.0);
     }

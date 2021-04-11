@@ -1,4 +1,4 @@
-package experis.ds.logic.query;
+package experis.ds.logic.query.title;
 
 public class Command {
     private final String title;

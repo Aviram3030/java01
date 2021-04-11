@@ -15,7 +15,7 @@ class MaxTest {
     void last_max() {
         List<Ball> a = new ArrayList<>();
 
-        assertNull(Generics.max(a));
+        assertNull(Generics.max(a.iterator()));
 
         a.add(new Ball(1.1));
         a.add(new Ball(5.22));
@@ -25,16 +25,18 @@ class MaxTest {
             a.add(new Ball(i));
         }
 
-        assertEquals(Generics.max(a).getArea(), 5.22);
+        assertEquals(Generics.max(a.iterator()).getArea(), 5.22);
 
         Ball b = new Ball(10);
-        assertEquals(Generics.max(a), b);
+        a.add(b);
+        assertEquals(Generics.max(a.iterator()), b);
 
         for(int i = 10; i > 5; i--){
             a.add(new Ball(i));
         }
         Ball c = new Ball(10);
+        a.add(c);
 
-        assertEquals(Generics.max(a), c);
+        assertEquals(Generics.max(a.iterator()), c);
     }
 }

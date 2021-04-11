@@ -1,7 +1,7 @@
 package experis.ds.tests;
 
 import experis.ds.Generics;
-import experis.ds.ListNumbersGenerator;
+import experis.ds.generators.ListNumbersGenerator;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;

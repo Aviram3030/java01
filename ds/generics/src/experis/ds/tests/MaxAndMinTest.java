@@ -1,6 +1,9 @@
 package experis.ds.tests;
 
 import experis.ds.*;
+import experis.ds.generators.IBiFuncObject;
+import experis.ds.generators.IFuncGenerator;
+import experis.ds.generators.ListObjectsGenerator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -48,11 +51,11 @@ class MaxAndMinTest {
         ListObjectsGenerator<Ball> a = new ListObjectsGenerator<>();
 
         Ball b = new Ball(5);
-        Ball c = new Ball(2);
 
-        IBiFuncObject<Ball> func= (x,y) -> new Ball(x.getArea() + y.getArea());
+        IBiFuncObject<Ball,Double> funcCalculate = (x, y) -> x.getArea() + y.doubleValue();
+        IFuncGenerator<Double,Ball> funcCreate = (x) -> new Ball(x);
 
-        List list = a.generator(b,c,3, func);
+        List list = a.generator(b,2.0,3, funcCalculate, funcCreate);
 
         List<Ball> d = Generics.maxAndMin(list.iterator());
         assertEquals(d.get(0).getArea(), 9);

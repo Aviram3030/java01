@@ -5,22 +5,21 @@ import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 public class InputFile implements Input{
-    private File myObj;
-    private Scanner myReader;
+    private final Scanner reader;
 
     public InputFile(String fileName) throws FileNotFoundException {
-        myObj = new File(fileName);
-        myReader = new Scanner(myObj);
-        myReader.nextLine();
+        File obj = new File(fileName);
+        reader = new Scanner(obj);
+        reader.nextLine();
     }
 
     @Override
     public String line(){
-        return myReader.nextLine();
+        return reader.nextLine();
     }
 
     @Override
     public Boolean hasNext() {
-        return myReader.hasNext();
+        return reader.hasNext();
     }
 }

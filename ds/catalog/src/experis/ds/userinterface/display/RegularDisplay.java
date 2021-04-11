@@ -1,11 +1,12 @@
-package experis.ds.logic.display;
+package experis.ds.userinterface.display;
 
-import experis.ds.database.books.BookDetails;
-import experis.ds.logic.query.Book;
+import experis.ds.database.details.Book;
 
 import java.util.ArrayList;
 
-public class DisplayBooksList {
+public class RegularDisplay implements Display{
+
+    @Override
     public void print(ArrayList<Book> books){
         for(Book book: books){
             System.out.print(book.getIsbn().getText() + "|" + book.getTitle() + "|" + book.getAuthor().getName());

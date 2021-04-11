@@ -20,7 +20,7 @@ public class Ball implements Comparable<Ball>{
             return 1;
         }
         else{
-            return 0;
+            return -1;
         }
     }
 

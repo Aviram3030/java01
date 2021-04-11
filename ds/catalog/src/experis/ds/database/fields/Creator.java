@@ -1,12 +1,12 @@
 package experis.ds.database.fields;
 
-import experis.ds.logic.query.Book;
+import experis.ds.database.details.Book;
 
 import java.util.ArrayList;
 
 public class Creator {
     private final String name;
-    private ArrayList<Book> books= new ArrayList<>();
+    private final ArrayList<Book> books= new ArrayList<>();
 
     public Creator(String name){
         this.name = name;

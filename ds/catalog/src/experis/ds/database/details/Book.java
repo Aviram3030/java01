@@ -1,17 +1,17 @@
-package experis.ds.logic.query;
+package experis.ds.database.details;
 
 import experis.ds.database.fields.Author;
 import experis.ds.database.fields.ISBN;
 import experis.ds.database.fields.Publisher;
 
 public class Book {
-    private ISBN isbn;
-    private String title;
-    private Author author;
-    private String year;
-    private Publisher publisher;
+    private final ISBN isbn;
+    private final String title;
+    private final Author author;
+    private final int year;
+    private final Publisher publisher;
 
-    public Book(ISBN isbn, String title, Author author, String year, Publisher publisher) throws Exception {
+    public Book(ISBN isbn, String title, Author author, int year, Publisher publisher) throws Exception {
         this.isbn = isbn;
         this.title = title;
         this.author = author;
@@ -31,7 +31,7 @@ public class Book {
         return author;
     }
 
-    public String getYear() {
+    public int getYear() {
         return year;
     }
 

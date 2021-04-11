@@ -2,7 +2,7 @@ package experis.ds.tests;
 
 import experis.ds.Ball;
 import experis.ds.Generics;
-import experis.ds.ListNumbersGenerator;
+import experis.ds.generators.ListNumbersGenerator;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -16,7 +16,7 @@ class MinTest {
     void first_min() {
         List<Ball> a = new ArrayList<>();
 
-        assertNull(Generics.max(a));
+        assertNull(Generics.max(a.iterator()));
 
         a.add(new Ball(1.1));
         a.add(new Ball(5.22));
@@ -40,8 +40,7 @@ class MinTest {
     void first_min_generator(){
         ListNumbersGenerator a = new ListNumbersGenerator();
 
-
-        List list = a.generator(5.0,2,3, (x,y) -> x.doubleValue() + y.doubleValue());
+        List<Double> list = a.generator(5.0,2,3, (x,y) -> x.doubleValue() + y.doubleValue());
 
         assertEquals(Generics.min(list.iterator()), 5.0);
     }

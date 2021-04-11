@@ -21,13 +21,13 @@ public class Generics{
         return sum;
     }
 
-    public static <T extends Comparable<T>> T max(List<T> elements) {
-        if(elements == null || elements.isEmpty()){
+    public static <T extends Comparable<T>> T max(Iterator<T> elements) {
+        if(elements == null || !elements.hasNext()){
             return null;
         }
 
         IFunc<T> a = (x,y) -> x.compareTo(y) <= 0;
-        return findTheMost(elements.iterator(), a);
+        return findTheMost(elements, a);
     }
 
     public static <T extends Comparable<T>> T min(Iterator<T> elements) {
@@ -85,18 +85,17 @@ public class Generics{
         }
 
         List<T> maxMin = new ArrayList<>();
-
         T max;
         T min;
-
         T a = elements.next();
+
         if(!elements.hasNext()){
             maxMin.add(a);
             maxMin.add(a);
             return maxMin;
         }
-        T b = elements.next();
 
+        T b = elements.next();
 
         if(a.compareTo(b) > 0){
             max = a;
