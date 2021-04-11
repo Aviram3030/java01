@@ -30,6 +30,7 @@ class IteratorTest {
         while(iterator.hasNext()){
             assertEquals(counter++, iterator.next());
         }
+        assertEquals(null, iterator.next());
     }
 
     @Test
