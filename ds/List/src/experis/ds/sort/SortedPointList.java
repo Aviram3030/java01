@@ -1,4 +1,4 @@
-package com.tryfinally.sort;
+package experis.ds.sort;
 
 import experis.ds.DoublyLinkedList;
 import experis.ds.Node;

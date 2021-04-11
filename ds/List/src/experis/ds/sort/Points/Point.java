@@ -1,4 +1,4 @@
-package com.tryfinally.sort.Points;
+package experis.ds.sort.Points;
 
 public class Point {
     public int x;

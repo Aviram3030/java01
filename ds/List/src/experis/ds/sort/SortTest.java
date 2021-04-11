@@ -1,6 +1,6 @@
-package com.tryfinally.sort;
+package experis.ds.sort;
 
-import com.tryfinally.sort.Points.Point;
+import experis.ds.sort.Points.Point;
 
 public class SortTest {
 

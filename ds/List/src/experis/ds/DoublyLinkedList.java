@@ -52,7 +52,7 @@ public class DoublyLinkedList<T> {
 
     }
 
-    private T getTheElement(int index){
+    private T getTheElement(int index) {
         Node<T> obj = head;
         for (int i = 0; i < index; i++) {
             obj = obj.getNext();
@@ -70,7 +70,7 @@ public class DoublyLinkedList<T> {
         executeAddHead(a);
     }
 
-    public void addTail(Node<T> a){
+    public void addTail(Node<T> a) {
         tail.setNext(a);
         a.setPrevious(tail);
         a.setNext(null);
@@ -80,7 +80,7 @@ public class DoublyLinkedList<T> {
 
     }
 
-    private void executeAddTail(T a){
+    private void executeAddTail(T a) {
         Node<T> obj = new Node<>(a);
         obj.setPrevious(tail);
         tail.setNext(obj);
@@ -97,7 +97,7 @@ public class DoublyLinkedList<T> {
         executeAddTail(a);
     }
 
-    private void executeAddHead(T a){
+    private void executeAddHead(T a) {
         Node<T> obj = new Node<>(a);
         obj.setNext(head);
         head.setPrevious(obj);
@@ -150,7 +150,7 @@ public class DoublyLinkedList<T> {
 
 
     public void insert(T a, int at) {
-        if (at < 0 || at > size ) {
+        if (at < 0 || at > size) {
             return;
         }
 
@@ -167,7 +167,7 @@ public class DoublyLinkedList<T> {
 
     }
 
-    private void insertElement(T a, int at){
+    private void insertElement(T a, int at) {
         Node<T> obj = head;
         for (int i = 0; i < at - 1; i++) {
             obj = obj.getNext();
@@ -252,7 +252,7 @@ public class DoublyLinkedList<T> {
         Node<T> obj = head;
 
         for (int i = 0; i < size; i++) {
-            if(a.find(obj.getData()) != -1){
+            if (a.find(obj.getData()) != -1) {
                 newList.addAtTail(obj.getData());
             }
 
@@ -267,7 +267,7 @@ public class DoublyLinkedList<T> {
         Node<T> obj = head;
 
         for (int i = 0; i < size; i++) {
-            if(a.find(obj.getData()) == -1){
+            if (a.find(obj.getData()) == -1) {
                 newList.addAtTail(obj.getData());
             }
             obj = obj.getNext();
@@ -277,16 +277,18 @@ public class DoublyLinkedList<T> {
 
     }
 
-    public Iterator<T> iterator(){
+    public Iterator<T> iterator() {
         return new ListIterator();
     }
 
-    private class ListIterator implements Iterator<T>{
+    private class ListIterator implements Iterator<T> {
         private Node<T> node;
 
-        public ListIterator(){
-            node = head;
+        public ListIterator() {
+            node = new Node<>();
+            node.setNext(head);
         }
+
         @Override
         public boolean hasNext() {
             return node.getNext() != null;
@@ -294,13 +296,14 @@ public class DoublyLinkedList<T> {
 
         @Override
         public T next() {
-            if(node == null){
+            if (node == null) {
                 return null;
             }
             node = node.getNext();
             return node.data;
         }
+
+
     }
-
-
 }
+

@@ -1,7 +1,7 @@
-package com.tryfinally.sort.Points;
+package experis.ds.sort.Points;
 
 
-import com.tryfinally.sort.Comparator;
+import experis.ds.sort.Comparator;
 
 public class Utils {
     public static Point max(Point a, Point b, Comparator cmp){

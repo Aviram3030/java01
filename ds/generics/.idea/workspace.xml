@@ -1,14 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
+<<<<<<< HEAD
     <list default="true" id="083a2aec-b43a-4b1b-a932-f4db852b69d8" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/src/experis/ds/Generics.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/experis/ds/Generics.java" afterDir="false" />
     </list>
+=======
+    <list default="true" id="8a10716e-2949-44c1-add5-7a573c569ad6" name="Default Changelist" comment="" />
+>>>>>>> list-iter
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+<<<<<<< HEAD
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
@@ -227,6 +232,16 @@
         </entry>
       </map>
     </option>
+=======
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
+  </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="TaskManager">
+    <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+>>>>>>> list-iter
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
 </project>
