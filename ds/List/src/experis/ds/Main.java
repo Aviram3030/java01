@@ -1,6 +1,6 @@
 package experis.ds;
 
-import com.tryfinally.sort.SortTest;
+import experis.ds.sort.SortTest;
 
 public class Main {
 

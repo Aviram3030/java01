@@ -1,4 +1,4 @@
-package com.tryfinally.sort;
+package experis.ds.sort;
 
 public interface Comparator<T>{
 

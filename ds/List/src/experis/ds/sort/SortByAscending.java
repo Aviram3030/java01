@@ -1,4 +1,4 @@
-package com.tryfinally.sort;
+package experis.ds.sort;
 
 
 public class SortByAscending<T> implements Comparator<T> {
