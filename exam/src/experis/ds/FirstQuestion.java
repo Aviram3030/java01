@@ -3,12 +3,12 @@ package experis.ds;
 import java.util.HashMap;
 
 public class FirstQuestion {
-    public static int f1(int[] numbers){
+    public static Integer f1(int[] numbers){
         if(numbers == null){
-            return -1;
+            return null;
         }
 
-        HashMap<Integer, Integer> map = new HashMap();
+        HashMap<Integer, Integer> map = new HashMap<>();
         for(int i = 0; i < numbers.length; i++){
             Integer index = map.get(numbers[i]);
             if(index == null) {
@@ -25,6 +25,6 @@ public class FirstQuestion {
             }
         }
 
-        return -1;
+        return null;
     }
 }

@@ -2,13 +2,13 @@ package experis.ds;
 
 import java.util.HashMap;
 
-public class SecondQuestion <T>{
+public class SecondQuestion{
     public static <T> T f2(T[] obj){
         if(obj == null){
             return null;
         }
 
-        HashMap<T, Integer> map = new HashMap();
+        HashMap<T, Integer> map = new HashMap<>();
         for(int i = 0; i < obj.length; i++){
             Integer index = map.get(obj[i]);
             if(index == null) {

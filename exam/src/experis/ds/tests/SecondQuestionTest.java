@@ -1,11 +1,12 @@
-package experis.ds;
+package experis.ds.tests;
 
+import experis.ds.SecondQuestion;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class Ball{
-    private int price;
+    private final int price;
 
     public Ball(int price){
         this.price = price;
@@ -48,7 +49,7 @@ class SecondQuestionTest {
         Ball B5 = new Ball(5);
 
         Ball[] arr1 = new Ball[]{B1,B1,B1,B3,B3,B1,B5,B2,B2,B5,B4,B4};
-        assertEquals(null, SecondQuestion.f2(arr1));
+        assertNull(SecondQuestion.f2(arr1));
     }
 
     @Test

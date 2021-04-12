@@ -1,5 +1,7 @@
-package experis.ds;
+package experis.ds.tests;
 
+import experis.ds.FirstQuestion;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -9,7 +11,7 @@ class FirstQuestionTest {
     @Test
     void checkNumbers() {
         int[] arr1 = new int[]{7,7,1,2,1,2,8};
-        assertEquals(8, FirstQuestion.f1(arr1));
+        Assertions.assertEquals(8, FirstQuestion.f1(arr1));
 
         int[] arr2 = new int[]{5,4,2,1,3,8};
         assertEquals(5, FirstQuestion.f1(arr2));
@@ -21,16 +23,16 @@ class FirstQuestionTest {
     @Test
     void checkAllNumbersRepeating(){
         int[] arr1 = new int[]{7,7,1,8,2,1,2,8,1,1,1,1,1};
-        assertEquals(-1, FirstQuestion.f1(arr1));
+        assertNull(FirstQuestion.f1(arr1));
     }
 
     @Test
     void checkNull(){
-        assertEquals(-1, FirstQuestion.f1(null));
+        assertNull(FirstQuestion.f1(null));
     }
 
     @Test
     void checkEmpty(){
-        assertEquals(-1, FirstQuestion.f1(new int[5]));
+        assertNull(FirstQuestion.f1(new int[5]));
     }
 }
