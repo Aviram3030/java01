@@ -1,6 +1,6 @@
 package experis.ds;
 
-    class FirstTask implements Runnable{
+    class LeftTask implements Runnable{
         private int sum = 0;
 
         @Override
@@ -15,7 +15,7 @@ package experis.ds;
         }
     }
 
-    class SecondTask implements Runnable{
+    class RightTask implements Runnable{
         private int sum = 0;
 
         @Override
@@ -30,54 +30,39 @@ package experis.ds;
         }
     }
 
-    class FirstSort implements Runnable{
-
-        @Override
-        public void run() {
-            Main.bubbleSort(0, Main.a.length / 4);
-        }
-    }
-
-    class SecondSort implements Runnable{
-
-        @Override
-        public void run() {
-            Main.bubbleSort(Main.a.length / 4, Main.a.length / 2);
-        }
-    }
-
-
-    class ThirdSort implements Runnable{
-
-        @Override
-        public void run() {
-            Main.bubbleSort(Main.a.length / 2, 3 * Main.a.length / 4);
-        }
-    }
-
-    class FourthSort implements Runnable{
-
-        @Override
-        public void run() {
-            Main.bubbleSort(3 * Main.a.length / 4, Main.a.length);
-        }
-    }
-
     public class Main {
         public static int[] a = new int[1000];
+        volatile static Boolean found = false;
 
-        public static void bubbleSort(int start, int end){
-            for (int i = start; i < end - 1; i++) {
-                for (int j = 0; j < end - i - 1; j++) {
+        public static void mergeArray(int[] v){
+            Runnable lambda = () -> {
+            for (int i = 0; i < v.length / 2; i++) {
+                for (int j = 0; j < v.length / 2 - i - 1; j++) {
                     if (a[j] > a[j + 1])
                         swap(j + 1, j);
                 }
-            }
-        }
+            }};
 
-        public static void mergeArray(){
-            mergeTwoSortedSubArray(0, a.length/4, a.length/4 + 1, a.length / 2);
-            mergeTwoSortedSubArray(a.length / 2, 3 * a.length/4, 3 * a.length/4 + 1, a.length);
+            var t1 = new Thread(lambda);
+            var t2 = new Thread(() -> {
+                for (int i = v.length / 2; i < v.length; i++) {
+                    for (int j = v.length / 2; j < v.length - i - 1; j++) {
+                        if (a[j] > a[j + 1])
+                            swap(j + 1, j);
+                    }
+            }});
+
+            t1.start();
+            t2.start();
+
+            try {
+                t1.join();
+                t2.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            mergeTwoSortedSubArray(0, a.length/2, a.length/2 + 1, a.length);
         }
 
         private static void mergeTwoSortedSubArray(int start1, int end1, int start2, int end2){
@@ -98,15 +83,52 @@ package experis.ds;
             a[j] = temp;
         }
 
+        public static Boolean search(int[] v, int x, int nThreads){
+            Thread[] threads = new Thread[nThreads];
+            for(int i = 0; i < nThreads; i++){
+                int finalI = i;
+
+                threads[i] = new Thread(() ->{
+                    int multiply = v.length / nThreads;
+
+                    int start = finalI * multiply;
+                    int end;
+                    if(finalI == nThreads - 1) {
+                        end = v.length;
+                    }
+                    else{
+                        end = (finalI + 1) * multiply;
+                    }
+                    for(int j = start; j < end; j++){
+                        if(v[j] == x || found){
+                            found = true;
+                            return;
+                        }
+                    }
+                });
+
+                threads[i].start();
+            }
+
+            for(int i = 0; i < nThreads; i++){
+                try {
+                    threads[i].join();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            return found;
+        }
+
         public static void main(String[] args) {
 
             for (int i =  a.length - 1; i > 0; i--) {
                 a[i] = i;
             }
 
-
-            FirstTask task1 = new FirstTask();
-            SecondTask task2 = new SecondTask();
+            LeftTask task1 = new LeftTask();
+            RightTask task2 = new RightTask();
             Thread t1 = new Thread(task1);
             Thread t2 = new Thread(task2);
 
@@ -122,41 +144,17 @@ package experis.ds;
 
             System.out.println("Sum: " + task1.getSum() + task2.getSum());
 
-            FirstSort firstPart = new FirstSort();
-            SecondSort secondPart = new SecondSort();
-            ThirdSort thirdPart = new ThirdSort();
-            FourthSort fourthPart = new FourthSort();
-
-            Thread t3 = new Thread(firstPart);
-            Thread t4 = new Thread(secondPart);
-            Thread t5 = new Thread(thirdPart);
-            Thread t6 = new Thread(fourthPart);
-
-
-            t3.start();
-            t4.start();
-            t5.start();
-            t6.start();
-
-            try {
-                t3.join();
-                t4.join();
-                t5.join();
-                t6.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-            mergeArray();
+            mergeArray(a);
 
             for(int i = 0; i < a.length - 1; i++){
                 if(a[i] > a[i+1]){
                     System.out.println("Error");
                     return;
                 }
+                System.out.println(a[i]);
             }
 
-
+            System.out.println(search(a, 999, 1005));
         }
     }
 
