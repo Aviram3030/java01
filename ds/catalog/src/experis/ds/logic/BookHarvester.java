@@ -1,12 +1,12 @@
 package experis.ds.logic;
 
-import experis.ds.database.books.BookDetails;
+import experis.ds.database.details.BookDetails;
 import experis.ds.userinterface.input.Input;
 
 
 public class BookHarvester {
 
-    private Input input;
+    private final Input input;
 
     public BookHarvester(Input input){
         this.input = input;
