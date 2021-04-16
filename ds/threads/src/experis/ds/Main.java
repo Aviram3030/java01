@@ -87,7 +87,7 @@ public class Main {
 
     private static int countPairs(int[] v, int sum) {
         Thread[] threads = new Thread[v.length - 1];
-        HashSet<Integer> pairs = new HashSet<>();
+        HashSet<Integer> finalResults = new HashSet<>();
         PairsSum[] pairsSums = new PairsSum[v.length - 1];
         int count = 0;
 
@@ -110,16 +110,16 @@ public class Main {
             Integer firstResult = result.getFirstLoopResult();
             Integer secondResult = result.getSecondLoopResult();
 
-            if (!isContainResult(firstResult, sum, pairs)) {
-                pairs.add(firstResult);
+            if (!isContainResult(firstResult, sum, finalResults)) {
+                finalResults.add(firstResult);
                 count++;
             }
-            if (!isContainResult(secondResult, sum, pairs)) {
-                pairs.add(secondResult);
+            if (!isContainResult(secondResult, sum, finalResults)) {
+                finalResults.add(secondResult);
                 count++;
             }
         }
-        System.out.println(pairs.toString());
+        System.out.println(finalResults.toString());
         return count;
     }
 
@@ -128,10 +128,10 @@ public class Main {
     }
 
     private static int sum(int[] v){
-        SumTask task1 = new SumTask(v, 0, v.length / 2);
-        SumTask task2 = new SumTask(v, v.length / 2, v.length);
-        Thread t1 = new Thread(task1);
-        Thread t2 = new Thread(task2);
+        SumTask firstHalfSum = new SumTask(v, 0, v.length / 2);
+        SumTask secondHalfSum = new SumTask(v, v.length / 2, v.length);
+        Thread t1 = new Thread(firstHalfSum);
+        Thread t2 = new Thread(secondHalfSum);
 
         t1.start();
         t2.start();
@@ -143,7 +143,7 @@ public class Main {
             e.printStackTrace();
         }
 
-        return task1.getSum() + task2.getSum();
+        return firstHalfSum.getSum() + secondHalfSum.getSum();
 
     }
 
