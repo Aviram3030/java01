@@ -4,6 +4,10 @@ import java.util.HashSet;
 
 public class Main {
     public static void sortArray(int[] v) {
+        if(v == null){
+            return;
+        }
+
         SortArray firstHalf = new SortArray(v,0, v.length / 2);
         SortArray secondHalf = new SortArray(v,v.length / 2, v.length);
 
@@ -62,6 +66,10 @@ public class Main {
     }
 
     public static Boolean search(int[] v, int x, int nThreads) {
+        if(v == null){
+            return false;
+        }
+
         int multiply;
         if (v.length < nThreads) {
             multiply = 1;
@@ -103,6 +111,10 @@ public class Main {
     }
 
     public static int countPairs(int[] v, int sum) {
+        if(v == null){
+            return 0;
+        }
+
         Thread[] threads = new Thread[v.length - 1];
         HashSet<Integer> finalResults = new HashSet<>();
         PairsSum[] pairsSums = new PairsSum[v.length - 1];
@@ -145,6 +157,10 @@ public class Main {
     }
 
     public static int sum(int[] v){
+        if(v == null){
+            return 0;
+        }
+
         SumTask firstHalfSum = new SumTask(v, 0, v.length / 2);
         SumTask secondHalfSum = new SumTask(v, v.length / 2, v.length);
         Thread t1 = new Thread(firstHalfSum);

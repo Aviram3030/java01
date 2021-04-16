@@ -1,5 +1,6 @@
-package experis.ds;
+package experis.ds.tests;
 
+import experis.ds.Main;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
