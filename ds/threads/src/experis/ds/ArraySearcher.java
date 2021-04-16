@@ -27,4 +27,6 @@ public class ArraySearcher implements Runnable{
     public static Boolean getFound(){
         return found;
     }
+
+    public static void nullifyFound(){found = false;}
 }

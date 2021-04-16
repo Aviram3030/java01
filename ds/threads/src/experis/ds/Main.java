@@ -24,16 +24,8 @@ public class Main {
             e.printStackTrace();
         }
 
-        for(int i = 0; i < v.length; i++){
-            System.out.println(v[i]);
-        }
 
-        System.out.println();
         mergeTwoSortedSubArray(v);
-
-        for(int i = 0; i < v.length; i++){
-            System.out.println(v[i]);
-        }
     }
 
 
@@ -66,6 +58,9 @@ public class Main {
     }
 
     public static Boolean search(int[] v, int x, int nThreads) {
+        if(nThreads < 1){
+            throw new IllegalArgumentException();
+        }
         if(v == null){
             return false;
         }
@@ -99,7 +94,9 @@ public class Main {
             }
         }
 
-        return ArraySearcher.getFound();
+        Boolean found = ArraySearcher.getFound();
+        ArraySearcher.nullifyFound();
+        return found;
     }
 
     private static int setEnd(int i, int nThreads, int length, int multiply){
