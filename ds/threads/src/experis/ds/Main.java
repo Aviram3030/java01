@@ -20,7 +20,16 @@ public class Main {
             e.printStackTrace();
         }
 
+        for(int i = 0; i < v.length; i++){
+            System.out.println(v[i]);
+        }
+
+        System.out.println();
         mergeTwoSortedSubArray(v);
+
+        for(int i = 0; i < v.length; i++){
+            System.out.println(v[i]);
+        }
     }
 
 
@@ -32,9 +41,17 @@ public class Main {
             if (v[start1] > v[start2]) {
                 swap(v, start1, start2);
                 start1++;
+                fixingSort(v, start2);
             } else {
                 start2++;
             }
+        }
+    }
+
+    private static void fixingSort(int[] v, int index){
+        while(index < v.length - 1 && v[index] > v[index + 1]){
+            swap(v, index, index + 1);
+            index++;
         }
     }
 
@@ -85,7 +102,7 @@ public class Main {
         }
     }
 
-    private static int countPairs(int[] v, int sum) {
+    public static int countPairs(int[] v, int sum) {
         Thread[] threads = new Thread[v.length - 1];
         HashSet<Integer> finalResults = new HashSet<>();
         PairsSum[] pairsSums = new PairsSum[v.length - 1];
@@ -127,7 +144,7 @@ public class Main {
         return result == null || pairs.contains(result) || pairs.contains(sum - result);
     }
 
-    private static int sum(int[] v){
+    public static int sum(int[] v){
         SumTask firstHalfSum = new SumTask(v, 0, v.length / 2);
         SumTask secondHalfSum = new SumTask(v, v.length / 2, v.length);
         Thread t1 = new Thread(firstHalfSum);

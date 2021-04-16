@@ -1,9 +1,9 @@
 package experis.ds;
 
 public class SortArray implements Runnable{
+    private final int[] v;
     private final int start;
     private final int end;
-    private final int[] v;
 
     public SortArray(int[] v, int start, int end){
         this.v = v;
@@ -14,10 +14,11 @@ public class SortArray implements Runnable{
 
     @Override
     public void run() {
-        for (int i = start; i < end; i++) {
-            for (int j = 0; j < v.length / 2 - i - 1; j++) {
-                if (v[j] > v[j + 1])
+        for (int i = start, k = 0; i < end; i++,k++) {
+            for (int j = start; j < end - k - 1; j++) {
+                if (v[j] > v[j + 1]) {
                     swap(j + 1, j);
+                }
             }
         }
     }
