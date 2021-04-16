@@ -1,160 +1,177 @@
 package experis.ds;
 
-    class LeftTask implements Runnable{
-        private int sum = 0;
+import java.util.HashSet;
 
-        @Override
-        public void run() {
-            for(int i = 0; i < Main.a.length / 2; i++){
-                sum += Main.a[i];
-            }
+public class Main {
+    private static void sortArray(int[] v) {
+        SortArray firstHalf = new SortArray(v,0, v.length / 2);
+        SortArray secondHalf = new SortArray(v,v.length / 2, v.length);
+
+        var t1 = new Thread(firstHalf);
+        var t2 = new Thread(secondHalf);
+
+        t1.start();
+        t2.start();
+
+        try {
+            t1.join();
+            t2.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
 
-        public int getSum(){
-            return sum;
+        mergeTwoSortedSubArray(v);
+    }
+
+
+    private static void mergeTwoSortedSubArray(int[] v) {
+        int start1 = 0;
+        int start2 = v.length / 2;
+
+        while (start1 != v.length / 2 && start2 != v.length) {
+            if (v[start1] > v[start2]) {
+                swap(v, start1, start2);
+                start1++;
+            } else {
+                start2++;
+            }
         }
     }
 
-    class RightTask implements Runnable{
-        private int sum = 0;
-
-        @Override
-        public void run() {
-            for(int i = Main.a.length / 2; i < Main.a.length; i++){
-                sum += Main.a[i];
-            }
-        }
-
-        public int getSum(){
-            return sum;
-        }
+    private static void swap(int[] v, int i, int j) {
+        int temp = v[i];
+        v[i] = v[j];
+        v[j] = temp;
     }
 
-    public class Main {
-        public static int[] a = new int[1000];
-        volatile static Boolean found = false;
+    private static Boolean search(int[] v, int x, int nThreads) {
+        int multiply;
+        if (v.length < nThreads) {
+            multiply = 1;
+            nThreads = v.length;
+        } else {
+            multiply = v.length / nThreads;
+        }
 
-        public static void mergeArray(int[] v){
-            Runnable lambda = () -> {
-            for (int i = 0; i < v.length / 2; i++) {
-                for (int j = 0; j < v.length / 2 - i - 1; j++) {
-                    if (a[j] > a[j + 1])
-                        swap(j + 1, j);
-                }
-            }};
+        Thread[] threads = new Thread[nThreads];
+        ArraySearcher[] arraySearcher = new ArraySearcher[nThreads];
 
-            var t1 = new Thread(lambda);
-            var t2 = new Thread(() -> {
-                for (int i = v.length / 2; i < v.length; i++) {
-                    for (int j = v.length / 2; j < v.length - i - 1; j++) {
-                        if (a[j] > a[j + 1])
-                            swap(j + 1, j);
-                    }
-            }});
+        for (int i = 0; i < nThreads; i++) {
+            int start = i * multiply;
+            int end = declareEnd(i, nThreads, v.length, multiply);
 
-            t1.start();
-            t2.start();
+            arraySearcher[i] = new ArraySearcher(v, start, end, x);
+            threads[i] = new Thread(arraySearcher[i]);
 
+            threads[i].start();
+        }
+
+        for (int i = 0; i < nThreads; i++) {
             try {
-                t1.join();
-                t2.join();
+                threads[i].join();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-
-            mergeTwoSortedSubArray(0, a.length/2, a.length/2 + 1, a.length);
         }
 
-        private static void mergeTwoSortedSubArray(int start1, int end1, int start2, int end2){
-            while(start1 != end1 && start2 != end2){
-                if(a[start1] > a[start2]){
-                    swap(start1, start2);
-                    start1++;
-                }
-                else{
-                    start2++;
-                }
-            }
+        return ArraySearcher.getFound();
+    }
+
+    private static int declareEnd(int i, int nThreads, int length, int multiply){
+        if (i == nThreads - 1) {
+            return length;
+        } else {
+            return (i + 1) * multiply;
+        }
+    }
+
+    private static int countPairs(int[] v, int sum) {
+        Thread[] threads = new Thread[v.length - 1];
+        HashSet<Integer> pairs = new HashSet<>();
+        PairsSum[] pairsSums = new PairsSum[v.length - 1];
+        int count = 0;
+
+        for (int i = 0; i < (v.length - 1) / 2; i++) {
+            pairsSums[i] = new PairsSum(v, i, sum);
+            threads[i] = new Thread(pairsSums[i]);
+            threads[i].start();
         }
 
-        private static void swap(int i, int j){
-            int temp = a[i];
-            a[i] = a[j];
-            a[j] = temp;
-        }
-
-        public static Boolean search(int[] v, int x, int nThreads){
-            Thread[] threads = new Thread[nThreads];
-            for(int i = 0; i < nThreads; i++){
-                int finalI = i;
-
-                threads[i] = new Thread(() ->{
-                    int multiply = v.length / nThreads;
-
-                    int start = finalI * multiply;
-                    int end;
-                    if(finalI == nThreads - 1) {
-                        end = v.length;
-                    }
-                    else{
-                        end = (finalI + 1) * multiply;
-                    }
-                    for(int j = start; j < end; j++){
-                        if(v[j] == x || found){
-                            found = true;
-                            return;
-                        }
-                    }
-                });
-
-                threads[i].start();
-            }
-
-            for(int i = 0; i < nThreads; i++){
-                try {
-                    threads[i].join();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            return found;
-        }
-
-        public static void main(String[] args) {
-
-            for (int i =  a.length - 1; i > 0; i--) {
-                a[i] = i;
-            }
-
-            LeftTask task1 = new LeftTask();
-            RightTask task2 = new RightTask();
-            Thread t1 = new Thread(task1);
-            Thread t2 = new Thread(task2);
-
-            t1.start();
-            t2.start();
-
+        for (int i = 0; i < (v.length - 1) / 2; i++) {
             try {
-                t1.join();
-                t2.join();
+                threads[i].join();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-
-            System.out.println("Sum: " + task1.getSum() + task2.getSum());
-
-            mergeArray(a);
-
-            for(int i = 0; i < a.length - 1; i++){
-                if(a[i] > a[i+1]){
-                    System.out.println("Error");
-                    return;
-                }
-                System.out.println(a[i]);
-            }
-
-            System.out.println(search(a, 999, 1005));
         }
+
+        for (int i = 0; i < (v.length - 1) / 2; i++) {
+            Pair result = pairsSums[i].getResult();
+            Integer firstResult = result.getFirstLoopResult();
+            Integer secondResult = result.getSecondLoopResult();
+
+            if (!isContainResult(firstResult, sum, pairs)) {
+                pairs.add(firstResult);
+                count++;
+            }
+            if (!isContainResult(secondResult, sum, pairs)) {
+                pairs.add(secondResult);
+                count++;
+            }
+        }
+        System.out.println(pairs.toString());
+        return count;
     }
+
+    private static Boolean isContainResult(Integer result, int sum, HashSet<Integer> pairs) {
+        return result == null || pairs.contains(result) || pairs.contains(sum - result);
+    }
+
+    private static int sum(int[] v){
+        SumTask task1 = new SumTask(v, 0, v.length / 2);
+        SumTask task2 = new SumTask(v, v.length / 2, v.length);
+        Thread t1 = new Thread(task1);
+        Thread t2 = new Thread(task2);
+
+        t1.start();
+        t2.start();
+
+        try {
+            t1.join();
+            t2.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return task1.getSum() + task2.getSum();
+
+    }
+
+    public static void main(String[] args) {
+        int[] a = new int[1000];
+        for (int i = a.length - 1; i >= 0; i--) {
+            a[i] = i;
+        }
+
+        //question #1
+        System.out.println("Sum: " + sum(a));
+
+        //question #2
+        sortArray(a);
+
+        for (int i = 0; i < a.length - 1; i++) {
+            if (a[i] > a[i + 1]) {
+                System.out.println("Error");
+                return;
+            }
+        }
+
+        //question #3
+        System.out.println(search(a, 888, 1100));
+
+        //question #4
+        System.out.println(countPairs(a, 17));
+
+    }
+}
 
