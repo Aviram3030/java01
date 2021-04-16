@@ -3,7 +3,7 @@ package experis.ds;
 import java.util.HashSet;
 
 public class Main {
-    private static void sortArray(int[] v) {
+    public static void sortArray(int[] v) {
         SortArray firstHalf = new SortArray(v,0, v.length / 2);
         SortArray secondHalf = new SortArray(v,v.length / 2, v.length);
 
@@ -44,7 +44,7 @@ public class Main {
         v[j] = temp;
     }
 
-    private static Boolean search(int[] v, int x, int nThreads) {
+    public static Boolean search(int[] v, int x, int nThreads) {
         int multiply;
         if (v.length < nThreads) {
             multiply = 1;
@@ -58,7 +58,7 @@ public class Main {
 
         for (int i = 0; i < nThreads; i++) {
             int start = i * multiply;
-            int end = declareEnd(i, nThreads, v.length, multiply);
+            int end = setEnd(i, nThreads, v.length, multiply);
 
             arraySearcher[i] = new ArraySearcher(v, start, end, x);
             threads[i] = new Thread(arraySearcher[i]);
@@ -77,7 +77,7 @@ public class Main {
         return ArraySearcher.getFound();
     }
 
-    private static int declareEnd(int i, int nThreads, int length, int multiply){
+    private static int setEnd(int i, int nThreads, int length, int multiply){
         if (i == nThreads - 1) {
             return length;
         } else {
