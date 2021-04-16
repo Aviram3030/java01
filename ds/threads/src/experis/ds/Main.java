@@ -148,7 +148,6 @@ public class Main {
                 count++;
             }
         }
-        System.out.println(finalResults.toString());
         return count;
     }
 
