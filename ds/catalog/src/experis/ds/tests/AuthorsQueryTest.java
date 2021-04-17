@@ -15,14 +15,14 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class AuthorsQueryTest {
 
-    private BookDetails bookDetails;
-    private Book book;
-    private ArrayList<Book> books = new ArrayList<>();
-    private BookCreator bookCreator = new BookCreator();
+    private final ArrayList<Book> books = new ArrayList<>();
+    private final BookCreator bookCreator = new BookCreator();
 
     @BeforeEach
     void setUp() {
         try {
+            BookDetails bookDetails;
+            Book book;
             String[] details = {"671042858","The Girl Who Loved Tom Gordon","Stephen King","2000","Pocket"};
             bookDetails = new BookDetails(details);
             book = bookCreator.create(bookDetails);
@@ -46,7 +46,6 @@ class AuthorsQueryTest {
 
         } catch (Exception e) {
             System.out.println("Exception worked");
-            return;
         }
     }
 
