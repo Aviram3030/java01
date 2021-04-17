@@ -22,7 +22,6 @@ public class Library {
     private final HashMap<String,ISBN> isbnElements;
     private final TitleQuery titleQuery = new TitleQuery();
 
-
     public Library(Scanner Reader, ArrayList<Book> booksList, HashMap<String, ISBN> isbnElements) {
         this.reader = Reader;
         this.isbnElements = isbnElements;
