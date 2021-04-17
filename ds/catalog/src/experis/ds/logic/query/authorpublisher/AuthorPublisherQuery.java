@@ -2,11 +2,12 @@ package experis.ds.logic.query.authorpublisher;
 
 
 import experis.ds.database.details.Book;
+import experis.ds.database.fields.Creator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class AuthorPublisherQuery <T>{
+public class AuthorPublisherQuery <T extends Creator>{
     private ArrayList<Book> books = null;
     private final HashMap<String, T> details = new HashMap<>();
 
@@ -14,10 +15,10 @@ public class AuthorPublisherQuery <T>{
         this.books = books;
     }
 
-    public ArrayList<T> search(String text, BiFunc<T,Book> biFunc, Func<T> func){
+    public ArrayList<T> search(String text, BiFunc<T,Book> biFunc){
         for (Book book : books) {
             T obj = biFunc.apply(book);
-            String name = func.apply(obj);
+            String name = obj.getName();
             String[] splitNames = name.split(" ");
             if (isContain(splitNames, text.toLowerCase()) && details.get(name) == null) {
                 details.put(name, obj);

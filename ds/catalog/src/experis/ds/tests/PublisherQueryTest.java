@@ -2,7 +2,7 @@ package experis.ds.tests;
 
 import experis.ds.database.details.Book;
 import experis.ds.database.details.BookDetails;
-import experis.ds.database.fields.Author;
+import experis.ds.database.fields.Publisher;
 import experis.ds.logic.BookCreator;
 import experis.ds.logic.query.authorpublisher.AuthorPublisherQuery;
 import experis.ds.logic.query.authorpublisher.BiFunc;
@@ -13,8 +13,7 @@ import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class AuthorsQueryTest {
-
+class PublisherQueryTest {
     private BookDetails bookDetails;
     private Book book;
     private ArrayList<Book> books = new ArrayList<>();
@@ -51,21 +50,15 @@ class AuthorsQueryTest {
     }
 
     @Test
-    void executeQueryAuthor() {
-        BiFunc<Author,Book> biFunc = Book::getAuthor;
-        AuthorPublisherQuery<Author> authorsQuery = new AuthorPublisherQuery<>();
-        authorsQuery.set(books);
-        ArrayList<Author> selectedAuthors = authorsQuery.search("R.J.",biFunc);
-        assertEquals(0, selectedAuthors.size());
+    void executeQueryPublisher() {
+        BiFunc<Publisher, Book> biFunc = Book::getPublisher;
+        AuthorPublisherQuery<Publisher> publishersQuery = new AuthorPublisherQuery<>();
+        publishersQuery.set(books);
 
-        selectedAuthors = authorsQuery.search("Kaiser",biFunc);
-        assertEquals("R. J. Kaiser", selectedAuthors.get(0).getName());
-        assertEquals(1,selectedAuthors.size());
-
-        authorsQuery.clear();
-        authorsQuery.set(books);
-        selectedAuthors = authorsQuery.search("Aimee",biFunc);
-        assertEquals("Aimee Liu", selectedAuthors.get(0).getName());
-
+        ArrayList<Publisher> selectedPublisher = publishersQuery.search("Books",biFunc);
+        assertEquals(3, selectedPublisher.size());
+        assertEquals("Pinnacle Books", selectedPublisher.get(0).getName());
+        assertEquals("Mira Books", selectedPublisher.get(1).getName());
+        assertEquals("Warner Books", selectedPublisher.get(2).getName());
     }
 }

@@ -7,7 +7,6 @@ import experis.ds.database.fields.*;
 
 import experis.ds.logic.query.authorpublisher.AuthorPublisherQuery;
 import experis.ds.logic.query.authorpublisher.BiFunc;
-import experis.ds.logic.query.authorpublisher.Func;
 import experis.ds.logic.query.title.TitleQuery;
 
 import java.util.ArrayList;
@@ -110,8 +109,7 @@ public class Library {
         publishersQuery.set(books);
 
         BiFunc<Publisher,Book> biFunc = Book::getPublisher;
-        Func<Publisher> func = Creator::getName;
-        ArrayList<Publisher> selectedPublishers = publishersQuery.search(titles[0], biFunc, func);
+        ArrayList<Publisher> selectedPublishers = publishersQuery.search(titles[0], biFunc);
 
         return getBooksForAuthorAndPublisher(selectedPublishers, publishersQuery);
     }
@@ -120,8 +118,7 @@ public class Library {
         authorsQuery.set(books);
 
         BiFunc<Author,Book> biFunc = Book::getAuthor;
-        Func<Author> func = Creator::getName;
-        ArrayList<Author> selectedAuthors = authorsQuery.search(titles[0], biFunc, func);
+        ArrayList<Author> selectedAuthors = authorsQuery.search(titles[0], biFunc);
 
         return getBooksForAuthorAndPublisher(selectedAuthors,authorsQuery);
     }
