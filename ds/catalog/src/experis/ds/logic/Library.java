@@ -72,10 +72,11 @@ public class Library {
         String[] titles = new String[titlesAndPublisher.length - 1];
         String publisherName = null;
         int k = 0;
+        final int publisherLength = 10;
 
         for (String s : titlesAndPublisher) {
             if (s.contains("publisher:")) {
-                publisherName = s.substring(10);
+                publisherName = s.substring(publisherLength);
                 continue;
             }
             titles[k++] = s;
@@ -89,10 +90,11 @@ public class Library {
         String[] titles = new String[titlesAndAuthor.length - 1];
         String authorName = null;
         int k = 0;
+        final int authorLength = 7;
 
         for (String s : titlesAndAuthor) {
             if (s.contains("author:")) {
-                authorName = s.substring(7);
+                authorName = s.substring(authorLength);
                 continue;
             }
             titles[k++] = s;
