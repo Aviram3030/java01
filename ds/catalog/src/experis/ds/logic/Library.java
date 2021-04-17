@@ -104,20 +104,20 @@ public class Library {
         return searchByTitle(booksByAuthor, titles);
     }
 
-    private ArrayList<Book> searchByPublisher(ArrayList<Book> books, String[] titles) {
+    private ArrayList<Book> searchByPublisher(ArrayList<Book> books, String[] publisherName) {
         publishersQuery.set(books);
 
         BiFunc<Publisher,Book> biFunc = Book::getPublisher;
-        ArrayList<Publisher> selectedPublishers = publishersQuery.search(titles[0], biFunc);
+        ArrayList<Publisher> selectedPublishers = publishersQuery.search(publisherName[0], biFunc);
 
         return getBooksForAuthorAndPublisher(selectedPublishers, publishersQuery);
     }
 
-    private ArrayList<Book> searchByAuthor(ArrayList<Book> books, String[] titles) {
+    private ArrayList<Book> searchByAuthor(ArrayList<Book> books, String[] authorName) {
         authorsQuery.set(books);
 
         BiFunc<Author,Book> biFunc = Book::getAuthor;
-        ArrayList<Author> selectedAuthors = authorsQuery.search(titles[0], biFunc);
+        ArrayList<Author> selectedAuthors = authorsQuery.search(authorName[0], biFunc);
 
         return getBooksForAuthorAndPublisher(selectedAuthors,authorsQuery);
     }
@@ -141,7 +141,8 @@ public class Library {
 
     private ArrayList<Book> searchByTitle(ArrayList<Book> books, String[] queryTitles){
         titleQuery.load(queryTitles);
-        ArrayList<Book> selectedBooks = titleQuery.getBooksByTitle(books);
+        titleQuery.setBooks(books);
+        ArrayList<Book> selectedBooks = titleQuery.getBooksByTitle();
         titleQuery.clear();
 
         return selectedBooks;

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 public class TitleQuery {
     private final ArrayList<Command> commands = new ArrayList<>();
+    private ArrayList<Book> books = new ArrayList<>();
 
     public void load(String[] queryTitles){
         for(String title: queryTitles){
@@ -15,7 +16,11 @@ public class TitleQuery {
         }
     }
 
-    public ArrayList<Book> getBooksByTitle(ArrayList<Book> books) {
+    public void setBooks(ArrayList<Book> books){
+        this.books = books;
+    }
+
+    public ArrayList<Book> getBooksByTitle() {
         ArrayList<Book> booksList = new ArrayList<>();
 
         for(Book book: books){
