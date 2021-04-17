@@ -113,9 +113,7 @@ public class Library {
         Func<Publisher> func = Creator::getName;
         ArrayList<Publisher> selectedPublishers = publishersQuery.search(titles[0], biFunc, func);
 
-        ArrayList<Book> selectedBooks = BooksExtractor.extractBooks(selectedPublishers);
-        publishersQuery.clear();
-        return selectedBooks;
+        return getBooksForAuthorAndPublisher(selectedPublishers, publishersQuery);
     }
 
     private ArrayList<Book> searchByAuthor(ArrayList<Book> books, String[] titles) {
@@ -125,8 +123,13 @@ public class Library {
         Func<Author> func = Creator::getName;
         ArrayList<Author> selectedAuthors = authorsQuery.search(titles[0], biFunc, func);
 
-        ArrayList<Book> selectedBooks = BooksExtractor.extractBooks(selectedAuthors);
-        authorsQuery.clear();
+        return getBooksForAuthorAndPublisher(selectedAuthors,authorsQuery);
+    }
+
+    private ArrayList<Book> getBooksForAuthorAndPublisher(ArrayList<? extends Creator> selectedCreators,
+                                                          AuthorPublisherQuery<? extends  Creator> query){
+        ArrayList<Book> selectedBooks = BooksExtractor.extractBooks(selectedCreators);
+        query.clear();
         return selectedBooks;
     }
 
