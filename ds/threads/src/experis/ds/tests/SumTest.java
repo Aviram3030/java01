@@ -9,16 +9,22 @@ import static org.junit.jupiter.api.Assertions.*;
 class SumTest {
 
     @Test
-    void sum() {
+    void firstTest() {
         int[] a = new int[]{1,2,3,4};
         Assertions.assertEquals(Main.sum(a), 10);
 
-        int[] b = new int[]{1,2,3,4,5};
-        assertEquals(Main.sum(b), 15);
-
-        int[] c = new int[]{5};
-        assertEquals(Main.sum(c), 5);
-
         assertEquals(Main.sum(null),0);
+    }
+
+    @Test
+    void secondTest(){
+        int[] a = new int[]{1,2,3,4,5};
+        assertEquals(Main.sum(a), 15);
+    }
+
+    @Test
+    void thirdTest(){
+        int[] a = new int[]{5};
+        assertEquals(Main.sum(a), 5);
     }
 }

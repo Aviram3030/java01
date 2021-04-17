@@ -13,7 +13,6 @@ public class Main {
 
         var t1 = new Thread(firstHalf);
         var t2 = new Thread(secondHalf);
-
         t1.start();
         t2.start();
 

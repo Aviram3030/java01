@@ -8,18 +8,25 @@ import static org.junit.jupiter.api.Assertions.*;
 class SortTest {
 
     @Test
-    void sortArray() {
-        int[] v = new int[]{8,5,3,56,1,9,42,4};
-        Main.sortArray(v);
-        assertTrue(isSorted(v));
-
-        int[] a = new int[]{2};
+    void firstTest() {
+        int[] a = new int[]{8,5,3,56,1,9,42,4};
         Main.sortArray(a);
         assertTrue(isSorted(a));
 
-        int[] b = new int[]{54,18,5,7,5,2,-8};
-        Main.sortArray(b);
-        assertTrue(isSorted(b));
+    }
+
+    @Test
+    void secondTest(){
+        int[] a = new int[]{2};
+        Main.sortArray(a);
+        assertTrue(isSorted(a));
+    }
+
+    @Test
+    void thirdTest(){
+        int[] a = new int[]{54,18,5,7,5,2,-8};
+        Main.sortArray(a);
+        assertTrue(isSorted(a));
     }
 
     private Boolean isSorted(int[] v){
