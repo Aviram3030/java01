@@ -33,7 +33,6 @@ public class AuthorPublisherQuery <T>{
             obj.add(details.get(key));
         }
 
-        details.clear();
         return obj;
     }
 
@@ -48,6 +47,11 @@ public class AuthorPublisherQuery <T>{
         }
 
         return false;
+    }
+
+    public void clear(){
+        details.clear();
+        books = null;
     }
 
 }

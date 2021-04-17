@@ -53,5 +53,9 @@ public class TitleQuery {
         }
         return type != CommandType.PRESENT || bookTitle.contains(title);
     }
+
+    public void clear(){
+        commands.clear();
+    }
 }
 

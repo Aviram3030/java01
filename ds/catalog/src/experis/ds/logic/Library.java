@@ -21,6 +21,8 @@ public class Library {
     private final AuthorPublisherQuery<Author> authorsQuery = new AuthorPublisherQuery<>();
     private final AuthorPublisherQuery<Publisher> publishersQuery = new AuthorPublisherQuery<>();
     private final HashMap<String,ISBN> isbnElements;
+    private final TitleQuery titleQuery = new TitleQuery();
+
 
     public Library(Scanner Reader, ArrayList<Book> booksList, HashMap<String, ISBN> isbnElements) {
         this.reader = Reader;
@@ -111,7 +113,9 @@ public class Library {
         Func<Publisher> func = Creator::getName;
         ArrayList<Publisher> selectedPublishers = publishersQuery.search(titles[0], biFunc, func);
 
-        return BooksExtractor.extractBooks(selectedPublishers);
+        ArrayList<Book> selectedBooks = BooksExtractor.extractBooks(selectedPublishers);
+        publishersQuery.clear();
+        return selectedBooks;
     }
 
     private ArrayList<Book> searchByAuthor(ArrayList<Book> books, String[] titles) {
@@ -121,7 +125,9 @@ public class Library {
         Func<Author> func = Creator::getName;
         ArrayList<Author> selectedAuthors = authorsQuery.search(titles[0], biFunc, func);
 
-        return BooksExtractor.extractBooks(selectedAuthors);
+        ArrayList<Book> selectedBooks = BooksExtractor.extractBooks(selectedAuthors);
+        authorsQuery.clear();
+        return selectedBooks;
     }
 
 
@@ -135,10 +141,11 @@ public class Library {
     }
 
     private ArrayList<Book> searchByTitle(ArrayList<Book> books, String[] queryTitles){
-        TitleQuery titleQuery = new TitleQuery();
         titleQuery.load(queryTitles);
+        ArrayList<Book> selectedBooks = titleQuery.getBooksByTitle(books);
+        titleQuery.clear();
 
-        return titleQuery.getBooksByTitle(books);
+        return selectedBooks;
     }
 
 
