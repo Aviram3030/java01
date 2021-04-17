@@ -14,15 +14,15 @@ class BookCreatorTest {
     private Book book;
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() {
         String[] details = {"671042858","The Girl Who Loved Tom Gordon","Stephen King","2000","Pocket"};
         try {
+            BookCreator bookCreator = new BookCreator();
+            book = bookCreator.create(bookDetails);
             bookDetails = new BookDetails(details);
         } catch (Exception e) {
             System.out.println("Exception worked");
         }
-        BookCreator bookCreator = new BookCreator();
-        book = bookCreator.create(bookDetails);
     }
 
     @Test
