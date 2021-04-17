@@ -11,7 +11,6 @@ public class SortArray implements Runnable{
         this.end = end;
     }
 
-
     @Override
     public void run() {
         for (int i = start, k = 0; i < end; i++,k++) {

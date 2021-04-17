@@ -24,10 +24,8 @@ public class Main {
             e.printStackTrace();
         }
 
-
         mergeTwoSortedSubArray(v);
     }
-
 
     private static void mergeTwoSortedSubArray(int[] v) {
         int start1 = 0;
@@ -113,17 +111,15 @@ public class Main {
         }
 
         Thread[] threads = new Thread[v.length - 1];
-        HashSet<Integer> finalResults = new HashSet<>();
         PairsSum[] pairsSums = new PairsSum[v.length - 1];
-        int count = 0;
 
-        for (int i = 0; i < (v.length - 1) / 2; i++) {
+        for (int i = 0; i < v.length / 2; i++) {
             pairsSums[i] = new PairsSum(v, i, sum);
             threads[i] = new Thread(pairsSums[i]);
             threads[i].start();
         }
 
-        for (int i = 0; i < (v.length - 1) / 2; i++) {
+        for (int i = 0; i < v.length / 2; i++) {
             try {
                 threads[i].join();
             } catch (InterruptedException e) {
@@ -131,7 +127,14 @@ public class Main {
             }
         }
 
-        for (int i = 0; i < (v.length - 1) / 2; i++) {
+       return calculateNumOfPairs(v, pairsSums, sum);
+    }
+
+    private static int calculateNumOfPairs(int[] v, PairsSum[] pairsSums, int sum){
+        HashSet<Integer> finalResults = new HashSet<>();
+        int count = 0;
+
+        for (int i = 0; i < v.length / 2; i++) {
             Pair result = pairsSums[i].getResult();
             Integer firstResult = result.getFirstLoopResult();
             Integer secondResult = result.getSecondLoopResult();
@@ -173,7 +176,6 @@ public class Main {
         }
 
         return firstHalfSum.getSum() + secondHalfSum.getSum();
-
     }
 
     public static void main(String[] args) {
@@ -200,7 +202,6 @@ public class Main {
 
         //question #4
         System.out.println(countPairs(a, 17));
-
     }
 }
 
