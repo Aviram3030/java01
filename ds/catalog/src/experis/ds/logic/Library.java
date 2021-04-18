@@ -19,7 +19,7 @@ public class Library {
     private final Scanner reader;
     private final AuthorPublisherQuery<Author> authorsQuery = new AuthorPublisherQuery<>();
     private final AuthorPublisherQuery<Publisher> publishersQuery = new AuthorPublisherQuery<>();
-    private final HashMap<String,ISBN> isbnElements;
+    private final HashMap<String, ISBN> isbnElements;
     private final TitleQuery titleQuery = new TitleQuery();
 
     public Library(Scanner Reader, ArrayList<Book> booksList, HashMap<String, ISBN> isbnElements) {
@@ -32,37 +32,32 @@ public class Library {
         System.out.print(">");
         String query;
         ArrayList<Book> selectedBooks;
-        try {
-            switch (queryType) {
-
-                case "1" -> {
-                    query = reader.nextLine().trim();
-                    selectedBooks = searchByIsbn(query);
-                }
-                case "2" -> {
-                    query = reader.nextLine().trim();
-                    selectedBooks = searchByTitle(booksList, query.split(" "));
-                }
-                case "3" -> {
-                    query = reader.nextLine().trim();
-                    selectedBooks = searchByAuthor(booksList, query.split(" "));
-                }
-                case "4" -> {
-                    query = reader.nextLine().trim();
-                    selectedBooks = searchByPublisher(booksList, query.split(" "));
-                }
-                case "5" -> {
-                    query = reader.nextLine().trim();
-                    selectedBooks = searchByAuthorAndTitle(booksList, query.split(" "));
-                }
-                case "6" -> {
-                    query = reader.nextLine().trim();
-                    selectedBooks = searchByPublisherAndTitle(booksList, query.split(" "));
-                }
-                default -> throw new Exception();
+        switch (queryType) {
+            case "1" -> {
+                query = reader.nextLine().trim();
+                selectedBooks = searchByIsbn(query);
             }
-        }catch(Exception e){
-            throw new IllegalQueryException();
+            case "2" -> {
+                query = reader.nextLine().trim();
+                selectedBooks = searchByTitle(booksList, query.split(" "));
+            }
+            case "3" -> {
+                query = reader.nextLine().trim();
+                selectedBooks = searchByAuthor(booksList, query.split(" "));
+            }
+            case "4" -> {
+                query = reader.nextLine().trim();
+                selectedBooks = searchByPublisher(booksList, query.split(" "));
+            }
+            case "5" -> {
+                query = reader.nextLine().trim();
+                selectedBooks = searchByAuthorAndTitle(booksList, query.split(" "));
+            }
+            case "6" -> {
+                query = reader.nextLine().trim();
+                selectedBooks = searchByPublisherAndTitle(booksList, query.split(" "));
+            }
+            default -> throw new IllegalQueryException();
         }
 
         return selectedBooks;
@@ -107,7 +102,7 @@ public class Library {
     private ArrayList<Book> searchByPublisher(ArrayList<Book> books, String[] publisherName) {
         publishersQuery.set(books);
 
-        BiFunc<Publisher,Book> biFunc = Book::getPublisher;
+        BiFunc<Publisher, Book> biFunc = Book::getPublisher;
         ArrayList<Publisher> selectedPublishers = publishersQuery.search(publisherName[0], biFunc);
 
         return getBooksForAuthorAndPublisher(selectedPublishers, publishersQuery);
@@ -116,21 +111,21 @@ public class Library {
     private ArrayList<Book> searchByAuthor(ArrayList<Book> books, String[] authorName) {
         authorsQuery.set(books);
 
-        BiFunc<Author,Book> biFunc = Book::getAuthor;
+        BiFunc<Author, Book> biFunc = Book::getAuthor;
         ArrayList<Author> selectedAuthors = authorsQuery.search(authorName[0], biFunc);
 
-        return getBooksForAuthorAndPublisher(selectedAuthors,authorsQuery);
+        return getBooksForAuthorAndPublisher(selectedAuthors, authorsQuery);
     }
 
     private ArrayList<Book> getBooksForAuthorAndPublisher(ArrayList<? extends Creator> selectedCreators,
-                                                          AuthorPublisherQuery<? extends  Creator> query){
+                                                          AuthorPublisherQuery<? extends Creator> query) {
         ArrayList<Book> selectedBooks = BooksExtractor.extractBooks(selectedCreators);
         query.clear();
         return selectedBooks;
     }
 
 
-    private ArrayList<Book> searchByIsbn(String text){
+    private ArrayList<Book> searchByIsbn(String text) {
         ISBN isbn = isbnElements.get(text.toLowerCase());
         Book book = isbn.getBook();
 
@@ -139,7 +134,7 @@ public class Library {
         return selectedBook;
     }
 
-    private ArrayList<Book> searchByTitle(ArrayList<Book> books, String[] queryTitles){
+    private ArrayList<Book> searchByTitle(ArrayList<Book> books, String[] queryTitles) {
         titleQuery.load(queryTitles);
         titleQuery.setBooks(books);
         ArrayList<Book> selectedBooks = titleQuery.getBooksByTitle();
