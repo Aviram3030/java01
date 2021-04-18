@@ -34,8 +34,7 @@ class OneToOneTest {
         }
 
         Integer[] result = consumer.getProducts();
-        for(int i = 0; i < products.length; i++){
-            assertEquals(i, result[i]);
-        }
+        assertArrayEquals(result, products);
+        assertEquals(0, queue.size());
     }
 }
