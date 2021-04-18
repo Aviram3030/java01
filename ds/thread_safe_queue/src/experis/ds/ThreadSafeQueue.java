@@ -1,8 +1,12 @@
 package experis.ds;
 
+import java.util.Iterator;
+
 public class ThreadSafeQueue <T>{
     private final T[] data;
-    private final Object lock = new Object();
+    private final Object firstLock = new Object();
+    private final Object secondLock = new Object();
+    private final Object thirdLock = new Object();
     private int size = 0;
     private int head = 0; // index of the current front item, if one exists
     private int tail = 0; // index of next item to be added
@@ -12,10 +16,10 @@ public class ThreadSafeQueue <T>{
     }
 
     public void enqueue(T a){
-        synchronized (lock){
+        synchronized (firstLock){
             while(isFull()){
                 try {
-                    lock.wait();
+                    firstLock.wait();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -24,16 +28,35 @@ public class ThreadSafeQueue <T>{
             data[tail] = a;
             tail = (tail + 1) % data.length;
             size++;
-            lock.notify();
+            firstLock.notify();
+        }
+    }
+
+    public void enqueue(Iterator<T> iterator){
+        synchronized (firstLock) {
+            while (iterator.hasNext()) {
+                while(isFull()){
+                    try {
+                        firstLock.wait();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                data[tail] = iterator.next();
+                tail = (tail + 1) % data.length;
+                size++;
+                firstLock.notify();
+            }
         }
     }
 
     public T dequeue(){
         T val;
-        synchronized (lock){
+        synchronized (firstLock){
             while(isEmpty()){
                 try {
-                    lock.wait();
+                    firstLock.wait();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -43,25 +66,25 @@ public class ThreadSafeQueue <T>{
             data[head] = null;
             head = (head + 1) % data.length;
             size--;
-            lock.notify();
+            firstLock.notify();
         }
         return val;
     }
 
     public int size(){
-        synchronized (lock) {
+        synchronized (firstLock) {
             return size;
         }
     }
 
     public Boolean isEmpty(){
-        synchronized (lock) {
+        synchronized (firstLock) {
             return size == 0;
         }
     }
 
     public Boolean isFull(){
-        synchronized (lock) {
+        synchronized (firstLock) {
             return size == data.length;
         }
     }
