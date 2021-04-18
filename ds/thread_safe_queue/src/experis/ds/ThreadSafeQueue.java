@@ -8,8 +8,8 @@ public class ThreadSafeQueue <T>{
     private final Object secondLock = new Object();
     private final Object thirdLock = new Object();
     private int size = 0;
-    private int head = 0; // index of the current front item, if one exists
-    private int tail = 0; // index of next item to be added
+    private int head = 0;
+    private int tail = 0;
 
     public ThreadSafeQueue(T[] data){
         this.data = data;

@@ -1,5 +1,8 @@
-package experis.ds;
+package experis.ds.tests;
 
+import experis.ds.Consumer;
+import experis.ds.Producer;
+import experis.ds.ThreadSafeQueue;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
