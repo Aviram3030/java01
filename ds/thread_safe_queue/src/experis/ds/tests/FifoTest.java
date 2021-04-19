@@ -8,8 +8,8 @@ import static org.junit.jupiter.api.Assertions.*;
 class FifoTest {
 
     @Test
-    void main() {
-        ThreadSafeQueue<Integer> queue = new ThreadSafeQueue<>(new Integer[1000]);
+    void fifoTest() {
+        ThreadSafeQueue<Integer> queue = new ThreadSafeQueue<>(1000);
         for(int i = 0; i < 1000; i++){
             queue.enqueue(i);
 

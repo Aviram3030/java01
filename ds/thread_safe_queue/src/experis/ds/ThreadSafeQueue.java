@@ -11,8 +11,8 @@ public class ThreadSafeQueue <T>{
     private int head = 0;
     private int tail = 0;
 
-    public ThreadSafeQueue(T[] data){
-        this.data = data;  //data = (T[]) new Object[capacity];
+    public ThreadSafeQueue(int capacity){
+        data = (T[]) new Object[capacity];
     }
 
     public void enqueue(T a){
@@ -28,7 +28,7 @@ public class ThreadSafeQueue <T>{
             data[tail] = a;
             tail = (tail + 1) % data.length;
             size++;
-            firstLock.notify();
+            firstLock.notifyAll();
         }
     }
 
@@ -53,7 +53,7 @@ public class ThreadSafeQueue <T>{
             data[head] = null;
             head = (head + 1) % data.length;
             size--;
-            firstLock.notify();
+            firstLock.notifyAll();
         }
         return val;
     }

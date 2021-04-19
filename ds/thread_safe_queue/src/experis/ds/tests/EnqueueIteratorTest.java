@@ -11,8 +11,8 @@ import static org.junit.jupiter.api.Assertions.*;
 class EnqueueIteratorTest {
 
     @Test
-    void main() {
-        ThreadSafeQueue<Integer> queue = new ThreadSafeQueue<>(new Integer[1000]);
+    void enqueueIteratorTest() {
+        ThreadSafeQueue<Integer> queue = new ThreadSafeQueue<>(1000);
         ArrayList<Integer> products = new ArrayList<>();
 
         for (int i = 0; i < 1500; i++) {

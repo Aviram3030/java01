@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 class ManyToManyTest {
     @Test
     void manyToMany() {
-        ThreadSafeQueue<Integer> queue = new ThreadSafeQueue<>(new Integer[1000]);
+        ThreadSafeQueue<Integer> queue = new ThreadSafeQueue<>(1000);
         Integer[] products = new Integer[1000];
 
         for (int i = 0; i < products.length; i++) {

@@ -11,7 +11,7 @@ class TwoConsumersToOneProducer {
 
     @Test
     void twoConsumersToOneProducer() throws InterruptedException {
-        ThreadSafeQueue<Integer> queue = new ThreadSafeQueue<>(new Integer[2000]);
+        ThreadSafeQueue<Integer> queue = new ThreadSafeQueue<>(100);
         Integer[] products = new Integer[2000];
 
         for (int i = 0; i < products.length; i++) {
