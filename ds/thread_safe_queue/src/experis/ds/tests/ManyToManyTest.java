@@ -5,63 +5,71 @@ import experis.ds.Producer;
 import experis.ds.ThreadSafeQueue;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 class ManyToManyTest {
     @Test
     void manyToMany() {
-        ThreadSafeQueue<Integer> queue = new ThreadSafeQueue<>(1000);
-        Integer[] products = new Integer[1000];
+        ThreadSafeQueue<Double> queue = new ThreadSafeQueue<>(100);
+        Double[] products = new Double[1000];
 
         for (int i = 0; i < products.length; i++) {
-            products[i] = i;
+            products[i] = (double)i;
         }
 
         final int numOfProducers = 100;
         final int numOfConsumers = 10;
 
-        Producer<Integer>[] producers = makeProducers(queue, numOfProducers, products);
-        Consumer<Integer>[] consumers = makeConsumers(queue, numOfConsumers);
+        ThreadGroup threadGroupProducers = new ThreadGroup(numOfProducers,() -> new Producer<>(products, queue));
+        ThreadGroup threadGroupConsumers = new ThreadGroup(numOfConsumers,() -> new Consumer<>(new Double[10000], queue));
 
-        Thread[] threads = new Thread[numOfProducers + numOfConsumers];
+        threadGroupConsumers.start();
+        try {
+            Thread.sleep(10);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        threadGroupProducers.start();
 
-        int i = 0;
-        int j = 0;
-        int k = 0;
-        while(k < threads.length){
-            if(i < producers.length){
-                threads[k] = new Thread(producers[i]);
-                i++;
-                k++;
-            }
-            if(j < consumers.length){
-                threads[j] = new Thread(consumers[j]);
-                j++;
-                k++;
-            }
+        threadGroupConsumers.join();
+        threadGroupProducers.join();
+
+        Consumer<Double>[] consumers = new Consumer[numOfConsumers];
+        Double[][] results = new Double[numOfConsumers][1000];
+
+        double mul = (double)numOfConsumers / (double)numOfProducers;
+        for(int i = 0; i < numOfConsumers; i++){
+            consumers[i] = (Consumer<Double>)threadGroupConsumers.get(i);
+            results[i] = consumers[i].getProducts();
         }
 
-        //TODO
-        int sum = 0;
-        for(int t = 0; t < consumers.length; t++){
-             consumers[i].getProducts();
-        }
+        checkArrays(results, mul);
+
     }
 
-    Producer[] makeProducers(ThreadSafeQueue<Integer> queue, int numOfProducers, Integer[] products){
-        Producer[] producers = new Producer[numOfProducers];
-        int start = 0;
-        int interval = 1000 / numOfProducers;
-        int end = interval;
-
-        for(int i = 0; i < numOfProducers; i++){
-            for(int j = 0; j < end; j++){
-                Integer[] arr = makeArray(start , end);
-                producers[i] = new Producer(arr, queue);
-            }
-            start = end;
-            end += interval;
+    private Boolean checkCondition(Double product,int index , double mul){
+        if(product > index * mul){
+            return false;
         }
-        return producers;
+        return true;
     }
+
+    private Boolean checkArrays(Double[][] products, double mul){
+        for(int i = 0; i < products[0].length; i++){
+            Boolean check = false;
+            for(int j = 0; j < products.length; j++){
+                if(checkCondition(products[j][i], i, mul)){
+                    check = true;
+                    break;
+                }
+            }
+            if(!check){
+                return false;
+            }
+        }
+        return true;
+    }
+
 
     Integer[] makeArray(int start, int end){
         Integer[] arr = new Integer[end - start];
@@ -71,35 +79,4 @@ class ManyToManyTest {
 
         return arr;
     }
-
-    Consumer[] makeConsumers(ThreadSafeQueue<Integer> queue, int numOfConsumers){
-        Consumer[] consumers = new Consumer[numOfConsumers];
-        int start = 0;
-        int interval = 1000 / numOfConsumers;
-        int end = interval;
-
-        for(int i = 0; i < numOfConsumers; i++){
-            for(int j = 0; j < end; j++){
-                consumers[i] = new Consumer(new Integer[interval], queue);
-            }
-        }
-        return consumers;
-    }
-
-    void startThreads(Thread[] threads){
-        for(Thread thread: threads){
-            thread.start();
-        }
-    }
-
-    void joinThreads(Thread[] threads){
-        for(Thread thread: threads){
-            try {
-                thread.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
 }

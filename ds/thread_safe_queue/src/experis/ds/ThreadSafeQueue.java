@@ -1,6 +1,7 @@
 package experis.ds;
 
 import java.util.Iterator;
+import java.util.function.BooleanSupplier;
 
 public class ThreadSafeQueue <T>{
     private final T[] data;
@@ -17,13 +18,7 @@ public class ThreadSafeQueue <T>{
 
     public void enqueue(T a){
         synchronized (firstLock){
-            while(isFull()){
-                try {
-                    firstLock.wait();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
+            waitWhile(this::full);
 
             data[tail] = a;
             tail = (tail + 1) % data.length;
@@ -41,13 +36,7 @@ public class ThreadSafeQueue <T>{
     public T dequeue(){
         T val;
         synchronized (firstLock){
-            while(isEmpty()){
-                try {
-                    firstLock.wait();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
+            waitWhile(this::empty);
 
             val = data[head];
             data[head] = null;
@@ -58,6 +47,16 @@ public class ThreadSafeQueue <T>{
         return val;
     }
 
+    private void waitWhile(BooleanSupplier waitReason){
+        while(waitReason.getAsBoolean()){
+            try {
+                firstLock.wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     public int size(){
         synchronized (firstLock) {
             return size;
@@ -65,14 +64,22 @@ public class ThreadSafeQueue <T>{
     }
 
     public Boolean isEmpty(){
+        return size == 0;
+    }
+
+    private Boolean empty(){
         synchronized (firstLock) {
-            return size == 0;
+            return isEmpty();
         }
     }
 
     public Boolean isFull(){
+        return size == data.length;
+    }
+
+    private Boolean full(){
         synchronized (firstLock) {
-            return size == data.length;
+            return isFull();
         }
     }
 }
