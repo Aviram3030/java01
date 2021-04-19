@@ -5,66 +5,105 @@ import experis.ds.Producer;
 import experis.ds.ThreadSafeQueue;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ManyToManyTest {
+    final int numOfProducers = 100;
+    final int numOfConsumers = 10;
+    final int N = 2000;
+
     @Test
     void manyToMany() {
-        ThreadSafeQueue<Double> queue = new ThreadSafeQueue<>(100);
-        Double[] products = new Double[1000];
+        ThreadSafeQueue<Box> queue = new ThreadSafeQueue<>(100);
 
-        for (int i = 0; i < products.length; i++) {
-            products[i] = (double)i;
+        List<List<Box>> products = new ArrayList<>();
+        Producer[] producers = new Producer[numOfProducers];
+        for(int i = 0; i < numOfConsumers; i++){
+            products.add(createBoxList(i, N / (i+1)));
+            producers[i] = new Producer(products.get(i), queue);
         }
 
-        final int numOfProducers = 100;
-        final int numOfConsumers = 10;
-
-        ThreadGroup threadGroupProducers = new ThreadGroup(numOfProducers,() -> new Producer<>(products, queue));
-        ThreadGroup threadGroupConsumers = new ThreadGroup(numOfConsumers,() -> new Consumer<>(new Double[10000], queue));
+        ThreadGroup threadGroupProducers = new ThreadGroup(producers);
+        ThreadGroup threadGroupConsumers = new ThreadGroup(numOfConsumers,() -> new Consumer(queue));
 
         threadGroupConsumers.start();
         try {
-            Thread.sleep(10);
+            Thread.sleep(100);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
         threadGroupProducers.start();
 
-        threadGroupConsumers.join();
         threadGroupProducers.join();
+        queue.enqueue(new Box(-1 , 0));
+        threadGroupConsumers.join();
 
-        Consumer<Double>[] consumers = new Consumer[numOfConsumers];
-        Double[][] results = new Double[numOfConsumers][1000];
-
-        for(int i = 0; i < numOfConsumers; i++){
-            consumers[i] = (Consumer<Double>)threadGroupConsumers.get(i);
-            results[i] = consumers[i].getProducts();
+        Consumer[] consumers = new Consumer[numOfConsumers];
+        for(int i = 0; i < consumers.length; i++){
+            consumers[i] = (Consumer)threadGroupConsumers.get(i);
         }
+        List<List<Box>> results = new ArrayList<>(numOfConsumers);
+        for(var consumer: consumers){
+            results.add(consumer.getProducts());
+        }
+        assertTrue(checkIfLegal(results));
 
-        double mul = (double)numOfConsumers / (double)numOfProducers;
-        assertTrue(checkArrays(results, mul));
-
+        Box[][] sortedData = scanTheArray(results, N);
+        for(int i = 0; i < products.size(); i++) {
+            assertTrue(compareResults(sortedData[i], products.get(i)));
+        }
     }
 
-    private Boolean checkCondition(Double product, int index , double mul){
-        return product * mul <= index ;
-    }
-
-    private Boolean checkArrays(Double[][] products, double mul){
-        for(int i = 0; i < products[0].length; i++){
-            Boolean check = false;
-            for(int j = 0; j < products.length; j++){
-                if(checkCondition(products[j][i], i, mul)){
-                    check = true;
-                    break;
+    private Boolean checkIfLegal(List<List<Box>> results){
+        int[] min = new int[numOfProducers];
+        for(var list: results){
+            allToMinusOne(min);
+            for(var box: list){
+                int index = box.getIndex();
+                int val = box.getVal();
+                if(min[index] > val){
+                    return false;
                 }
+                min[index] = val;
             }
-            if(!check){
+        }
+        return true;
+    }
+
+    void allToMinusOne(int[] v){
+        Arrays.fill(v, -1);
+    }
+    Boolean compareResults(Box[] sortedData, List<Box> products) {
+        for(int i = 0; i < products.size(); i++){
+            if(sortedData[i].getVal() != products.get(i).getVal()){
                 return false;
             }
         }
         return true;
+    }
+
+    Box[][] scanTheArray(List<List<Box>> results, int n) {
+        Box[][] sortedData = new Box[results.size()][n];
+        for(var list: results){
+            for(var box: list){
+                int val = box.getVal();
+                int index = box.getIndex();
+                sortedData[index][val] = box;
+            }
+        }
+        return sortedData;
+    }
+
+    List<Box> createBoxList(int index, int length){
+        List<Box> list = new ArrayList<>();
+        for(int i = 0; i < length; i++){
+            list.add(new Box(i, index));
+        }
+        return list;
     }
 
 }

@@ -5,6 +5,7 @@ import experis.ds.ThreadSafeQueue;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -12,28 +13,36 @@ class EnqueueIteratorTest {
 
     @Test
     void enqueueIteratorTest() {
-        ThreadSafeQueue<Integer> queue = new ThreadSafeQueue<>(1000);
-        ArrayList<Integer> products = new ArrayList<>();
+        ThreadSafeQueue<Box> queue = new ThreadSafeQueue<>(100);
+        List<Box> products;
 
-        for (int i = 0; i < 1500; i++) {
-            products.add(i);
-        }
+        final int N = 2000;
+        products = createBoxList(0, N);
 
-        Consumer<Integer> consumer = new Consumer<>(new Integer[1000], queue);
+        Consumer consumer = new Consumer(queue);
         Thread thread = new Thread(consumer);
 
         thread.start();
         queue.enqueue(products.iterator());
+        queue.enqueue(new Box(-1, 1));
         try {
             thread.join();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
-        Integer[] result = consumer.getProducts();
-        for(int i = 0; i < result.length; i++){
-            assertEquals(result[i], products.get(i));
+        List<Box> result = consumer.getProducts();
+        for (int i = 0; i < result.size(); i++) {
+            assertEquals(result.get(i), products.get(i));
         }
-        assertEquals(500, queue.size());
+        assertEquals(1, queue.size());
+    }
+
+    List<Box> createBoxList(int index, int length) {
+        List<Box> list = new ArrayList<>();
+        for (int i = 0; i < length; i++) {
+            list.add(new Box(i, index));
+        }
+        return list;
     }
 }

@@ -1,22 +1,31 @@
 package experis.ds;
 
-public class Consumer<T> implements Runnable{
-    ThreadSafeQueue<T> queue;
-    T[] products;
+import experis.ds.tests.Box;
 
-    public Consumer(T[] products, ThreadSafeQueue<T> queue){
+import java.util.ArrayList;
+import java.util.List;
+
+public class Consumer implements Runnable{
+    private final ThreadSafeQueue<Box> queue;
+    private final List<Box> products = new ArrayList<>();
+
+    public Consumer(ThreadSafeQueue<Box> queue){
         this.queue = queue;
-        this.products = products;
     }
 
     @Override
     public void run() {
-        for(int i = 0; i < products.length; i++){
-            products[i] = queue.dequeue();
+        while(true){
+            Box box = queue.dequeue();
+            if(box.getVal() == -1){
+                queue.enqueue(box);
+                return;
+            }
+            products.add(box);
         }
     }
 
-    public T[] getProducts(){
+    public List<Box> getProducts(){
         return products;
     }
 }

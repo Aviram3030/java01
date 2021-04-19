@@ -5,22 +5,23 @@ import experis.ds.Producer;
 import experis.ds.ThreadSafeQueue;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class TwoConsumersToOneProducer {
 
     @Test
     void twoConsumersToOneProducer() throws InterruptedException {
-        ThreadSafeQueue<Integer> queue = new ThreadSafeQueue<>(100);
-        Integer[] products = new Integer[2000];
+        ThreadSafeQueue<Box> queue = new ThreadSafeQueue<>(10);
+        final int N = 2000;
 
-        for (int i = 0; i < products.length; i++) {
-            products[i] = i;
-        }
+        List<Box> products = createBoxList(0, N);
 
-        Consumer<Integer> firstConsumer = new Consumer<>(new Integer[1000], queue);
-        Consumer<Integer> secondConsumer = new Consumer<>(new Integer[1000], queue);
-        Producer<Integer> producer = new Producer<>(products, queue);
+        Consumer firstConsumer = new Consumer(queue);
+        Consumer secondConsumer = new Consumer(queue);
+        Producer producer = new Producer(products, queue);
 
         Thread firstConsumerThread = new Thread(firstConsumer);
         Thread secondConsumerThread = new Thread(secondConsumer);
@@ -32,23 +33,44 @@ class TwoConsumersToOneProducer {
         producerThread.start();
 
         try {
+            producerThread.join();
+            queue.enqueue(new Box(-1, 0));
             firstConsumerThread.join();
             secondConsumerThread.join();
-            producerThread.join();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
-        assertTrue(checkArrays(firstConsumer.getProducts(), secondConsumer.getProducts()));
-        assertEquals(0, queue.size());
+        List<Box> firstList = firstConsumer.getProducts();
+        List<Box> secondList = secondConsumer.getProducts();
+        assertTrue(checkLists(firstList, secondList));
+
     }
 
-    private Boolean checkArrays(Integer[] firstProducts, Integer[] secondProducts) {
-        for(int i = 0; i < firstProducts.length; i++){
-            if(firstProducts[i] > 2 * i && secondProducts[i] > 2 * i){
+    private Boolean checkLists(List<Box> firstList, List<Box> secondList) {
+        int firstPointer = 0;
+        int secondPointer = 0;
+        int length = firstList.size() + secondList.size();
+        for(int i = 0; i < length; i++){
+            if(firstPointer != firstList.size() && firstList.get(firstPointer).getVal() == i){
+                firstPointer++;
+            }
+            else if(secondPointer != secondList.size() && secondList.get(secondPointer).getVal() == i){
+                secondPointer++;
+            }
+            else{
                 return false;
             }
         }
         return true;
+    }
+
+    List<Box> createBoxList(int index, int length){
+        List<Box> list= new ArrayList<>();
+        for(int i = 0; i < length; i++){
+            list.add(new Box(i, index));
+        }
+
+        return list;
     }
 }

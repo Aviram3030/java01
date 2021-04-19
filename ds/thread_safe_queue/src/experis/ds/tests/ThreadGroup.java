@@ -16,6 +16,15 @@ public class ThreadGroup {
         }
     }
 
+    public ThreadGroup(Runnable[] runners){
+        this.runners = runners;
+        threads = new Thread[runners.length];
+
+        for (int i = 0; i < threads.length; i++) {
+            threads[i] = new Thread(runners[i]);
+        }
+    }
+
     public void start(){
         for (var t : threads) {
             t.start();

@@ -5,23 +5,24 @@ import experis.ds.Producer;
 import experis.ds.ThreadSafeQueue;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class TwoProducersToOneConsumer {
 
     @Test
     void twoProducersToOneConsumer() throws InterruptedException {
-        ThreadSafeQueue<Integer> queue = new ThreadSafeQueue<>(100);
-        Integer[] products = new Integer[1000];
+        ThreadSafeQueue<Box> queue = new ThreadSafeQueue<>(100);
+        final int N = 1000;
 
-        for (int i = 0; i < products.length; i++) {
-            products[i] = i;
-        }
+        List <Box> firstProducts = createBoxList(0, N);
+        List <Box> secondProducts = createBoxList(1, N / 2);
 
-        Producer<Integer> firstProducer = new Producer<>(products, queue);
-        Producer<Integer> secondProducer = new Producer<>(products, queue);
-        Consumer<Integer> consumer = new Consumer<>(new Integer[2000], queue);
+        Producer firstProducer = new Producer(firstProducts, queue);
+        Producer secondProducer = new Producer(secondProducts, queue);
+        Consumer consumer = new Consumer(queue);
 
         Thread firstProducerThread = new Thread(firstProducer);
         Thread secondProducerThread = new Thread(secondProducer);
@@ -34,28 +35,50 @@ class TwoProducersToOneConsumer {
 
         try {
             firstProducerThread.join();
-            consumerThread.join();
             secondProducerThread.join();
+            queue.enqueue(new Box(-1,0));
+            consumerThread.join();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
-        Integer[] arr = consumer.getProducts();
-        assertTrue(checkArray(arr));
-        assertEquals(0, queue.size());
+        List<Box> result = consumer.getProducts();
+        assertTrue(checkList(result));
     }
 
-    private Boolean checkArray(Integer[] arr) {
-        int max = 0;
-        for(Integer num: arr){
-            if(max + 1 < num){
-                return false;
+    private Boolean checkList(List<Box> list) {
+        int firstMin = -1;
+        int secondMin = -1;
+
+        for(var box: list){
+            if(box.getIndex() == 1){
+                int val = box.getVal();
+                if(val < firstMin){
+                    return false;
+                }
+                else{
+                    firstMin = val;
+                }
             }
-            else if(max + 1 == num){
-                max = num;
+            else if(box.getIndex() == 2){
+                int val = box.getVal();
+                if(val < secondMin){
+                    return false;
+                }
+                else{
+                    secondMin = val;
+                }
             }
         }
-
         return true;
+    }
+
+    List<Box> createBoxList(int index, int length){
+        List<Box> list= new ArrayList<>();
+        for(int i = 0; i < length; i++){
+            list.add(new Box(i, index));
+        }
+
+        return list;
     }
 }

@@ -1,14 +1,13 @@
 package experis.ds;
 
 import java.util.Iterator;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BooleanSupplier;
 
 public class ThreadSafeQueue <T>{
     private final T[] data;
-    private final Object firstLock = new Object();
-    private static AtomicInteger enqueueWaiting = new AtomicInteger();
-    private static AtomicInteger dequeueWaiting = new AtomicInteger();
+    private final Object lock = new Object();
+    private int enqueueWaiting = 0;
+    private int dequeueWaiting = 0;
     private int size = 0;
     private int head = 0;
     private int tail = 0;
@@ -18,34 +17,34 @@ public class ThreadSafeQueue <T>{
     }
 
     public void enqueue(T a){
-        synchronized (firstLock){
-            enqueueWaiting.incrementAndGet();
+        synchronized (lock){
+            ++enqueueWaiting;
             waitWhile(this::full);
-            enqueueWaiting.decrementAndGet();
+            --enqueueWaiting;
 
             data[tail] = a;
             tail = (tail + 1) % data.length;
             size++;
 
-            if(dequeueWaiting.get() != 0){
-                firstLock.notify();
+            if(dequeueWaiting != 0){
+                lock.notify();
             }
         }
     }
 
     public T dequeue(){
         T val;
-        synchronized (firstLock){
-            dequeueWaiting.incrementAndGet();
+        synchronized (lock){
+            ++dequeueWaiting;
             waitWhile(this::empty);
-            dequeueWaiting.decrementAndGet();
+            --dequeueWaiting;
 
             val = data[head];
             data[head] = null;
             head = (head + 1) % data.length;
             size--;
-            if(enqueueWaiting.get() != 0){
-                firstLock.notify();
+            if(enqueueWaiting != 0){
+                lock.notify();
             }
         }
         return val;
@@ -54,7 +53,7 @@ public class ThreadSafeQueue <T>{
     private void waitWhile(BooleanSupplier waitReason){
         while(waitReason.getAsBoolean()){
             try {
-                firstLock.wait();
+                lock.wait();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -62,34 +61,36 @@ public class ThreadSafeQueue <T>{
     }
 
     public void enqueue(Iterator<T> iterator){
-        while (iterator.hasNext()) {
-            enqueue(iterator.next());
+        synchronized (lock) {
+            while (iterator.hasNext()) {
+                enqueue(iterator.next());
+            }
         }
     }
 
     public int size(){
-        synchronized (firstLock) {
+        synchronized (lock) {
             return size;
         }
     }
 
     public Boolean isEmpty(){
-        return size == 0;
+        synchronized (lock) {
+            return empty();
+        }
     }
 
     private Boolean empty(){
-        synchronized (firstLock) {
-            return isEmpty();
-        }
+        return size == 0;
     }
 
     public Boolean isFull(){
-        return size == data.length;
+        synchronized (lock) {
+            return full();
+        }
     }
 
     private Boolean full(){
-        synchronized (firstLock) {
-            return isFull();
-        }
+        return size == data.length;
     }
 }

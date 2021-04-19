@@ -1,18 +1,23 @@
 package experis.ds;
 
-public class Producer<T> implements Runnable{
-    ThreadSafeQueue<T> queue;
-    T[] products;
+import experis.ds.tests.Box;
 
-    public Producer(T[] products, ThreadSafeQueue<T> queue){
+import java.util.ArrayList;
+import java.util.List;
+
+public class Producer implements Runnable{
+    private final ThreadSafeQueue<Box> queue;
+    private final List<Box> products;
+
+    public Producer(List<Box> products, ThreadSafeQueue<Box> queue){
         this.queue = queue;
         this.products = products;
     }
 
     @Override
     public void run() {
-        for (T product : products) {
-            queue.enqueue(product);
+        for (var item : products) {
+            queue.enqueue(item);
         }
     }
 }
