@@ -1,13 +1,14 @@
 package experis.ds;
 
 import java.util.Iterator;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BooleanSupplier;
 
 public class ThreadSafeQueue <T>{
     private final T[] data;
     private final Object firstLock = new Object();
-    private final Object secondLock = new Object();
-    private final Object thirdLock = new Object();
+    private static AtomicInteger enqueueWaiting = new AtomicInteger();
+    private static AtomicInteger dequeueWaiting = new AtomicInteger();
     private int size = 0;
     private int head = 0;
     private int tail = 0;
@@ -18,31 +19,34 @@ public class ThreadSafeQueue <T>{
 
     public void enqueue(T a){
         synchronized (firstLock){
+            enqueueWaiting.incrementAndGet();
             waitWhile(this::full);
+            enqueueWaiting.decrementAndGet();
 
             data[tail] = a;
             tail = (tail + 1) % data.length;
             size++;
-            firstLock.notifyAll();
-        }
-    }
 
-    public void enqueue(Iterator<T> iterator){
-        while (iterator.hasNext()) {
-            enqueue(iterator.next());
+            if(dequeueWaiting.get() != 0){
+                firstLock.notify();
+            }
         }
     }
 
     public T dequeue(){
         T val;
         synchronized (firstLock){
+            dequeueWaiting.incrementAndGet();
             waitWhile(this::empty);
+            dequeueWaiting.decrementAndGet();
 
             val = data[head];
             data[head] = null;
             head = (head + 1) % data.length;
             size--;
-            firstLock.notifyAll();
+            if(enqueueWaiting.get() != 0){
+                firstLock.notify();
+            }
         }
         return val;
     }
@@ -54,6 +58,12 @@ public class ThreadSafeQueue <T>{
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    public void enqueue(Iterator<T> iterator){
+        while (iterator.hasNext()) {
+            enqueue(iterator.next());
         }
     }
 
