@@ -12,7 +12,7 @@ public class ThreadSafeQueue <T>{
     private int tail = 0;
 
     public ThreadSafeQueue(T[] data){
-        this.data = data;
+        this.data = data;  //data = (T[]) new Object[capacity];
     }
 
     public void enqueue(T a){
@@ -33,21 +33,8 @@ public class ThreadSafeQueue <T>{
     }
 
     public void enqueue(Iterator<T> iterator){
-        synchronized (firstLock) {
-            while (iterator.hasNext()) {
-                while(isFull()){
-                    try {
-                        firstLock.wait();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                data[tail] = iterator.next();
-                tail = (tail + 1) % data.length;
-                size++;
-                firstLock.notify();
-            }
+        while (iterator.hasNext()) {
+            enqueue(iterator.next());
         }
     }
 

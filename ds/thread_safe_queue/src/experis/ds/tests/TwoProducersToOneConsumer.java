@@ -5,12 +5,13 @@ import experis.ds.Producer;
 import experis.ds.ThreadSafeQueue;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class TwoProducersToOneConsumer {
 
     @Test
-    void twoProducersToOneConsumer() {
+    void twoProducersToOneConsumer() throws InterruptedException {
         ThreadSafeQueue<Integer> queue = new ThreadSafeQueue<>(new Integer[2000]);
         Integer[] products = new Integer[1000];
 
@@ -26,8 +27,9 @@ class TwoProducersToOneConsumer {
         Thread secondProducerThread = new Thread(secondProducer);
         Thread consumerThread = new Thread(consumer);
 
-        firstProducerThread.start();
         consumerThread.start();
+        Thread.sleep(100);
+        firstProducerThread.start();
         secondProducerThread.start();
 
         try {
@@ -40,6 +42,7 @@ class TwoProducersToOneConsumer {
 
         Integer[] arr = consumer.getProducts();
         assertTrue(checkArray(arr));
+        assertEquals(0, queue.size());
     }
 
     private Boolean checkArray(Integer[] arr) {

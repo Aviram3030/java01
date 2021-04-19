@@ -1,5 +1,8 @@
-package experis.ds;
+package experis.ds.tests;
 
+import experis.ds.Consumer;
+import experis.ds.Producer;
+import experis.ds.ThreadSafeQueue;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -7,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class TwoConsumersToOneProducer {
 
     @Test
-    void twoConsumersToOneProducer() {
+    void twoConsumersToOneProducer() throws InterruptedException {
         ThreadSafeQueue<Integer> queue = new ThreadSafeQueue<>(new Integer[2000]);
         Integer[] products = new Integer[2000];
 
@@ -25,8 +28,8 @@ class TwoConsumersToOneProducer {
 
         firstConsumerThread.start();
         secondConsumerThread.start();
+        Thread.sleep(100);
         producerThread.start();
-
 
         try {
             firstConsumerThread.join();
@@ -37,12 +40,12 @@ class TwoConsumersToOneProducer {
         }
 
         assertTrue(checkArrays(firstConsumer.getProducts(), secondConsumer.getProducts()));
+        assertEquals(0, queue.size());
     }
 
     private Boolean checkArrays(Integer[] firstProducts, Integer[] secondProducts) {
         for(int i = 0; i < firstProducts.length; i++){
             if(firstProducts[i] > 2 * i && secondProducts[i] > 2 * i){
-                System.out.println(i +" "+ firstProducts[i]);
                 return false;
             }
         }
