@@ -49,6 +49,7 @@ class TwoProducersToOneConsumer {
         List<Box> result = consumer.getProducts();
         assertTrue(checkList(result));
         assertFalse(queue.isFull());
+        assertFalse(queue.isEmpty());
         assertEquals(1, queue.size());
     }
 

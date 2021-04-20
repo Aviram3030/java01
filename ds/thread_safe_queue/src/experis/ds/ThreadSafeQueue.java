@@ -8,9 +8,6 @@ import java.util.function.BooleanSupplier;
 
 public class ThreadSafeQueue <T>{
     private final T[] data;
-    //private final Object lock = new Object();
-    //private int enqueueWaiting = 0;
-    //private int dequeueWaiting = 0;
     private int size = 0;
     private int head = 0;
     private int tail = 0;
