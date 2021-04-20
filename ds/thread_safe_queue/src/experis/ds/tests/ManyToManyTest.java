@@ -13,12 +13,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ManyToManyTest {
-    final int numOfProducers = 10;
+    final int numOfProducers = 1000;
     final int numOfConsumers = 50;
     final int N = 2000;
     List<List<Box>> products = new ArrayList<>();
     Producer[] producers = new Producer[numOfProducers];
-    ThreadSafeQueue<Box> queue = new ThreadSafeQueue<>(100);
+    ThreadSafeQueue<Box> queue = new ThreadSafeQueue<>(10);
 
     @Test
     void manyToMany() {

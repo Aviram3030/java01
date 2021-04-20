@@ -8,8 +8,7 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class TwoProducersToOneConsumer {
     ThreadSafeQueue<Box> queue = new ThreadSafeQueue<>(10);
@@ -49,6 +48,7 @@ class TwoProducersToOneConsumer {
 
         List<Box> result = consumer.getProducts();
         assertTrue(checkList(result));
+        assertFalse(queue.isFull());
         assertEquals(1, queue.size());
     }
 
