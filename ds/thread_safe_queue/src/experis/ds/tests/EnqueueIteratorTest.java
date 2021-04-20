@@ -11,14 +11,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class EnqueueIteratorTest {
 
+    ThreadSafeQueue<Box> queue = new ThreadSafeQueue<>(10);
+    final int N = 2000;
+    List<Box> products = new ArrayList<>();
+
     @Test
     void enqueueIteratorTest() {
-        ThreadSafeQueue<Box> queue = new ThreadSafeQueue<>(100);
-        List<Box> products;
-
-        final int N = 2000;
-        products = createBoxList(0, N);
-
         Consumer consumer = new Consumer(queue);
         Thread thread = new Thread(consumer);
 
@@ -36,13 +34,5 @@ class EnqueueIteratorTest {
             assertEquals(result.get(i), products.get(i));
         }
         assertEquals(1, queue.size());
-    }
-
-    List<Box> createBoxList(int index, int length) {
-        List<Box> list = new ArrayList<>();
-        for (int i = 0; i < length; i++) {
-            list.add(new Box(i, index));
-        }
-        return list;
     }
 }

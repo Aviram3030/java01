@@ -16,15 +16,13 @@ public class ThreadSafeQueue <T>{
         data = (T[]) new Object[capacity];
     }
 
-    public void enqueue(T a){
+    public void enqueue(T val){
         synchronized (lock){
             ++enqueueWaiting;
             waitWhile(this::full);
             --enqueueWaiting;
 
-            data[tail] = a;
-            tail = (tail + 1) % data.length;
-            size++;
+            insert(val);
 
             if(dequeueWaiting != 0){
                 lock.notify();
@@ -39,15 +37,28 @@ public class ThreadSafeQueue <T>{
             waitWhile(this::empty);
             --dequeueWaiting;
 
-            val = data[head];
-            data[head] = null;
-            head = (head + 1) % data.length;
-            size--;
+            val = remove();
+
             if(enqueueWaiting != 0){
                 lock.notify();
             }
         }
         return val;
+    }
+
+    private T remove(){
+        T val = data[head];
+        data[head] = null;
+        head = (head + 1) % data.length;
+        size--;
+
+        return val;
+    }
+
+    private void insert(T val){
+        data[tail] = val;
+        tail = (tail + 1) % data.length;
+        size++;
     }
 
     private void waitWhile(BooleanSupplier waitReason){

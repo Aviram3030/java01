@@ -12,12 +12,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class OneToOneTest {
 
+    ThreadSafeQueue<Box> queue = new ThreadSafeQueue<>(10);
+    final int N = 1000;
+    List<Box> products = new ArrayList<>();
+
     @Test
     void oneToOne() {
-        var queue = new ThreadSafeQueue<Box>(100);
-        final int N = 1000;
-
-        List<Box> products = createBoxList(0, N);
+        createBoxList();
         Producer producer = new Producer(products, queue);
         Consumer consumer = new Consumer(queue);
 
@@ -34,11 +35,10 @@ class OneToOneTest {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        queue.enqueue(new Box(-1, 0));
 
-        /* ArrayList<Box> result = consumer.getProducts();
+        List<Box> result = consumer.getProducts();
         compareLists(products, result);
-        assertEquals(0, queue.size()); */
+        assertEquals(1, queue.size());
     }
 
     void compareLists(List<Box> products, List<Box> result){
@@ -48,12 +48,9 @@ class OneToOneTest {
         }
     }
 
-    List<Box> createBoxList(int index, int length){
-        List<Box> list= new ArrayList<Box>();
-        for(int i = 0; i < length; i++){
-            list.add(new Box(i, index));
+    void createBoxList(){
+        for(int i = 0; i < N; i++){
+            products.add(new Box(i, 0));
         }
-
-        return list;
     }
 }

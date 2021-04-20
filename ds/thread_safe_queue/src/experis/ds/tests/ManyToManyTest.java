@@ -9,23 +9,21 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ManyToManyTest {
-    final int numOfProducers = 100;
-    final int numOfConsumers = 10;
+    final int numOfProducers = 10;
+    final int numOfConsumers = 50;
     final int N = 2000;
+    List<List<Box>> products = new ArrayList<>();
+    Producer[] producers = new Producer[numOfProducers];
+    ThreadSafeQueue<Box> queue = new ThreadSafeQueue<>(100);
 
     @Test
     void manyToMany() {
-        ThreadSafeQueue<Box> queue = new ThreadSafeQueue<>(100);
-
-        List<List<Box>> products = new ArrayList<>();
-        Producer[] producers = new Producer[numOfProducers];
-        for(int i = 0; i < numOfConsumers; i++){
-            products.add(createBoxList(i, N / (i+1)));
-            producers[i] = new Producer(products.get(i), queue);
-        }
+        createProducts();
+        createProducers();
 
         ThreadGroup threadGroupProducers = new ThreadGroup(producers);
         ThreadGroup threadGroupConsumers = new ThreadGroup(numOfConsumers,() -> new Consumer(queue));
@@ -46,29 +44,31 @@ class ManyToManyTest {
         for(int i = 0; i < consumers.length; i++){
             consumers[i] = (Consumer)threadGroupConsumers.get(i);
         }
-        List<List<Box>> results = new ArrayList<>(numOfConsumers);
+
+        List<List<Box>> results = new ArrayList<>();
         for(var consumer: consumers){
             results.add(consumer.getProducts());
         }
         assertTrue(checkIfLegal(results));
 
-        Box[][] sortedData = scanTheArray(results, N);
+        Box[][] sortedData = scanTheList(results, N);
         for(int i = 0; i < products.size(); i++) {
-            assertTrue(compareResults(sortedData[i], products.get(i)));
+            assertTrue(compare(sortedData[i], products.get(i)));
         }
+        assertEquals(1, queue.size());
     }
 
-    private Boolean checkIfLegal(List<List<Box>> results){
+    Boolean checkIfLegal(List<List<Box>> results){
         int[] min = new int[numOfProducers];
         for(var list: results){
             allToMinusOne(min);
             for(var box: list){
-                int index = box.getIndex();
+                int type = box.getType();
                 int val = box.getVal();
-                if(min[index] > val){
+                if(min[type] > val){
                     return false;
                 }
-                min[index] = val;
+                min[type] = val;
             }
         }
         return true;
@@ -77,7 +77,8 @@ class ManyToManyTest {
     void allToMinusOne(int[] v){
         Arrays.fill(v, -1);
     }
-    Boolean compareResults(Box[] sortedData, List<Box> products) {
+
+    Boolean compare(Box[] sortedData, List<Box> products) {
         for(int i = 0; i < products.size(); i++){
             if(sortedData[i].getVal() != products.get(i).getVal()){
                 return false;
@@ -86,13 +87,13 @@ class ManyToManyTest {
         return true;
     }
 
-    Box[][] scanTheArray(List<List<Box>> results, int n) {
-        Box[][] sortedData = new Box[results.size()][n];
+    Box[][] scanTheList(List<List<Box>> results, int n) {
+        Box[][] sortedData = new Box[numOfProducers][n];
         for(var list: results){
             for(var box: list){
                 int val = box.getVal();
-                int index = box.getIndex();
-                sortedData[index][val] = box;
+                int type = box.getType();
+                sortedData[type][val] = box;
             }
         }
         return sortedData;
@@ -106,4 +107,15 @@ class ManyToManyTest {
         return list;
     }
 
+    void createProducts(){
+        for(int i = 0; i < numOfProducers; i++){
+            products.add(createBoxList(i, N / (i+1)));
+        }
+    }
+
+    void createProducers(){
+        for(int i = 0; i < numOfProducers; i++){
+            producers[i] = new Producer(products.get(i), queue);
+        }
+    }
 }

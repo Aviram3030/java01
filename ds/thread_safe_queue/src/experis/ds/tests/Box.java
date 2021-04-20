@@ -2,18 +2,18 @@ package experis.ds.tests;
 
 public class Box {
     private final int val;
-    private final int index;
+    private final int type;
 
-    public Box(int val, int index){
+    public Box(int val, int type){
         this.val = val;
-        this.index = index;
+        this.type = type;
     }
 
     public int getVal(){
         return val;
     }
 
-    public int getIndex(){
-        return index;
+    public int getType(){
+        return type;
     }
 }

@@ -8,17 +8,17 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class TwoProducersToOneConsumer {
+    ThreadSafeQueue<Box> queue = new ThreadSafeQueue<>(10);
+    final int N = 1000;
 
     @Test
-    void twoProducersToOneConsumer() throws InterruptedException {
-        ThreadSafeQueue<Box> queue = new ThreadSafeQueue<>(100);
-        final int N = 1000;
-
-        List <Box> firstProducts = createBoxList(0, N);
-        List <Box> secondProducts = createBoxList(1, N / 2);
+    void twoProducersToOneConsumer() {
+        List<Box> firstProducts = createBoxList(0, N);
+        List<Box> secondProducts = createBoxList(1, N / 2);
 
         Producer firstProducer = new Producer(firstProducts, queue);
         Producer secondProducer = new Producer(secondProducts, queue);
@@ -29,7 +29,12 @@ class TwoProducersToOneConsumer {
         Thread consumerThread = new Thread(consumer);
 
         consumerThread.start();
-        Thread.sleep(100);
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         firstProducerThread.start();
         secondProducerThread.start();
 
@@ -44,6 +49,7 @@ class TwoProducersToOneConsumer {
 
         List<Box> result = consumer.getProducts();
         assertTrue(checkList(result));
+        assertEquals(1, queue.size());
     }
 
     private Boolean checkList(List<Box> list) {
@@ -51,7 +57,7 @@ class TwoProducersToOneConsumer {
         int secondMin = -1;
 
         for(var box: list){
-            if(box.getIndex() == 1){
+            if(box.getType() == 1){
                 int val = box.getVal();
                 if(val < firstMin){
                     return false;
@@ -60,7 +66,7 @@ class TwoProducersToOneConsumer {
                     firstMin = val;
                 }
             }
-            else if(box.getIndex() == 2){
+            else if(box.getType() == 2){
                 int val = box.getVal();
                 if(val < secondMin){
                     return false;
@@ -73,12 +79,11 @@ class TwoProducersToOneConsumer {
         return true;
     }
 
-    List<Box> createBoxList(int index, int length){
+    List<Box> createBoxList(int type, int length){
         List<Box> list= new ArrayList<>();
         for(int i = 0; i < length; i++){
-            list.add(new Box(i, index));
+            list.add(new Box(i, type));
         }
-
         return list;
     }
 }
