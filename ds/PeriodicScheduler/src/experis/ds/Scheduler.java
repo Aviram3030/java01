@@ -32,9 +32,9 @@ public class Scheduler {
     }
 
     public void stop(Runnable operation) {
-        Func<Task> func = Task::isSuspended;
+        StateChecker<Task> stateChecker = Task::isSuspended;
         StateChanger<Task> stateChanger = Task::stop;
-        action(operation, func, stateChanger);
+        action(operation, stateChecker, stateChanger);
         /*
         List<Thread> threads = threadsExtractor.get(operation);
         for (var thread : threads) {
@@ -53,9 +53,9 @@ public class Scheduler {
     }
 
     public void suspend(Runnable operation) {
-        Func<Task> func = (Task task) -> !task.isRunning();
+        StateChecker<Task> stateChecker = (Task task) -> !task.isRunning();
         StateChanger<Task> stateChanger = Task::suspend;
-        action(operation, func, stateChanger);
+        action(operation, stateChecker, stateChanger);
         /*
         List<Thread> threads = threadsExtractor.get(operation);
         for (var thread : threads) {
@@ -68,9 +68,9 @@ public class Scheduler {
     }
 
     public void resume(Runnable operation) {
-        Func<Task> func = (Task task) -> !task.isSuspended();
+        StateChecker<Task> stateChecker = (Task task) -> !task.isSuspended();
         StateChanger<Task> stateChanger = Task::resume;
-        action(operation, func, stateChanger);
+        action(operation, stateChecker, stateChanger);
 
         /* List<Thread> threads = threadsExtractor.get(operation);
         for (var thread : threads) {
@@ -82,13 +82,13 @@ public class Scheduler {
         }*/
     }
 
-    public void action(Runnable operation, Func<Task> func, StateChanger<Task> stateChanger){
+    public void action(Runnable operation, StateChecker<Task> stateChecker, StateChanger<Task> stateChanger){
 
         List<Thread> threads = threadsExtractor.get(operation);
         for (var thread : threads) {
             Task task = tasks.get(thread);
-            func.apply(task);
-            if (func.apply(task)) {
+            stateChecker.apply(task);
+            if (stateChecker.apply(task)) {
                 continue;
             }
             stateChanger.apply(task);

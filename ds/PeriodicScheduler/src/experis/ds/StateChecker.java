@@ -1,5 +1,5 @@
 package experis.ds;
 
-public interface Func<T>{
+public interface StateChecker<T>{
     Boolean apply(T element);
 }
