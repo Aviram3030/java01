@@ -54,13 +54,20 @@ public class Task implements Runnable {
 
     public void resume(){
         synchronized (lock) {
+            state = State.RUNNING;
             lock.notify();
         }
     }
 
-    public void setState(State state) {
+    public void suspend(){
         synchronized (lock) {
-            this.state = state;
+            state = State.SUSPENDED;
+        }
+    }
+
+    public void stop(){
+        synchronized (lock) {
+            state = State.FINISHED;
         }
     }
 

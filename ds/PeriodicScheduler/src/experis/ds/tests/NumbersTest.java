@@ -84,14 +84,14 @@ class NumbersTest {
         }
         assertTrue(list.size() > 8 && list.size() < 12);
 
-        scheduler.suspend((runnable));
+        scheduler.suspend(runnable);
         try {
             Thread.sleep(M);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
-        scheduler.resume((runnable));
+        scheduler.resume(runnable);
 
         try {
             Thread.sleep(M);
@@ -99,6 +99,7 @@ class NumbersTest {
             e.printStackTrace();
         }
 
+        System.out.println(list.size());
         assertTrue(list.size() > 17 && list.size() < 23);
     }
 }

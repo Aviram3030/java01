@@ -7,8 +7,8 @@ import java.util.concurrent.TimeUnit;
 
 public class Scheduler {
 
-    private HashMap<Runnable, List<Thread>> threadsExtractor = new HashMap<>();
-    private HashMap<Thread, Task> tasks = new HashMap<>();
+    private final HashMap<Runnable, List<Thread>> threadsExtractor = new HashMap<>();
+    private final HashMap<Thread, Task> tasks = new HashMap<>();
 
     public void schedule(Runnable operation, long period, TimeUnit timeUnit) {
         if (operation == null) {
@@ -32,14 +32,18 @@ public class Scheduler {
     }
 
     public void stop(Runnable operation) {
+        Func<Task> func = Task::isSuspended;
+        StateChanger<Task> stateChanger = Task::stop;
+        action(operation, func, stateChanger);
+        /*
         List<Thread> threads = threadsExtractor.get(operation);
         for (var thread : threads) {
             Task task = tasks.get(thread);
             if (task.isSuspended()) {
                 task.resume();
             }
-            task.setState(State.FINISHED);
-        }
+            task.stop();
+        } */
     }
 
     public void shutDown() {
@@ -49,25 +53,58 @@ public class Scheduler {
     }
 
     public void suspend(Runnable operation) {
+        Func<Task> func = (Task task) -> !task.isRunning();
+        StateChanger<Task> stateChanger = Task::suspend;
+        action(operation, func, stateChanger);
+        /*
         List<Thread> threads = threadsExtractor.get(operation);
         for (var thread : threads) {
             Task task = tasks.get(thread);
             if (!task.isRunning()) {
                 continue;
             }
-            task.setState(State.SUSPENDED);
-        }
+            task.suspend();
+        }*/
     }
 
     public void resume(Runnable operation) {
-        List<Thread> threads = threadsExtractor.get(operation);
+        Func<Task> func = (Task task) -> !task.isSuspended();
+        StateChanger<Task> stateChanger = Task::resume;
+        action(operation, func, stateChanger);
+
+        /* List<Thread> threads = threadsExtractor.get(operation);
         for (var thread : threads) {
             Task task = tasks.get(thread);
             if (!task.isSuspended()) {
                 continue;
             }
-            task.setState(State.RUNNING);
             task.resume();
+        }*/
+    }
+
+    public void action(Runnable operation, Func<Task> func, StateChanger<Task> stateChanger){
+
+        List<Thread> threads = threadsExtractor.get(operation);
+        for (var thread : threads) {
+            Task task = tasks.get(thread);
+            func.apply(task);
+            if (func.apply(task)) {
+                continue;
+            }
+            stateChanger.apply(task);
+        }
+    }
+
+
+    public void suspendAll(){
+        for (var runnable : threadsExtractor.keySet()) {
+            suspend(runnable);
+        }
+    }
+
+    public void resumeAll(){
+        for (var runnable : threadsExtractor.keySet()) {
+            resume(runnable);
         }
     }
 
