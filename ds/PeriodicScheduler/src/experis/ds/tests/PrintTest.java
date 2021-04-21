@@ -1,6 +1,7 @@
 package experis.ds.tests;
 
 import experis.ds.Scheduler;
+import experis.ds.SleepCalculatorType;
 import org.junit.jupiter.api.Test;
 
 import java.sql.Time;
@@ -14,8 +15,8 @@ class PrintTest {
 
     @Test
     void twoThreadsDifferentRunnable() {
-        scheduler.schedule(() -> System.out.println("HELLO"), 1, TimeUnit.MILLISECONDS);
-        scheduler.schedule(() -> System.out.println("GoodBye"), 1, TimeUnit.MILLISECONDS);
+        scheduler.schedule(() -> System.out.println("HELLO"), 1, TimeUnit.MILLISECONDS, SleepCalculatorType.DELAY);
+        scheduler.schedule(() -> System.out.println("GoodBye"), 1, TimeUnit.MILLISECONDS, SleepCalculatorType.DELAY);
 
         try {
             Thread.sleep(100);
@@ -30,10 +31,10 @@ class PrintTest {
     void fourThreadsSameRunnable(){
         Runnable runnable = () -> System.out.println("HELLO");
 
-        scheduler.schedule(runnable, 1, TimeUnit.MILLISECONDS);
-        scheduler.schedule(runnable, 1, TimeUnit.MILLISECONDS);
-        scheduler.schedule(runnable, 1, TimeUnit.MILLISECONDS);
-        scheduler.schedule(runnable, 1, TimeUnit.MILLISECONDS);
+        scheduler.schedule(runnable, 1, TimeUnit.MILLISECONDS, SleepCalculatorType.DELAY);
+        scheduler.schedule(runnable, 1, TimeUnit.MILLISECONDS, SleepCalculatorType.DELAY);
+        scheduler.schedule(runnable, 1, TimeUnit.MILLISECONDS, SleepCalculatorType.DELAY);
+        scheduler.schedule(runnable, 1, TimeUnit.MILLISECONDS, SleepCalculatorType.DELAY);
 
         try {
             Thread.sleep(2);
@@ -50,8 +51,8 @@ class PrintTest {
         Runnable firstRunnable = () -> System.out.println("HELLO");
         Runnable secondRunnable = () -> System.out.println("GoodBye");
 
-        scheduler.schedule(firstRunnable, N, TimeUnit.MILLISECONDS);
-        scheduler.schedule(secondRunnable, N, TimeUnit.MILLISECONDS);
+        scheduler.schedule(firstRunnable, N, TimeUnit.MILLISECONDS, SleepCalculatorType.DELAY);
+        scheduler.schedule(secondRunnable, N, TimeUnit.MILLISECONDS, SleepCalculatorType.DELAY);
 
         try {
             Thread.sleep(100);

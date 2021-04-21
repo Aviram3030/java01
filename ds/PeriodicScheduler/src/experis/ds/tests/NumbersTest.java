@@ -1,6 +1,7 @@
 package experis.ds.tests;
 
 import experis.ds.Scheduler;
+import experis.ds.SleepCalculatorType;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -20,7 +21,7 @@ class NumbersTest {
 
         List<Integer> list = new ArrayList<>();
         Runnable runnable = () -> list.add(1);
-        scheduler.schedule(runnable, N, TimeUnit.MILLISECONDS);
+        scheduler.schedule(runnable, N, TimeUnit.MILLISECONDS, SleepCalculatorType.DELAY);
         try {
             Thread.sleep(M);
         } catch (InterruptedException e) {
@@ -30,7 +31,7 @@ class NumbersTest {
         //System.out.println(list.size());
         assertTrue(list.size() > 8 && list.size() < 12);
 
-        scheduler.schedule(() -> list.add(1), N, TimeUnit.MILLISECONDS);
+        scheduler.schedule(() -> list.add(1), N, TimeUnit.MILLISECONDS, SleepCalculatorType.DELAY);
         try {
             Thread.sleep(M);
         } catch (InterruptedException e) {
@@ -49,8 +50,8 @@ class NumbersTest {
         Runnable firstRunnable = () -> a.getAndSet(a.get() + 1);
         Runnable secondRunnable = () -> a.getAndSet(a.get() - 1);
 
-        scheduler.schedule(firstRunnable, N, TimeUnit.MILLISECONDS);
-        scheduler.schedule(secondRunnable, N, TimeUnit.MILLISECONDS);
+        scheduler.schedule(firstRunnable, N, TimeUnit.MILLISECONDS, SleepCalculatorType.DELAY);
+        scheduler.schedule(secondRunnable, N, TimeUnit.MILLISECONDS, SleepCalculatorType.DELAY);
 
         try {
             Thread.sleep(M);
@@ -76,7 +77,7 @@ class NumbersTest {
 
         List<Integer> list = new ArrayList<>();
         Runnable runnable = () -> list.add(1);
-        scheduler.schedule(runnable, N, TimeUnit.MILLISECONDS);
+        scheduler.schedule(runnable, N, TimeUnit.MILLISECONDS, SleepCalculatorType.DELAY);
         try {
             Thread.sleep(M);
         } catch (InterruptedException e) {

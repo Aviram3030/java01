@@ -8,11 +8,13 @@ public class Task implements Runnable {
     private State state = State.RUNNING;
     private TimeUnit timeUnit;
     private final Object lock = new Object();
+    private SleepCalculator sleepCalculator;
 
-    public Task(Runnable operation, long period, TimeUnit timeUnit) {
+    public Task(Runnable operation, long period, TimeUnit timeUnit, SleepCalculator sleepCalculator) {
         this.operation = operation;
         this.period = period;
         this.timeUnit = timeUnit;
+        this.sleepCalculator = sleepCalculator;
     }
 
     @Override
@@ -34,8 +36,10 @@ public class Task implements Runnable {
                 long start = System.nanoTime();
                 operation.run();
                 long elapsedTime = System.nanoTime() - start;
-                long timeToWaitMils = getTimeToWait(elapsedTime) / nanosToMilli;
-                int timeToWaitNanos = (int)getTimeToWait(elapsedTime) % nanosToMilli;
+                long timePeriod = timeUnit.toNanos(period);
+                long timeToWait = sleepCalculator.calculate(timePeriod, elapsedTime);
+                long timeToWaitMils = timeToWait / nanosToMilli;
+                int timeToWaitNanos = (int)timeToWait % nanosToMilli;
 
                 try {
                     lock.wait(timeToWaitMils, timeToWaitNanos);

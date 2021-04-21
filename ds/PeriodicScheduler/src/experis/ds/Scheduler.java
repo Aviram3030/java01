@@ -10,7 +10,12 @@ public class Scheduler {
     private final HashMap<Runnable, List<Thread>> threadsExtractor = new HashMap<>();
     private final HashMap<Thread, Task> tasks = new HashMap<>();
 
-    public void schedule(Runnable operation, long period, TimeUnit timeUnit) {
+    public void schedule(Runnable operation, long period, TimeUnit timeUnit, SleepCalculatorType sleepCalculatorType) {
+        var sleepCalculator = getSleepCalculator(sleepCalculatorType);
+        schedule(operation, period, timeUnit, sleepCalculator);
+    }
+
+    public void schedule(Runnable operation, long period, TimeUnit timeUnit, SleepCalculator sleepCalculator) {
         if (operation == null) {
             return;
         }
@@ -19,7 +24,7 @@ public class Scheduler {
             list = new ArrayList<>();
             threadsExtractor.put(operation, list);
         }
-        Task task = new Task(operation, period, timeUnit);
+        Task task = new Task(operation, period, timeUnit, sleepCalculator);
         Thread thread = new Thread(task);
 
         add(thread, task, list);
@@ -29,6 +34,16 @@ public class Scheduler {
     private void add(Thread thread, Task task, List<Thread> list){
         tasks.put(thread, task);
         list.add(thread);
+    }
+
+    private SleepCalculator getSleepCalculator(SleepCalculatorType sleepCalculatorType){
+        if(sleepCalculatorType == SleepCalculatorType.DELAY){
+            return (long cycle, long elapsed) -> (cycle - elapsed) % cycle;
+        }
+        else if(sleepCalculatorType == SleepCalculatorType.IMMEDIATELY){
+            return (long cycle, long elapsed) -> Math.max(0, elapsed - cycle);
+        }
+        return null;
     }
 
     public void stop(Runnable operation) {

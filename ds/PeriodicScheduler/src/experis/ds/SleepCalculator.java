@@ -2,5 +2,5 @@ package experis.ds;
 
 @FunctionalInterface
 public interface SleepCalculator {
-    int calculate(int elapsed, int cycle);
+    long calculate(long elapsed, long cycle);
 }
