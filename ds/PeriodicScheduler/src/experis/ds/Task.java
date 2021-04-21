@@ -18,12 +18,12 @@ public class Task implements Runnable {
     @Override
     public void run() {
         final int nanosToMilli = 1_000_000;
-        while (!isFinished()) {
+        while (!finished()) {
             synchronized (lock) {
-                while(isSuspended()){
+                while(suspended()){
                     try {
                         lock.wait();
-                        if(isFinished()){
+                        if(finished()){
                             return;
                         }
                     } catch (InterruptedException e) {
@@ -64,14 +64,32 @@ public class Task implements Runnable {
     }
 
     public Boolean isRunning(){
+        synchronized (lock) {
+            return running();
+        }
+    }
+
+    private Boolean running(){
         return state == State.RUNNING;
     }
 
     public Boolean isSuspended(){
+        synchronized (lock) {
+            return suspended();
+        }
+    }
+
+    private Boolean suspended(){
         return state == State.SUSPENDED;
     }
 
     public Boolean isFinished(){
+        synchronized (lock) {
+            return finished();
+        }
+    }
+
+    private Boolean finished(){
         return state == State.FINISHED;
     }
 

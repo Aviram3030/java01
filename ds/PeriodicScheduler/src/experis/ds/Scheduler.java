@@ -22,9 +22,13 @@ public class Scheduler {
         Task task = new Task(operation, period, timeUnit);
         Thread thread = new Thread(task);
 
+        add(thread, task, list);
+        thread.start();
+    }
+
+    private void add(Thread thread, Task task, List<Thread> list){
         tasks.put(thread, task);
         list.add(thread);
-        thread.start();
     }
 
     public void stop(Runnable operation) {

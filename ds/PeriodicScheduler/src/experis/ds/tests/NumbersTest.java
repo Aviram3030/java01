@@ -36,7 +36,7 @@ class NumbersTest {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        assertTrue(list.size() > 17 && list.size() < 23);
+        assertTrue(list.size() > 16 && list.size() < 24);
         scheduler.shutDown();
     }
 
