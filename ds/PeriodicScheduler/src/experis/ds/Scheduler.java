@@ -1,85 +1,95 @@
 package experis.ds;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-
-class Pair{
-    private final Thread thread;
-    private final TaskRunner TaskRunner;
-
-    public Pair(TaskRunner TaskRunner){
-        this.TaskRunner = TaskRunner;
-        this.thread = new Thread(TaskRunner);
-    }
-
-    public TaskRunner getTaskRunner() {
-        return TaskRunner;
-    }
-
-    public Thread getThread() {
-        return thread;
-    }
-}
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class Scheduler {
-    private HashMap<Runnable,Pair> tasks = new HashMap<>();
 
-    public void schedule(Runnable runnable, long period){
-        if(runnable == null){
+    private HashMap<Runnable, List<Thread>> threadsExtractor = new HashMap<>();
+    private HashMap<Thread, Task> tasks = new HashMap<>();
+
+    public void schedule(Runnable operation, long period, TimeUnit timeUnit) {
+        if (operation == null) {
             return;
         }
-
-        Pair pair = tasks.get(runnable);
-        if(pair == null){
-            TaskRunner taskRunner = new TaskRunner(runnable, period);
-            tasks.put(runnable, new Pair(taskRunner));
+        List<Thread> list = threadsExtractor.get(operation);
+        if (list == null) {
+            list = new ArrayList<>();
+            threadsExtractor.put(operation, list);
         }
-        pair.getThread().start();
+        Task task = new Task(operation, period, timeUnit);
+        Thread thread = new Thread(task);
+
+        tasks.put(thread, task);
+        list.add(thread);
+        thread.start();
     }
 
-    public void stop(Runnable runnable){
-        Pair pair = tasks.get(runnable);
-        if(pair != null) {
-            Thread thread = pair.getThread();
-            thread.interrupt();
+    public void stop(Runnable operation) {
+        List<Thread> threads = threadsExtractor.get(operation);
+        for (var thread : threads) {
+            Task task = tasks.get(thread);
+            if (task.getState() == State.SUSPENDED) {
+                threads.notify();
+            }
+            task.setState(State.FINISHED);
+            task.stop();
         }
     }
 
-    public void stopAll(){
-        for(var runnable: tasks.keySet()){
+    public void shutDown() {
+        for (var runnable : threadsExtractor.keySet()) {
             stop(runnable);
         }
     }
 
-    public void suspend(Runnable runnable){
-        Pair pair = tasks.get(runnable);
-        if(pair == null){
-            return;
-        }
+    public void suspend(Runnable operation) {
+        List<Thread> threads = threadsExtractor.get(operation);
+        for (var thread : threads) {
+            Task task = tasks.get(thread);
+            if (task.getState() != State.RUNNING) {
+                continue;
+            }
 
-        Thread thread = pair.getThread();
-        try {
-            thread.wait();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+            task.setState(State.SUSPENDED);
         }
     }
 
-    public void resume(Runnable runnable){
-        Pair pair = tasks.get(runnable);
-        if(pair == null){
-            return;
-        }
+    public void resume(Runnable operation) {
+        List<Thread> threads = threadsExtractor.get(operation);
+        for (var thread : threads) {
+            Task task = tasks.get(thread);
+            if (task.getState() != State.SUSPENDED) {
+                continue;
+            }
 
-        Thread thread = pair.getThread();
-        thread.notify();
+            task.setState(State.RUNNING);
+            task.resume();
+        }
     }
 
-    public void reschedule(Runnable runnable, long period){
-        Pair pair = tasks.get(runnable);
-        TaskRunner taskRunner = pair.getTaskRunner();
-        if(taskRunner == null){
-            schedule(runnable, period);
+    public void reschedule(Runnable operation, long period, TimeUnit timeunit) {
+        List<Thread> threads = threadsExtractor.get(operation);
+        for (var thread : threads) {
+            Task task = tasks.get(thread);
+            if (task.getState() == State.FINISHED) {
+                continue;
+            }
+
+            task.setPeriod(period);
+            task.setTimeUnit(timeunit);
         }
-        taskRunner.setPeriod(period);
+    }
+
+
+    private void action(Runnable operation, Func func) {
+        List<Thread> threads = threadsExtractor.get(operation);
+        for (var thread : threads) {
+            Task task = tasks.get(thread);
+            func.apply();
+        }
     }
 }
+
