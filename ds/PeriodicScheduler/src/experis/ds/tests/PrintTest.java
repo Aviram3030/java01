@@ -44,7 +44,6 @@ class PrintTest {
         scheduler.shutDown();
     }
 
-    //not working
     @Test
     void reschedule() {
         final int N = 10;

@@ -55,7 +55,6 @@ public class Scheduler {
             if (!task.isRunning()) {
                 continue;
             }
-
             task.setState(State.SUSPENDED);
         }
     }
@@ -67,7 +66,6 @@ public class Scheduler {
             if (!task.isSuspended()) {
                 continue;
             }
-
             task.setState(State.RUNNING);
             task.resume();
         }
