@@ -31,11 +31,10 @@ public class Scheduler {
         List<Thread> threads = threadsExtractor.get(operation);
         for (var thread : threads) {
             Task task = tasks.get(thread);
-            if (task.getState() == State.SUSPENDED) {
-                threads.notify();
+            if (task.isSuspended()) {
+                task.resume();
             }
             task.setState(State.FINISHED);
-            task.stop();
         }
     }
 
@@ -49,7 +48,7 @@ public class Scheduler {
         List<Thread> threads = threadsExtractor.get(operation);
         for (var thread : threads) {
             Task task = tasks.get(thread);
-            if (task.getState() != State.RUNNING) {
+            if (!task.isRunning()) {
                 continue;
             }
 
@@ -61,7 +60,7 @@ public class Scheduler {
         List<Thread> threads = threadsExtractor.get(operation);
         for (var thread : threads) {
             Task task = tasks.get(thread);
-            if (task.getState() != State.SUSPENDED) {
+            if (!task.isSuspended()) {
                 continue;
             }
 
@@ -74,22 +73,13 @@ public class Scheduler {
         List<Thread> threads = threadsExtractor.get(operation);
         for (var thread : threads) {
             Task task = tasks.get(thread);
-            if (task.getState() == State.FINISHED) {
+            if (task.isFinished()) {
                 continue;
             }
-
             task.setPeriod(period);
             task.setTimeUnit(timeunit);
         }
     }
 
-
-    private void action(Runnable operation, Func func) {
-        List<Thread> threads = threadsExtractor.get(operation);
-        for (var thread : threads) {
-            Task task = tasks.get(thread);
-            func.apply();
-        }
-    }
 }
 

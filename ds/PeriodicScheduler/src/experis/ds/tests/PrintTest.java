@@ -60,7 +60,7 @@ class PrintTest {
             e.printStackTrace();
         }
 
-        scheduler.reschedule(firstRunnable, 5, TimeUnit.MILLISECONDS);
+        scheduler.reschedule(firstRunnable, 2, TimeUnit.MILLISECONDS);
         scheduler.reschedule(secondRunnable, N, TimeUnit.MILLISECONDS);
 
         try {

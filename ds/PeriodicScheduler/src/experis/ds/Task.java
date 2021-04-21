@@ -5,7 +5,6 @@ import java.util.concurrent.TimeUnit;
 public class Task implements Runnable {
     private final Runnable operation;
     private long period;
-    private Boolean alive = true;
     private State state = State.RUNNING;
     private TimeUnit timeUnit;
     private final Object lock = new Object();
@@ -19,11 +18,14 @@ public class Task implements Runnable {
     @Override
     public void run() {
         final int nanosToMilli = 1_000_000;
-        while (alive) {
+        while (!isFinished()) {
             synchronized (lock) {
-                while(state == State.SUSPENDED){
+                while(isSuspended()){
                     try {
                         lock.wait();
+                        if(isFinished()){
+                            return;
+                        }
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -44,15 +46,9 @@ public class Task implements Runnable {
         }
     }
 
-    public long getTimeToWait(long elapsedTime) {
+    private long getTimeToWait(long elapsedTime) {
         long nanoSecondsPeriod = timeUnit.toNanos(period);
         return (nanoSecondsPeriod - elapsedTime) % nanoSecondsPeriod;
-    }
-
-    public void stop() {
-        synchronized (lock) {
-            alive = false;
-        }
     }
 
     public void resume(){
@@ -62,11 +58,21 @@ public class Task implements Runnable {
     }
 
     public void setState(State state) {
-        this.state = state;
+        synchronized (lock) {
+            this.state = state;
+        }
     }
 
-    public State getState() {
-        return state;
+    public Boolean isRunning(){
+        return state == State.RUNNING;
+    }
+
+    public Boolean isSuspended(){
+        return state == State.SUSPENDED;
+    }
+
+    public Boolean isFinished(){
+        return state == State.FINISHED;
     }
 
     public void setPeriod(long period) {
