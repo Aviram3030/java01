@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class NumbersTest {
+class CalculationsTest {
     Scheduler scheduler = new Scheduler();
 
     @Test
@@ -27,8 +27,8 @@ class NumbersTest {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
         scheduler.shutDown();
-        //System.out.println(list.size());
         assertTrue(list.size() > 8 && list.size() < 12);
 
         scheduler.schedule(() -> list.add(1), N, TimeUnit.MILLISECONDS, SleepCalculatorType.DELAY);
@@ -100,7 +100,6 @@ class NumbersTest {
             e.printStackTrace();
         }
 
-        System.out.println(list.size());
         assertTrue(list.size() > 17 && list.size() < 23);
     }
 }

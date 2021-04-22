@@ -15,8 +15,8 @@ class PrintTest {
 
     @Test
     void twoThreadsDifferentRunnable() {
-        scheduler.schedule(() -> System.out.println("HELLO"), 1, TimeUnit.MILLISECONDS, SleepCalculatorType.DELAY);
-        scheduler.schedule(() -> System.out.println("GoodBye"), 1, TimeUnit.MILLISECONDS, SleepCalculatorType.DELAY);
+        scheduler.schedule(() -> System.out.print("0 "), 1, TimeUnit.MILLISECONDS, SleepCalculatorType.DELAY);
+        scheduler.schedule(() -> System.out.print("1 "), 1, TimeUnit.MILLISECONDS, SleepCalculatorType.DELAY);
 
         try {
             Thread.sleep(100);
@@ -29,7 +29,7 @@ class PrintTest {
 
     @Test
     void fourThreadsSameRunnable(){
-        Runnable runnable = () -> System.out.println("HELLO");
+        Runnable runnable = () -> System.out.print("0 ");
 
         scheduler.schedule(runnable, 1, TimeUnit.MILLISECONDS, SleepCalculatorType.DELAY);
         scheduler.schedule(runnable, 1, TimeUnit.MILLISECONDS, SleepCalculatorType.DELAY);
@@ -48,8 +48,8 @@ class PrintTest {
     @Test
     void reschedule() {
         final int N = 10;
-        Runnable firstRunnable = () -> System.out.println("HELLO");
-        Runnable secondRunnable = () -> System.out.println("GoodBye");
+        Runnable firstRunnable = () -> System.out.print("0 ");
+        Runnable secondRunnable = () -> System.out.print("1 ");
 
         scheduler.schedule(firstRunnable, N, TimeUnit.MILLISECONDS, SleepCalculatorType.DELAY);
         scheduler.schedule(secondRunnable, N, TimeUnit.MILLISECONDS, SleepCalculatorType.DELAY);
@@ -59,6 +59,8 @@ class PrintTest {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
+        System.out.println("\n0 goes faster");
 
         scheduler.reschedule(firstRunnable, 2, TimeUnit.MILLISECONDS);
         scheduler.reschedule(secondRunnable, N, TimeUnit.MILLISECONDS);

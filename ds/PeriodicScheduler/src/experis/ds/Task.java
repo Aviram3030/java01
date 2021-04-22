@@ -1,14 +1,20 @@
 package experis.ds;
 
+import experis.ds.lmbda.SleepCalculator;
+
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class Task implements Runnable {
     private final Runnable operation;
     private long period;
     private State state = State.RUNNING;
     private TimeUnit timeUnit;
-    private final Object lock = new Object();
-    private SleepCalculator sleepCalculator;
+    private final Lock guard = new ReentrantLock(true);
+    private final Condition active = guard.newCondition();
+    private final SleepCalculator sleepCalculator;
 
     public Task(Runnable operation, long period, TimeUnit timeUnit, SleepCalculator sleepCalculator) {
         this.operation = operation;
@@ -19,101 +25,116 @@ public class Task implements Runnable {
 
     @Override
     public void run() {
-        final int nanosToMilli = 1_000_000;
-        while (!finished()) {
-            synchronized (lock) {
-                while(suspended()){
-                    try {
-                        lock.wait();
-                        if(finished()){
-                            return;
-                        }
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
+        while (true) {
+            guard.lock();
+            if(finished()){
+                guard.unlock();
+                break;
+            }
 
-                long start = System.nanoTime();
-                operation.run();
-                long elapsedTime = System.nanoTime() - start;
-                long timePeriod = timeUnit.toNanos(period);
-                long timeToWait = sleepCalculator.calculate(timePeriod, elapsedTime);
-                long timeToWaitMils = timeToWait / nanosToMilli;
-                int timeToWaitNanos = (int)timeToWait % nanosToMilli;
-
+            while (suspended()) {
                 try {
-                    lock.wait(timeToWaitMils, timeToWaitNanos);
+                    active.await();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
+
+            execute();
+            guard.unlock();
         }
     }
 
-    // make class Time ???
+    private void execute(){
+        long start = System.nanoTime();
+        operation.run();
+        long elapsedTime = System.nanoTime() - start;
+        sleep(elapsedTime);
+    }
+
+    private void sleep(long elapsedTime) {
+        final int nanosToMilli = 1_000_000;
+        long timeToWait = getTimeToWait(elapsedTime);
+        long timeToWaitMils = timeToWait / nanosToMilli;
+        int timeToWaitNanos = (int) timeToWait % nanosToMilli;
+
+        goOff(timeToWaitMils, timeToWaitNanos);
+    }
+
     private long getTimeToWait(long elapsedTime) {
-        long nanoSecondsPeriod = timeUnit.toNanos(period);
-        return (nanoSecondsPeriod - elapsedTime) % nanoSecondsPeriod;
+        long timePeriod = timeUnit.toNanos(period);
+        return sleepCalculator.calculate(timePeriod, elapsedTime);
     }
 
-    public void resume(){
-        synchronized (lock) {
-            state = State.RUNNING;
-            lock.notify();
+    private void goOff(long timeToWaitMils, int timeToWaitNanos){
+        try {
+            Thread.sleep(timeToWaitMils, timeToWaitNanos);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 
-    public void suspend(){
-        synchronized (lock) {
-            state = State.SUSPENDED;
-        }
+    public void resume() {
+        guard.lock();
+        state = State.RUNNING;
+        active.signal();
+        guard.unlock();
     }
 
-    public void stop(){
-        synchronized (lock) {
-            state = State.FINISHED;
-        }
+    public void suspend() {
+        guard.lock();
+        state = State.SUSPENDED;
+        guard.unlock();
     }
 
-    public Boolean isRunning(){
-        synchronized (lock) {
-            return running();
-        }
+    public void stop() {
+        guard.lock();
+        state = State.FINISHED;
+        guard.unlock();
     }
 
-    private Boolean running(){
+    public Boolean isRunning() {
+        guard.lock();
+        Boolean present = running();
+        guard.unlock();
+        return present;
+    }
+
+    private Boolean running() {
         return state == State.RUNNING;
     }
 
-    public Boolean isSuspended(){
-        synchronized (lock) {
-            return suspended();
-        }
+    public Boolean isSuspended() {
+        guard.lock();
+        Boolean present = suspended();
+        guard.unlock();
+        return present;
     }
 
-    private Boolean suspended(){
+    private Boolean suspended() {
         return state == State.SUSPENDED;
     }
 
-    public Boolean isFinished(){
-        synchronized (lock) {
-            return finished();
-        }
+    public Boolean isFinished() {
+        guard.lock();
+        Boolean present = finished();
+        guard.unlock();
+        return present;
     }
 
-    private Boolean finished(){
+    private Boolean finished() {
         return state == State.FINISHED;
     }
 
     public void setPeriod(long period) {
-        synchronized (lock) {
-            this.period = period;
-        }
+        guard.lock();
+        this.period = period;
+        guard.unlock();
     }
 
     public void setTimeUnit(TimeUnit timeUnit) {
-        synchronized (lock) {
-            this.timeUnit = timeUnit;
-        }
+        guard.lock();
+        this.timeUnit = timeUnit;
+        guard.unlock();
     }
 }

@@ -1,6 +1,5 @@
-package experis.ds;
+package experis.ds.lmbda;
 
-@FunctionalInterface
 public interface SleepCalculator {
     long calculate(long elapsed, long cycle);
 }

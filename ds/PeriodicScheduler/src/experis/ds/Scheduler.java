@@ -1,14 +1,17 @@
 package experis.ds;
 
+import experis.ds.lmbda.SleepCalculator;
+import experis.ds.lmbda.StateChanger;
+import experis.ds.lmbda.StateChecker;
+
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 public class Scheduler {
-
-    private final HashMap<Runnable, List<Thread>> threadsExtractor = new HashMap<>();
-    private final HashMap<Thread, Task> tasks = new HashMap<>();
+    private final ConcurrentHashMap<Runnable, List<Thread>> threadsExtractor = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Thread, Task> tasks = new ConcurrentHashMap<>();
 
     public void schedule(Runnable operation, long period, TimeUnit timeUnit, SleepCalculatorType sleepCalculatorType) {
         var sleepCalculator = getSleepCalculator(sleepCalculatorType);
@@ -40,30 +43,19 @@ public class Scheduler {
         if(sleepCalculatorType == SleepCalculatorType.DELAY){
             return (long cycle, long elapsed) -> (cycle - elapsed) % cycle;
         }
-        else if(sleepCalculatorType == SleepCalculatorType.IMMEDIATELY){
-            return (long cycle, long elapsed) -> Math.max(0, elapsed - cycle);
-        }
-        return null;
+        return (long cycle, long elapsed) -> Math.max(0, elapsed - cycle);
+
     }
 
     public void stop(Runnable operation) {
-        StateChecker<Task> stateChecker = Task::isSuspended;
+        StateChecker<Task> stateChecker = Task::isFinished;
         StateChanger<Task> stateChanger = Task::stop;
         action(operation, stateChecker, stateChanger);
-        /*
-        List<Thread> threads = threadsExtractor.get(operation);
-        for (var thread : threads) {
-            Task task = tasks.get(thread);
-            if (task.isSuspended()) {
-                task.resume();
-            }
-            task.stop();
-        } */
     }
 
     public void shutDown() {
-        for (var runnable : threadsExtractor.keySet()) {
-            stop(runnable);
+        for (var operation : threadsExtractor.keySet()) {
+            stop(operation);
         }
     }
 
@@ -71,38 +63,18 @@ public class Scheduler {
         StateChecker<Task> stateChecker = (Task task) -> !task.isRunning();
         StateChanger<Task> stateChanger = Task::suspend;
         action(operation, stateChecker, stateChanger);
-        /*
-        List<Thread> threads = threadsExtractor.get(operation);
-        for (var thread : threads) {
-            Task task = tasks.get(thread);
-            if (!task.isRunning()) {
-                continue;
-            }
-            task.suspend();
-        }*/
     }
 
     public void resume(Runnable operation) {
         StateChecker<Task> stateChecker = (Task task) -> !task.isSuspended();
         StateChanger<Task> stateChanger = Task::resume;
         action(operation, stateChecker, stateChanger);
-
-        /* List<Thread> threads = threadsExtractor.get(operation);
-        for (var thread : threads) {
-            Task task = tasks.get(thread);
-            if (!task.isSuspended()) {
-                continue;
-            }
-            task.resume();
-        }*/
     }
 
     public void action(Runnable operation, StateChecker<Task> stateChecker, StateChanger<Task> stateChanger){
-
         List<Thread> threads = threadsExtractor.get(operation);
         for (var thread : threads) {
             Task task = tasks.get(thread);
-            stateChecker.apply(task);
             if (stateChecker.apply(task)) {
                 continue;
             }
@@ -110,16 +82,15 @@ public class Scheduler {
         }
     }
 
-
     public void suspendAll(){
-        for (var runnable : threadsExtractor.keySet()) {
-            suspend(runnable);
+        for (var operation : threadsExtractor.keySet()) {
+            suspend(operation);
         }
     }
 
     public void resumeAll(){
-        for (var runnable : threadsExtractor.keySet()) {
-            resume(runnable);
+        for (var operation : threadsExtractor.keySet()) {
+            resume(operation);
         }
     }
 
