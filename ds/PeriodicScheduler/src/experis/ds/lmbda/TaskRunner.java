@@ -1,5 +1,5 @@
 package experis.ds.lmbda;
 
-public interface StateChanger<T>{
+public interface TaskRunner<T>{
     void apply(T element);
 }

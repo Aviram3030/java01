@@ -1,5 +1,5 @@
 package experis.ds.lmbda;
 
-public interface StateChecker<T>{
+public interface StatusChecker<T>{
     Boolean apply(T element);
 }

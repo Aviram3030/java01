@@ -1,8 +1,8 @@
 package experis.ds;
 
 import experis.ds.lmbda.SleepCalculator;
-import experis.ds.lmbda.StateChanger;
-import experis.ds.lmbda.StateChecker;
+import experis.ds.lmbda.TaskRunner;
+import experis.ds.lmbda.StatusChecker;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,7 +66,9 @@ public class Scheduler {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+            taskExtractor.remove(thread);
         }
+        threadsExtractor.remove(operation);
     }
 
     public void shutDown() {
@@ -76,30 +78,32 @@ public class Scheduler {
     }
 
     public void suspendAll(){
-        for (var operation : threadsExtractor.keySet()) {
-            suspend(operation);
-        }
+        actionAll(this::suspend);
     }
 
     public void suspend(Runnable operation) {
-        StateChecker<Task> stateChecker = (Task task) -> !task.isRunning();
-        StateChanger<Task> stateChanger = Task::suspend;
+        StatusChecker<Task> stateChecker = (Task task) -> !task.isRunning();
+        TaskRunner<Task> stateChanger = Task::suspend;
         action(operation, stateChecker, stateChanger);
     }
 
     public void resumeAll(){
-        for (var operation : threadsExtractor.keySet()) {
-            resume(operation);
-        }
+        actionAll(this::resume);
     }
 
     public void resume(Runnable operation) {
-        StateChecker<Task> stateChecker = (Task task) -> !task.isSuspended();
-        StateChanger<Task> stateChanger = Task::resume;
+        StatusChecker<Task> stateChecker = (Task task) -> !task.isSuspended();
+        TaskRunner<Task> stateChanger = Task::resume;
         action(operation, stateChecker, stateChanger);
     }
 
-    public void action(Runnable operation, StateChecker<Task> stateChecker, StateChanger<Task> stateChanger){
+    public void actionAll(TaskRunner<Runnable> taskRunner){
+        for (var operation : threadsExtractor.keySet()) {
+            taskRunner.apply(operation);
+        }
+    }
+
+    public void action(Runnable operation, StatusChecker<Task> stateChecker, TaskRunner<Task> stateChanger){
         List<Thread> threads = threadsExtractor.get(operation);
         for (var thread : threads) {
             Task task = taskExtractor.get(thread);

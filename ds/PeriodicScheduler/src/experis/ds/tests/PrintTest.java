@@ -29,15 +29,15 @@ class PrintTest {
 
     @Test
     void fourThreadsSameRunnable(){
-        Runnable runnable = () -> System.out.print("0 ");
+        Runnable runnable = () -> System.out.println("0 ");
 
-        scheduler.schedule(runnable, 1, TimeUnit.MILLISECONDS, SleepCalculatorType.DELAY);
-        scheduler.schedule(runnable, 1, TimeUnit.MILLISECONDS, SleepCalculatorType.DELAY);
-        scheduler.schedule(runnable, 1, TimeUnit.MILLISECONDS, SleepCalculatorType.DELAY);
-        scheduler.schedule(runnable, 1, TimeUnit.MILLISECONDS, SleepCalculatorType.DELAY);
+        scheduler.schedule(runnable, 1, TimeUnit.SECONDS, SleepCalculatorType.DELAY);
+        scheduler.schedule(runnable, 1, TimeUnit.SECONDS, SleepCalculatorType.DELAY);
+        scheduler.schedule(runnable, 1, TimeUnit.SECONDS, SleepCalculatorType.DELAY);
+        scheduler.schedule(runnable, 1, TimeUnit.SECONDS, SleepCalculatorType.DELAY);
 
         try {
-            Thread.sleep(2);
+            Thread.sleep(10000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
