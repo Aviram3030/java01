@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 
 public class Scheduler {
     private final ConcurrentHashMap<Runnable, List<Thread>> threadsExtractor = new ConcurrentHashMap<>();
-    private final ConcurrentHashMap<Thread, Task> tasks = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Thread, Task> taskExtractor = new ConcurrentHashMap<>();
 
     public void schedule(Runnable operation, long period, TimeUnit timeUnit, SleepCalculatorType sleepCalculatorType) {
         var sleepCalculator = getSleepCalculator(sleepCalculatorType);
@@ -22,7 +22,7 @@ public class Scheduler {
         if (operation == null) {
             return;
         }
-        List<Thread> list = threadsExtractor.get(operation);
+        var list = threadsExtractor.get(operation);
         if (list == null) {
             list = new ArrayList<>();
             threadsExtractor.put(operation, list);
@@ -35,22 +35,38 @@ public class Scheduler {
     }
 
     private void add(Thread thread, Task task, List<Thread> list){
-        tasks.put(thread, task);
+        taskExtractor.put(thread, task);
         list.add(thread);
     }
 
     private SleepCalculator getSleepCalculator(SleepCalculatorType sleepCalculatorType){
         if(sleepCalculatorType == SleepCalculatorType.DELAY){
-            return (long cycle, long elapsed) -> (cycle - elapsed) % cycle;
+            return (long cycle, long elapsed) -> {
+                long num = (cycle - elapsed) % cycle;
+                if(num > 0) {
+                    return num;
+                }
+                return num + cycle;
+            };
         }
         return (long cycle, long elapsed) -> Math.max(0, elapsed - cycle);
 
     }
 
     public void stop(Runnable operation) {
-        StateChecker<Task> stateChecker = Task::isFinished;
-        StateChanger<Task> stateChanger = Task::stop;
-        action(operation, stateChecker, stateChanger);
+        List<Thread> threads = threadsExtractor.get(operation);
+        for (var thread : threads) {
+            Task task = taskExtractor.get(thread);
+            if (task.isFinished()) {
+                continue;
+            }
+            task.stop();
+            try {
+                thread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void shutDown() {
@@ -59,10 +75,22 @@ public class Scheduler {
         }
     }
 
+    public void suspendAll(){
+        for (var operation : threadsExtractor.keySet()) {
+            suspend(operation);
+        }
+    }
+
     public void suspend(Runnable operation) {
         StateChecker<Task> stateChecker = (Task task) -> !task.isRunning();
         StateChanger<Task> stateChanger = Task::suspend;
         action(operation, stateChecker, stateChanger);
+    }
+
+    public void resumeAll(){
+        for (var operation : threadsExtractor.keySet()) {
+            resume(operation);
+        }
     }
 
     public void resume(Runnable operation) {
@@ -74,7 +102,7 @@ public class Scheduler {
     public void action(Runnable operation, StateChecker<Task> stateChecker, StateChanger<Task> stateChanger){
         List<Thread> threads = threadsExtractor.get(operation);
         for (var thread : threads) {
-            Task task = tasks.get(thread);
+            Task task = taskExtractor.get(thread);
             if (stateChecker.apply(task)) {
                 continue;
             }
@@ -82,27 +110,14 @@ public class Scheduler {
         }
     }
 
-    public void suspendAll(){
-        for (var operation : threadsExtractor.keySet()) {
-            suspend(operation);
-        }
-    }
-
-    public void resumeAll(){
-        for (var operation : threadsExtractor.keySet()) {
-            resume(operation);
-        }
-    }
-
-    public void reschedule(Runnable operation, long period, TimeUnit timeunit) {
+    public void reschedule(Runnable operation, long period, TimeUnit timeUnit) {
         List<Thread> threads = threadsExtractor.get(operation);
         for (var thread : threads) {
-            Task task = tasks.get(thread);
+            Task task = taskExtractor.get(thread);
             if (task.isFinished()) {
                 continue;
             }
-            task.setPeriod(period);
-            task.setTimeUnit(timeunit);
+            task.setTime(timeUnit, period);
         }
     }
 

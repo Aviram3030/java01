@@ -1,5 +1,7 @@
 package experis.ds;
 
-public enum State {
+public enum Status {
     RUNNING, SUSPENDED, FINISHED
 }
+
+

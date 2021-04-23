@@ -7,12 +7,14 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class Task implements Runnable {
+class Task implements Runnable {
+    private final TimeUnit sleepForNanos = TimeUnit.NANOSECONDS;
     private final Runnable operation;
     private long period;
-    private State state = State.RUNNING;
+    private Status status = Status.RUNNING;
     private TimeUnit timeUnit;
     private final Lock guard = new ReentrantLock(true);
+    private final Lock lock = new ReentrantLock(true);
     private final Condition active = guard.newCondition();
     private final SleepCalculator sleepCalculator;
 
@@ -39,9 +41,11 @@ public class Task implements Runnable {
                     e.printStackTrace();
                 }
             }
-
-            execute();
             guard.unlock();
+
+            lock.lock();
+            execute();
+            lock.unlock();
         }
     }
 
@@ -53,43 +57,33 @@ public class Task implements Runnable {
     }
 
     private void sleep(long elapsedTime) {
-        final int nanosToMilli = 1_000_000;
-        long timeToWait = getTimeToWait(elapsedTime);
-        long timeToWaitMils = timeToWait / nanosToMilli;
-        int timeToWaitNanos = (int) timeToWait % nanosToMilli;
-
-        goOff(timeToWaitMils, timeToWaitNanos);
-    }
-
-    private long getTimeToWait(long elapsedTime) {
-        long timePeriod = timeUnit.toNanos(period);
-        return sleepCalculator.calculate(timePeriod, elapsedTime);
-    }
-
-    private void goOff(long timeToWaitMils, int timeToWaitNanos){
+        long cycle = timeUnit.toNanos(period);
+        long timeToSleep = sleepCalculator.calculate(cycle, elapsedTime);
         try {
-            Thread.sleep(timeToWaitMils, timeToWaitNanos);
+            sleepForNanos.sleep(timeToSleep);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
     }
 
     public void resume() {
         guard.lock();
-        state = State.RUNNING;
+        status = Status.RUNNING;
         active.signal();
         guard.unlock();
     }
 
     public void suspend() {
         guard.lock();
-        state = State.SUSPENDED;
+        status = Status.SUSPENDED;
         guard.unlock();
     }
 
     public void stop() {
         guard.lock();
-        state = State.FINISHED;
+        resume();
+        status = Status.FINISHED;
         guard.unlock();
     }
 
@@ -101,7 +95,7 @@ public class Task implements Runnable {
     }
 
     private Boolean running() {
-        return state == State.RUNNING;
+        return status == Status.RUNNING;
     }
 
     public Boolean isSuspended() {
@@ -112,7 +106,7 @@ public class Task implements Runnable {
     }
 
     private Boolean suspended() {
-        return state == State.SUSPENDED;
+        return status == Status.SUSPENDED;
     }
 
     public Boolean isFinished() {
@@ -123,18 +117,13 @@ public class Task implements Runnable {
     }
 
     private Boolean finished() {
-        return state == State.FINISHED;
+        return status == Status.FINISHED;
     }
 
-    public void setPeriod(long period) {
-        guard.lock();
+    public void setTime(TimeUnit timeUnit, long period) {
+        lock.lock();
         this.period = period;
-        guard.unlock();
-    }
-
-    public void setTimeUnit(TimeUnit timeUnit) {
-        guard.lock();
         this.timeUnit = timeUnit;
-        guard.unlock();
+        lock.unlock();
     }
 }
