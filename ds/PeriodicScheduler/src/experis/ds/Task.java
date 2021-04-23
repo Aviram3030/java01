@@ -10,19 +10,17 @@ import java.util.concurrent.locks.ReentrantLock;
 class Task implements Runnable {
     private final TimeUnit sleepForNanos = TimeUnit.NANOSECONDS;
     private final Runnable operation;
-    private long period;
+    private long time;
     private Status status = Status.RUNNING;
-    private TimeUnit timeUnit;
     private final Lock guard = new ReentrantLock(true);
     private final Lock lock = new ReentrantLock(true);
     private final Condition active = guard.newCondition();
     private final SleepCalculator sleepCalculator;
 
-    public Task(Runnable operation, long period, TimeUnit timeUnit, SleepCalculator sleepCalculator) {
+    public Task(Runnable operation, SleepCalculator sleepCalculator,long time) {
         this.operation = operation;
-        this.period = period;
-        this.timeUnit = timeUnit;
         this.sleepCalculator = sleepCalculator;
+        this.time = time;
     }
 
     @Override
@@ -53,12 +51,11 @@ class Task implements Runnable {
         long start = System.nanoTime();
         operation.run();
         long elapsedTime = System.nanoTime() - start;
-        sleep(elapsedTime);
+        long timeToSleep = sleepCalculator.calculate(time, elapsedTime);
+        sleep(timeToSleep);
     }
 
-    private void sleep(long elapsedTime) {
-        long cycle = timeUnit.toNanos(period);
-        long timeToSleep = sleepCalculator.calculate(cycle, elapsedTime);
+    private void sleep(long timeToSleep) {
         try {
             sleepForNanos.sleep(timeToSleep);
         } catch (InterruptedException e) {
@@ -120,10 +117,9 @@ class Task implements Runnable {
         return status == Status.FINISHED;
     }
 
-    public void setTime(TimeUnit timeUnit, long period) {
+    public void setTime(long time) {
         lock.lock();
-        this.period = period;
-        this.timeUnit = timeUnit;
+        this.time = time;
         lock.unlock();
     }
 }

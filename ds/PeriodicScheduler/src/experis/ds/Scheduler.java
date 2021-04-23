@@ -27,7 +27,7 @@ public class Scheduler {
             list = new ArrayList<>();
             threadsExtractor.put(operation, list);
         }
-        Task task = new Task(operation, period, timeUnit, sleepCalculator);
+        Task task = new Task(operation,sleepCalculator,timeUnit.toNanos(period));
         Thread thread = new Thread(task);
 
         add(thread, task, list);
@@ -121,7 +121,7 @@ public class Scheduler {
             if (task.isFinished()) {
                 continue;
             }
-            task.setTime(timeUnit, period);
+            task.setTime(timeUnit.toNanos(period));
         }
     }
 
