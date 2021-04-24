@@ -14,12 +14,15 @@ public class Scheduler {
     private final ConcurrentHashMap<Thread, Task> taskExtractor = new ConcurrentHashMap<>();
 
     public void schedule(Runnable operation, long period, TimeUnit timeUnit, SleepCalculatorType sleepCalculatorType) {
+        if (isNull(operation) || isNull(sleepCalculatorType)) {
+            return;
+        }
         var sleepCalculator = getSleepCalculator(sleepCalculatorType);
         schedule(operation, period, timeUnit, sleepCalculator);
     }
 
     public void schedule(Runnable operation, long period, TimeUnit timeUnit, SleepCalculator sleepCalculator) {
-        if (operation == null) {
+        if (isNull(operation) || isNull(sleepCalculator)) {
             return;
         }
         var list = threadsExtractor.get(operation);
@@ -49,12 +52,20 @@ public class Scheduler {
                 return num + cycle;
             };
         }
-        return (long cycle, long elapsed) -> Math.max(0, elapsed - cycle);
+        return (long cycle, long elapsed) -> Math.max(0, cycle - elapsed);
+    }
 
+    public void shutDown() {
+        for (var operation : threadsExtractor.keySet()) {
+            stop(operation);
+        }
     }
 
     public void stop(Runnable operation) {
-        List<Thread> threads = threadsExtractor.get(operation);
+        List<Thread> threads = getThreads(operation);
+        if(isNull(threads)){
+            return;
+        }
         for (var thread : threads) {
             Task task = taskExtractor.get(thread);
             if (task.isFinished()) {
@@ -71,17 +82,15 @@ public class Scheduler {
         threadsExtractor.remove(operation);
     }
 
-    public void shutDown() {
-        for (var operation : threadsExtractor.keySet()) {
-            stop(operation);
-        }
-    }
-
     public void suspendAll(){
         actionAll(this::suspend);
     }
 
     public void suspend(Runnable operation) {
+        if(isNull(operation)){
+            return;
+        }
+
         StatusChecker<Task> stateChecker = (Task task) -> !task.isRunning();
         TaskRunner<Task> stateChanger = Task::suspend;
         action(operation, stateChecker, stateChanger);
@@ -92,6 +101,10 @@ public class Scheduler {
     }
 
     public void resume(Runnable operation) {
+        if(isNull(operation)){
+            return;
+        }
+
         StatusChecker<Task> stateChecker = (Task task) -> !task.isSuspended();
         TaskRunner<Task> stateChanger = Task::resume;
         action(operation, stateChecker, stateChanger);
@@ -104,7 +117,10 @@ public class Scheduler {
     }
 
     public void action(Runnable operation, StatusChecker<Task> stateChecker, TaskRunner<Task> stateChanger){
-        List<Thread> threads = threadsExtractor.get(operation);
+        List<Thread> threads = getThreads(operation);
+        if(isNull(threads)){
+            return;
+        }
         for (var thread : threads) {
             Task task = taskExtractor.get(thread);
             if (stateChecker.apply(task)) {
@@ -115,7 +131,10 @@ public class Scheduler {
     }
 
     public void reschedule(Runnable operation, long period, TimeUnit timeUnit) {
-        List<Thread> threads = threadsExtractor.get(operation);
+        List<Thread> threads = getThreads(operation);
+        if(isNull(threads)){
+            return;
+        }
         for (var thread : threads) {
             Task task = taskExtractor.get(thread);
             if (task.isFinished()) {
@@ -125,5 +144,15 @@ public class Scheduler {
         }
     }
 
+    private List<Thread> getThreads(Runnable operation){
+        if(isNull(operation)){
+            return null;
+        }
+        return threadsExtractor.get(operation);
+    }
+
+    private <T> Boolean isNull(T data){
+        return data == null;
+    }
 }
 

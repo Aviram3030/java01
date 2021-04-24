@@ -16,6 +16,7 @@ class Task implements Runnable {
     private final Lock lock = new ReentrantLock(true);
     private final Condition active = guard.newCondition();
     private final SleepCalculator sleepCalculator;
+    private final StatsObserver statsObserver = new StatsObserver();
 
     public Task(Runnable operation, SleepCalculator sleepCalculator,long time) {
         this.operation = operation;
@@ -49,10 +50,17 @@ class Task implements Runnable {
 
     private void execute(){
         long start = System.nanoTime();
-        operation.run();
-        long elapsedTime = System.nanoTime() - start;
-        long timeToSleep = sleepCalculator.calculate(time, elapsedTime);
-        sleep(timeToSleep);
+        try {
+            operation.run();
+            long elapsedTime = System.nanoTime() - start;
+            statsObserver.onPeriodCompleted(elapsedTime);
+            long timeToSleep = sleepCalculator.calculate(time, elapsedTime);
+            sleep(timeToSleep);
+        }
+        catch(Exception e){
+            statsObserver.onException(System.nanoTime() - start, e);
+            return;
+        }
     }
 
     private void sleep(long timeToSleep) {
@@ -67,6 +75,7 @@ class Task implements Runnable {
     public void resume() {
         guard.lock();
         status = Status.RUNNING;
+        statsObserver.onStatus("Running");
         active.signal();
         guard.unlock();
     }
@@ -74,13 +83,15 @@ class Task implements Runnable {
     public void suspend() {
         guard.lock();
         status = Status.SUSPENDED;
+        statsObserver.onStatus("Suspended");
         guard.unlock();
     }
 
     public void stop() {
         guard.lock();
-        resume();
         status = Status.FINISHED;
+        active.signal();
+        statsObserver.onStatus("Finished");
         guard.unlock();
     }
 
