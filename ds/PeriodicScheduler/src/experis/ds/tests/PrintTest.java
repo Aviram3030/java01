@@ -18,11 +18,7 @@ class PrintTest {
         scheduler.schedule(() -> System.out.print("0 "), 1, TimeUnit.MILLISECONDS, SleepCalculatorType.DELAY);
         scheduler.schedule(() -> System.out.print("1 "), 1, TimeUnit.MILLISECONDS, SleepCalculatorType.DELAY);
 
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        sleep(100);
 
         scheduler.shutDown();
     }
@@ -36,11 +32,7 @@ class PrintTest {
         scheduler.schedule(runnable, 1, TimeUnit.SECONDS, SleepCalculatorType.DELAY);
         scheduler.schedule(runnable, 1, TimeUnit.SECONDS, SleepCalculatorType.DELAY);
 
-        try {
-            Thread.sleep(10000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        sleep(10_000);
 
         scheduler.shutDown();
     }
@@ -54,23 +46,23 @@ class PrintTest {
         scheduler.schedule(firstRunnable, N, TimeUnit.MILLISECONDS, SleepCalculatorType.DELAY);
         scheduler.schedule(secondRunnable, N, TimeUnit.MILLISECONDS, SleepCalculatorType.DELAY);
 
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        sleep(100);
 
         System.out.println("\n0 goes faster");
 
         scheduler.reschedule(firstRunnable, 2, TimeUnit.MILLISECONDS);
         scheduler.reschedule(secondRunnable, N, TimeUnit.MILLISECONDS);
 
+        sleep(100);
+
+        scheduler.shutDown();
+    }
+
+    void sleep(int n){
         try {
-            Thread.sleep(100);
+            Thread.sleep(n);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
-        scheduler.shutDown();
     }
 }

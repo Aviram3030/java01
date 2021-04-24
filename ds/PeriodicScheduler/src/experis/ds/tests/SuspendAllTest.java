@@ -16,27 +16,29 @@ class SuspendAllTest {
     void suspendAll() {
         final int N = 100;
         Runnable firstRunnable = () -> System.out.print("0 ");
+        System.out.println("print 1 and 0 constantly :");
         scheduler.schedule(firstRunnable, 1, TimeUnit.MILLISECONDS, SleepCalculatorType.DELAY);
         scheduler.schedule(() -> System.out.print("1 "), 1, TimeUnit.MILLISECONDS, SleepCalculatorType.IMMEDIATELY);
 
         sleep(N);
 
-        System.out.println();
-
         scheduler.suspendAll();
 
+        System.out.println("\ndon't print anything :");
         sleep(2000);
 
+        System.out.println("print 1 and 0 constantly :");
         scheduler.resumeAll();
 
         sleep(N);
 
-        System.out.println();
+        System.out.println("\nprint only 1:");
         scheduler.stop(firstRunnable);
 
         sleep(N);
 
         scheduler.shutDown();
+        System.out.println("\nGood bye");
     }
 
     void sleep(int n){

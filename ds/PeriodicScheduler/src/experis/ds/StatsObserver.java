@@ -9,6 +9,7 @@ public class StatsObserver {
     private String status = "Running";
     private long periods;
     private long totalTimeExecution;
+    private long averageTimeExecution;
     private AtomicLong failures = new AtomicLong();;
     private List exceptions = new ArrayList(16);
     private long finishAfter;
@@ -20,6 +21,7 @@ public class StatsObserver {
     public void onPeriodCompleted(long delta) {
         this.periods++;
         this.totalTimeExecution += delta;
+        this.averageTimeExecution = totalTimeExecution / periods;
     }
 
     public void onStatus(String status){
@@ -37,6 +39,7 @@ public class StatsObserver {
 
     public String toString() {
         return "StatsObserver{" +
+                "\n status=" + status +
                 "\n start=" + start.get() +
                 "\n periods=" + periods +
                 "\n totalTimeExecution=" + totalTimeExecution +
