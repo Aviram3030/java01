@@ -13,8 +13,8 @@ class Task implements Runnable {
     private long time;
     private Status status = Status.RUNNING;
     private final Lock guard = new ReentrantLock(true);
-    private final Lock lock = new ReentrantLock(true);
     private final Condition active = guard.newCondition();
+    private final Lock timeLock = new ReentrantLock(true);
     private final SleepCalculator sleepCalculator;
     private final StatsObserver statsObserver = new StatsObserver();
 
@@ -28,11 +28,6 @@ class Task implements Runnable {
     public void run() {
         while (true) {
             guard.lock();
-            if(finished()){
-                guard.unlock();
-                break;
-            }
-
             while (suspended()) {
                 try {
                     active.await();
@@ -40,11 +35,15 @@ class Task implements Runnable {
                     e.printStackTrace();
                 }
             }
+            if(finished()){
+                guard.unlock();
+                break;
+            }
             guard.unlock();
 
-            lock.lock();
+            timeLock.lock();
             execute();
-            lock.unlock();
+            timeLock.unlock();
         }
     }
 
@@ -129,8 +128,20 @@ class Task implements Runnable {
     }
 
     public void setTime(long time) {
-        lock.lock();
+        timeLock.lock();
         this.time = time;
-        lock.unlock();
+        timeLock.unlock();
+    }
+
+    public void printScheduleInfo(){
+        guard.lock();
+        timeLock.lock();
+        System.out.println(statsObserver.toString());
+        timeLock.unlock();
+        guard.unlock();
+    }
+
+    public StatsObserver getObserver(){
+        return statsObserver;
     }
 }

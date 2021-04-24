@@ -110,13 +110,13 @@ public class Scheduler {
         action(operation, stateChecker, stateChanger);
     }
 
-    public void actionAll(TaskRunner<Runnable> taskRunner){
+    private void actionAll(TaskRunner<Runnable> taskRunner){
         for (var operation : threadsExtractor.keySet()) {
             taskRunner.apply(operation);
         }
     }
 
-    public void action(Runnable operation, StatusChecker<Task> stateChecker, TaskRunner<Task> stateChanger){
+    private void action(Runnable operation, StatusChecker<Task> stateChecker, TaskRunner<Task> stateChanger){
         List<Thread> threads = getThreads(operation);
         if(isNull(threads)){
             return;
@@ -142,6 +142,16 @@ public class Scheduler {
             }
             task.setTime(timeUnit.toNanos(period));
         }
+    }
+
+    public void schedulesInfo(){
+        actionAll(this::scheduleInfo);
+    }
+
+    private void scheduleInfo(Runnable operation){
+        StatusChecker<Task> stateChecker = (Task task) -> false;
+        TaskRunner<Task> stateChanger = (Task task) -> task.printScheduleInfo();
+        action(operation, stateChecker, stateChanger);
     }
 
     private List<Thread> getThreads(Runnable operation){

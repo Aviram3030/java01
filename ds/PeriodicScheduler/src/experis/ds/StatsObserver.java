@@ -5,23 +5,18 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class StatsObserver {
-    private AtomicLong start = new AtomicLong();
     private String status = "Running";
     private long periods;
+    private long totalTimeException;
     private long totalTimeExecution;
     private long averageTimeExecution;
-    private AtomicLong failures = new AtomicLong();;
-    private List exceptions = new ArrayList(16);
-    private long finishAfter;
-
-    public void onStart(long activeFrom) {
-        this.start.addAndGet(activeFrom);
-    }
+    private long failures;
+    private final List<Exception> exceptions = new ArrayList<>();
 
     public void onPeriodCompleted(long delta) {
-        this.periods++;
-        this.totalTimeExecution += delta;
-        this.averageTimeExecution = totalTimeExecution / periods;
+        periods++;
+        totalTimeExecution += delta;
+        averageTimeExecution = totalTimeExecution / periods;
     }
 
     public void onStatus(String status){
@@ -29,23 +24,20 @@ public class StatsObserver {
     }
 
     public void onException(long delta, Exception x) {
-        this.failures.incrementAndGet();
-        this.exceptions.add(x);
-    }
-
-    public void onEnd(long overAllTime) {
-        this.finishAfter = overAllTime;
+        totalTimeException += delta;
+        failures++;
+        exceptions.add(x);
     }
 
     public String toString() {
         return "StatsObserver{" +
-                "\n status=" + status +
-                "\n start=" + start.get() +
-                "\n periods=" + periods +
-                "\n totalTimeExecution=" + totalTimeExecution +
-                "\n failures=" + failures.get() +
-                "\n exceptions=" + exceptions +
-                "\n finishAfter=" + finishAfter +
+                "\n status = " + status +
+                "\n periods = " + periods +
+                "\n totalTimeExecution = " + totalTimeExecution +
+                "\n averageTimeExecution = " + averageTimeExecution +
+                "\n totalTimeException = " + totalTimeException +
+                "\n failures = " + failures +
+                "\n exceptions = " + exceptions +
                 '}';
     }
 }

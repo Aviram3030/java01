@@ -20,6 +20,13 @@ class PrintTest {
 
         sleep(100);
 
+        scheduler.schedulesInfo();
+        scheduler.suspendAll();
+
+        System.out.println();
+
+        scheduler.schedulesInfo();
+
         scheduler.shutDown();
     }
 
