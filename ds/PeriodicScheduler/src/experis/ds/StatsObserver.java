@@ -2,9 +2,8 @@ package experis.ds;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
 
-public class StatsObserver {
+class StatsObserver {
     private String status = "Running";
     private long periods;
     private long totalTimeException;

@@ -4,12 +4,9 @@ import experis.ds.Scheduler;
 import experis.ds.SleepCalculatorType;
 import org.junit.jupiter.api.Test;
 
-import java.sql.Time;
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-class PrintTest {
+class BasicPrintTest {
 
     Scheduler scheduler = new Scheduler();
 
@@ -26,7 +23,6 @@ class PrintTest {
         System.out.println();
 
         scheduler.schedulesInfo();
-
         scheduler.shutDown();
     }
 
@@ -34,10 +30,9 @@ class PrintTest {
     void fourThreadsSameRunnable(){
         Runnable runnable = () -> System.out.println("0 ");
 
-        scheduler.schedule(runnable, 1, TimeUnit.SECONDS, SleepCalculatorType.DELAY);
-        scheduler.schedule(runnable, 1, TimeUnit.SECONDS, SleepCalculatorType.DELAY);
-        scheduler.schedule(runnable, 1, TimeUnit.SECONDS, SleepCalculatorType.DELAY);
-        scheduler.schedule(runnable, 1, TimeUnit.SECONDS, SleepCalculatorType.DELAY);
+        for(int i = 0; i < 4; i++){
+            scheduler.schedule(runnable, 1, TimeUnit.SECONDS, SleepCalculatorType.DELAY);
+        }
 
         sleep(10_000);
 

@@ -12,7 +12,7 @@ class EdgeCasesTests {
     Scheduler scheduler = new Scheduler();
 
     @Test
-    void schedule() {
+    void edgeCasesSchedule() {
         Runnable firstRunnable = () -> System.out.print("0 ");
         Runnable secondRunnable = () -> System.out.print("1 ");
 
@@ -63,6 +63,33 @@ class EdgeCasesTests {
         System.out.println();
         scheduler.schedulesInfo();
         scheduler.shutDown();
+        scheduler.schedulesInfo();
+    }
+
+    @Test
+    void testsWithExceptions() {
+        int[] a = new int[]{1, 2, 3, 4, 5};
+        int[] b = new int[]{6, 7, 8, 9, 10};
+        Runnable firstRunnable = () -> System.out.print(a[(int) (Math.random() * N)]+ " ");
+        Runnable secondRunnable = () -> System.out.print(b[(int) (Math.random() * N)]+ " ");
+
+        scheduler.schedule(firstRunnable, N, TimeUnit.MILLISECONDS, SleepCalculatorType.DELAY);
+        scheduler.schedule(secondRunnable, N, TimeUnit.MILLISECONDS, SleepCalculatorType.IMMEDIATELY);
+
+        sleep(M);
+
+        scheduler.suspendAll();
+        System.out.println();
+        scheduler.schedulesInfo();
+    }
+
+    @Test
+    void checkNull(){
+        Runnable firstRunnable = () -> System.out.print("0 ");
+        scheduler.schedule(null, N, TimeUnit.MILLISECONDS, SleepCalculatorType.DELAY);
+        scheduler.schedule(firstRunnable, N, null, SleepCalculatorType.DELAY);
+
+        System.out.println("print nothing: ");
         scheduler.schedulesInfo();
     }
 

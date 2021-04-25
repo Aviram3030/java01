@@ -22,7 +22,7 @@ public class Scheduler {
     }
 
     public void schedule(Runnable operation, long period, TimeUnit timeUnit, SleepCalculator sleepCalculator) {
-        if (isNull(operation) || isNull(sleepCalculator)) {
+        if (checkIsIllegal(operation, period, timeUnit, sleepCalculator)) {
             return;
         }
         var list = threadsExtractor.get(operation);
@@ -35,6 +35,10 @@ public class Scheduler {
 
         add(thread, task, list);
         thread.start();
+    }
+
+    private Boolean checkIsIllegal(Runnable operation, long period, TimeUnit timeUnit, SleepCalculator sleepCalculator){
+        return (isNull(operation) || isNull(sleepCalculator) || isNull(timeUnit) || period < 0);
     }
 
     private void add(Thread thread, Task task, List<Thread> list){
@@ -87,10 +91,6 @@ public class Scheduler {
     }
 
     public void suspend(Runnable operation) {
-        if(isNull(operation)){
-            return;
-        }
-
         StatusChecker<Task> stateChecker = (Task task) -> !task.isRunning();
         TaskRunner<Task> stateChanger = Task::suspend;
         action(operation, stateChecker, stateChanger);
@@ -101,12 +101,18 @@ public class Scheduler {
     }
 
     public void resume(Runnable operation) {
-        if(isNull(operation)){
-            return;
-        }
-
         StatusChecker<Task> stateChecker = (Task task) -> !task.isSuspended();
         TaskRunner<Task> stateChanger = Task::resume;
+        action(operation, stateChecker, stateChanger);
+    }
+
+    public void schedulesInfo(){
+        actionAll(this::scheduleInfo);
+    }
+
+    private void scheduleInfo(Runnable operation){
+        StatusChecker<Task> stateChecker = (Task task) -> false;
+        TaskRunner<Task> stateChanger = Task::printScheduleInfo;
         action(operation, stateChecker, stateChanger);
     }
 
@@ -117,6 +123,10 @@ public class Scheduler {
     }
 
     private void action(Runnable operation, StatusChecker<Task> stateChecker, TaskRunner<Task> stateChanger){
+        if(isNull(operation)){
+            return;
+        }
+
         List<Thread> threads = getThreads(operation);
         if(isNull(threads)){
             return;
@@ -137,21 +147,8 @@ public class Scheduler {
         }
         for (var thread : threads) {
             Task task = taskExtractor.get(thread);
-            if (task.isFinished()) {
-                continue;
-            }
             task.setTime(timeUnit.toNanos(period));
         }
-    }
-
-    public void schedulesInfo(){
-        actionAll(this::scheduleInfo);
-    }
-
-    private void scheduleInfo(Runnable operation){
-        StatusChecker<Task> stateChecker = (Task task) -> false;
-        TaskRunner<Task> stateChanger = (Task task) -> task.printScheduleInfo();
-        action(operation, stateChecker, stateChanger);
     }
 
     private List<Thread> getThreads(Runnable operation){

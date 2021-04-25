@@ -6,8 +6,6 @@ import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class SuspendAllTest {
 
     Scheduler scheduler = new Scheduler();
@@ -16,7 +14,7 @@ class SuspendAllTest {
     void suspendAll() {
         final int N = 100;
         Runnable firstRunnable = () -> System.out.print("0 ");
-        System.out.println("print 1 and 0 constantly :");
+        System.out.println("print 1 and 0 : ");
         scheduler.schedule(firstRunnable, 1, TimeUnit.MILLISECONDS, SleepCalculatorType.DELAY);
         scheduler.schedule(() -> System.out.print("1 "), 1, TimeUnit.MILLISECONDS, SleepCalculatorType.IMMEDIATELY);
 
@@ -27,12 +25,12 @@ class SuspendAllTest {
         System.out.println("\ndon't print anything :");
         sleep(2000);
 
-        System.out.println("print 1 and 0 constantly :");
+        System.out.println("print 1 and 0 : ");
         scheduler.resumeAll();
 
         sleep(N);
 
-        System.out.println("\nprint only 1:");
+        System.out.println("\nprint only 1 :");
         scheduler.stop(firstRunnable);
 
         sleep(N);

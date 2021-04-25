@@ -51,15 +51,16 @@ class Task implements Runnable {
         long start = System.nanoTime();
         try {
             operation.run();
-            long elapsedTime = System.nanoTime() - start;
-            statsObserver.onPeriodCompleted(elapsedTime);
-            long timeToSleep = sleepCalculator.calculate(time, elapsedTime);
-            sleep(timeToSleep);
         }
         catch(Exception e){
             statsObserver.onException(System.nanoTime() - start, e);
             return;
         }
+
+        long elapsedTime = System.nanoTime() - start;
+        long timeToSleep = sleepCalculator.calculate(time, elapsedTime);
+        statsObserver.onPeriodCompleted(elapsedTime);
+        sleep(timeToSleep);
     }
 
     private void sleep(long timeToSleep) {
@@ -139,9 +140,5 @@ class Task implements Runnable {
         System.out.println(statsObserver.toString());
         timeLock.unlock();
         guard.unlock();
-    }
-
-    public StatsObserver getObserver(){
-        return statsObserver;
     }
 }
