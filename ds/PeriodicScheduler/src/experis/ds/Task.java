@@ -2,12 +2,13 @@ package experis.ds;
 
 import experis.ds.lmbda.SleepCalculator;
 
+import java.util.concurrent.RecursiveAction;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-class Task implements Runnable {
+class Task extends RecursiveAction {
     private final TimeUnit sleepForNanos = TimeUnit.NANOSECONDS;
     private final Runnable operation;
     private long time;
@@ -25,7 +26,7 @@ class Task implements Runnable {
     }
 
     @Override
-    public void run() {
+    protected void compute() {
         while (true) {
             guard.lock();
             while (suspended()) {
@@ -69,7 +70,6 @@ class Task implements Runnable {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
     }
 
     public void resume() {
@@ -141,4 +141,5 @@ class Task implements Runnable {
         timeLock.unlock();
         guard.unlock();
     }
+
 }

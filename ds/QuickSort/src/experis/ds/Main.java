@@ -26,7 +26,6 @@ public class Main {
         for (int i = 0; i < v.length; i++) {
             v[i] = i;
         }
-
         return v;
     }
 }

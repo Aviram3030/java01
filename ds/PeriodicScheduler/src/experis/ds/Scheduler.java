@@ -7,11 +7,12 @@ import experis.ds.lmbda.StatusChecker;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
 
 public class Scheduler {
-    private final ConcurrentHashMap<Runnable, List<Thread>> threadsExtractor = new ConcurrentHashMap<>();
-    private final ConcurrentHashMap<Thread, Task> taskExtractor = new ConcurrentHashMap<>();
+    private final ForkJoinPool forkJoinPool = new ForkJoinPool(4);
+    private final ConcurrentHashMap<Runnable, List<Task>> tasksExtractor = new ConcurrentHashMap<>();
 
     public void schedule(Runnable operation, long period, TimeUnit timeUnit, SleepCalculatorType sleepCalculatorType) {
         if (isNull(operation) || isNull(sleepCalculatorType)) {
@@ -25,25 +26,23 @@ public class Scheduler {
         if (checkIsIllegal(operation, period, timeUnit, sleepCalculator)) {
             return;
         }
-        var list = threadsExtractor.get(operation);
+        var list = tasksExtractor.get(operation);
         if (list == null) {
             list = new ArrayList<>();
-            threadsExtractor.put(operation, list);
+            tasksExtractor.put(operation, list);
         }
-        Task task = new Task(operation,sleepCalculator, timeUnit.toNanos(period));
-        Thread thread = new Thread(task);
+        Task task = new Task(operation, sleepCalculator, timeUnit.toNanos(period));
 
-        add(thread, task, list);
-        thread.start();
+        add(task, list);
+        forkJoinPool.execute(task);
     }
 
     private Boolean checkIsIllegal(Runnable operation, long period, TimeUnit timeUnit, SleepCalculator sleepCalculator){
         return (isNull(operation) || isNull(sleepCalculator) || isNull(timeUnit) || period < 0);
     }
 
-    private void add(Thread thread, Task task, List<Thread> list){
-        taskExtractor.put(thread, task);
-        list.add(thread);
+    private void add(Task task, List<Task> list){
+        list.add(task);
     }
 
     private SleepCalculator getSleepCalculator(SleepCalculatorType sleepCalculatorType){
@@ -60,30 +59,23 @@ public class Scheduler {
     }
 
     public void shutDown() {
-        for (var operation : threadsExtractor.keySet()) {
+        for (var operation : tasksExtractor.keySet()) {
             stop(operation);
         }
     }
 
     public void stop(Runnable operation) {
-        List<Thread> threads = getThreads(operation);
-        if(isNull(threads)){
+        List<Task> tasks = getTasks(operation);
+        if(isNull(tasks)){
             return;
         }
-        for (var thread : threads) {
-            Task task = taskExtractor.get(thread);
+        for (var task : tasks) {
             if (task.isFinished()) {
                 continue;
             }
             task.stop();
-            try {
-                thread.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            taskExtractor.remove(thread);
+            tasksExtractor.remove(task);
         }
-        threadsExtractor.remove(operation);
     }
 
     public void suspendAll(){
@@ -117,8 +109,8 @@ public class Scheduler {
     }
 
     private void actionAll(TaskRunner<Runnable> taskRunner){
-        for (var operation : threadsExtractor.keySet()) {
-            taskRunner.apply(operation);
+        for (var task : tasksExtractor.keySet()) {
+            taskRunner.apply(task);
         }
     }
 
@@ -127,12 +119,11 @@ public class Scheduler {
             return;
         }
 
-        List<Thread> threads = getThreads(operation);
-        if(isNull(threads)){
+        List<Task> tasks = getTasks(operation);
+        if(isNull(tasks)){
             return;
         }
-        for (var thread : threads) {
-            Task task = taskExtractor.get(thread);
+        for (var task : tasks) {
             if (stateChecker.apply(task)) {
                 continue;
             }
@@ -141,21 +132,20 @@ public class Scheduler {
     }
 
     public void reschedule(Runnable operation, long period, TimeUnit timeUnit) {
-        List<Thread> threads = getThreads(operation);
-        if(isNull(threads) || period < 0){
+        List<Task> tasks = getTasks(operation);
+        if(isNull(tasks) || period < 0){
             return;
         }
-        for (var thread : threads) {
-            Task task = taskExtractor.get(thread);
+        for (var task : tasks) {
             task.setTime(timeUnit.toNanos(period));
         }
     }
 
-    private List<Thread> getThreads(Runnable operation){
+    private List<Task> getTasks(Runnable operation){
         if(isNull(operation)){
             return null;
         }
-        return threadsExtractor.get(operation);
+        return tasksExtractor.get(operation);
     }
 
     private <T> Boolean isNull(T data){
