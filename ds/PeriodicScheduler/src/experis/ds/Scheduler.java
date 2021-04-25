@@ -30,7 +30,7 @@ public class Scheduler {
             list = new ArrayList<>();
             threadsExtractor.put(operation, list);
         }
-        Task task = new Task(operation,sleepCalculator,timeUnit.toNanos(period));
+        Task task = new Task(operation,sleepCalculator, timeUnit.toNanos(period));
         Thread thread = new Thread(task);
 
         add(thread, task, list);
@@ -142,7 +142,7 @@ public class Scheduler {
 
     public void reschedule(Runnable operation, long period, TimeUnit timeUnit) {
         List<Thread> threads = getThreads(operation);
-        if(isNull(threads)){
+        if(isNull(threads) || period < 0){
             return;
         }
         for (var thread : threads) {
