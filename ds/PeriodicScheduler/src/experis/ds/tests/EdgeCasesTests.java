@@ -63,9 +63,8 @@ class EdgeCasesTests {
         System.out.println();
         scheduler.schedulesInfo();
 
-        System.out.println();
         scheduler.shutDown();
-        System.out.println("Shutdown");
+        System.out.println("\nShutdown");
         scheduler.schedulesInfo();
     }
 

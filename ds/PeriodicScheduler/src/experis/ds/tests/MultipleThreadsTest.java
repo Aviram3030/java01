@@ -36,10 +36,10 @@ class MultipleThreadsTest {
 
         sleep(M);
         scheduler.suspendAll();
+        scheduler.resumeAll();
 
-        scheduler.schedulesInfo();
         scheduler.shutDown();
-        System.out.println("\nnew scheduler info:(empty) ");
+        System.out.println("\nShutdown");
         scheduler.schedulesInfo();
     }
 
