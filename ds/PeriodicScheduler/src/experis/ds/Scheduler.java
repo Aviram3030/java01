@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.RunnableFuture;
 import java.util.concurrent.TimeUnit;
 
 public class Scheduler {
@@ -70,8 +71,9 @@ public class Scheduler {
                 continue;
             }
             task.stop();
-            tasksExtractor.remove(task);
+            forkJoinPool.invoke(task);
         }
+        tasksExtractor.remove(operation);
     }
 
     public void suspendAll(){
