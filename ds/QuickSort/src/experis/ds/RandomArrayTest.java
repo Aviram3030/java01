@@ -1,5 +1,7 @@
 package experis.ds;
 
+import org.junit.jupiter.api.Test;
+
 import java.util.Random;
 import java.util.concurrent.ForkJoinPool;
 
@@ -8,8 +10,8 @@ import static org.junit.jupiter.api.Assertions.*;
 class RandomArrayTest {
     final int N = 10_507_007;
 
-    @org.junit.jupiter.api.Test
-    void compute() {
+    @Test
+    void randomArray() {
         int[] arr = generateRandomArray(N);
         QuickSort qs = new QuickSort(arr,0 , arr.length - 1);
         ForkJoinPool forkJoinPool = new ForkJoinPool();
