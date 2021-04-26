@@ -37,8 +37,8 @@ class BasicCalculationsTest {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        assertTrue(list.size() > 16 && list.size() < 24);
         scheduler.shutDown();
+        assertTrue(list.size() > 16 && list.size() < 24);
     }
 
     @Test

@@ -6,14 +6,12 @@ import experis.ds.lmbda.StatusChecker;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.RunnableFuture;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 public class Scheduler {
     private final ForkJoinPool forkJoinPool = new ForkJoinPool();
     private final ConcurrentHashMap<Runnable, List<Task>> tasksExtractor = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Task, ForkJoinTask<Void>> futureExtractor = new ConcurrentHashMap<>();
 
     public void schedule(Runnable operation, long period, TimeUnit timeUnit, SleepCalculatorType sleepCalculatorType) {
         if (isNull(operation) || isNull(sleepCalculatorType)) {
@@ -34,8 +32,9 @@ public class Scheduler {
         }
         Task task = new Task(operation, sleepCalculator, timeUnit.toNanos(period));
 
+        ForkJoinTask<Void> future = forkJoinPool.submit(task);
+        futureExtractor.put(task, future);
         tasks.add(task);
-        forkJoinPool.execute(task);
     }
 
     private Boolean checkIsIllegal(Runnable operation, long period, TimeUnit timeUnit, SleepCalculator sleepCalculator){
@@ -71,7 +70,12 @@ public class Scheduler {
                 continue;
             }
             task.stop();
-            forkJoinPool.invoke(task);
+            try {
+                futureExtractor.get(task).get();
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+            futureExtractor.remove(task);
         }
         tasksExtractor.remove(operation);
     }
