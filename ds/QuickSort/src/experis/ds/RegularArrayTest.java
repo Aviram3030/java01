@@ -16,7 +16,7 @@ class RegularArrayTest {
         ForkJoinPool forkJoinPool = new ForkJoinPool(4);
         forkJoinPool.invoke(qs);
 
-        System.out.println(isSorted(arr));
+        assertTrue(isSorted(arr));
     }
 
     public static Boolean isSorted(int[] arr){

@@ -23,10 +23,7 @@ public class QuickSort extends RecursiveTask<Void> {
             int pivotIndex = partition(start, end);
             var left = new QuickSort(arr, start, pivotIndex - 1);
             var right = new QuickSort(arr, pivotIndex, end);
-            left.fork();
-            right.compute();
-
-            left.join();
+            invokeAll(left, right);
         }
         return null;
     }
@@ -45,7 +42,7 @@ public class QuickSort extends RecursiveTask<Void> {
     {
         int mid = (left + right) / 2;
         int pivot = arr[mid];
-        while (true){
+        while (left <= right){
             while (arr[right] > pivot){
                 right--;
             }
