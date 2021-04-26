@@ -27,8 +27,8 @@ class MultipleThreadsTest {
         System.out.println("\ndon't print anything: ");
 
         sleep(M);
+        System.out.println("\nprint only 0: ");
         scheduler.resume(firstRunnable);
-        System.out.println("\nprint only 0");
 
         sleep(M);
         scheduler.resumeAll();

@@ -11,7 +11,7 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
 
 public class Scheduler {
-    private final ForkJoinPool forkJoinPool = new ForkJoinPool(4);
+    private final ForkJoinPool forkJoinPool = new ForkJoinPool();
     private final ConcurrentHashMap<Runnable, List<Task>> tasksExtractor = new ConcurrentHashMap<>();
 
     public void schedule(Runnable operation, long period, TimeUnit timeUnit, SleepCalculatorType sleepCalculatorType) {
@@ -26,23 +26,19 @@ public class Scheduler {
         if (checkIsIllegal(operation, period, timeUnit, sleepCalculator)) {
             return;
         }
-        var list = tasksExtractor.get(operation);
-        if (list == null) {
-            list = new ArrayList<>();
-            tasksExtractor.put(operation, list);
+        var tasks = tasksExtractor.get(operation);
+        if (isNull(tasks)) {
+            tasks = new ArrayList<>();
+            tasksExtractor.put(operation, tasks);
         }
         Task task = new Task(operation, sleepCalculator, timeUnit.toNanos(period));
 
-        add(task, list);
+        tasks.add(task);
         forkJoinPool.execute(task);
     }
 
     private Boolean checkIsIllegal(Runnable operation, long period, TimeUnit timeUnit, SleepCalculator sleepCalculator){
         return (isNull(operation) || isNull(sleepCalculator) || isNull(timeUnit) || period < 0);
-    }
-
-    private void add(Task task, List<Task> list){
-        list.add(task);
     }
 
     private SleepCalculator getSleepCalculator(SleepCalculatorType sleepCalculatorType){

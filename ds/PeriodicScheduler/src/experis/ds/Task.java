@@ -13,9 +13,9 @@ class Task extends RecursiveAction {
     private final Runnable operation;
     private long time;
     private Status status = Status.RUNNING;
-    private final Lock guard = new ReentrantLock(true);
+    private final Lock guard = new ReentrantLock();
     private final Condition active = guard.newCondition();
-    private final Lock timeLock = new ReentrantLock(true);
+    private final Lock timeLock = new ReentrantLock();
     private final SleepCalculator sleepCalculator;
     private final StatsObserver statsObserver = new StatsObserver();
 
@@ -42,26 +42,28 @@ class Task extends RecursiveAction {
             }
             guard.unlock();
 
+            long elapsedTime = execute();
             timeLock.lock();
-            execute();
+            long timeToSleep = sleepCalculator.calculate(time, elapsedTime);
+            sleep(timeToSleep);
             timeLock.unlock();
         }
     }
 
-    private void execute(){
+    private long execute(){
+        long elapsedTime;
         long start = System.nanoTime();
         try {
             operation.run();
         }
         catch(Exception e){
-            statsObserver.onException(System.nanoTime() - start, e);
-            return;
+            elapsedTime = System.nanoTime() - start;
+            statsObserver.onException(elapsedTime, e);
+            return elapsedTime;
         }
-
-        long elapsedTime = System.nanoTime() - start;
-        long timeToSleep = sleepCalculator.calculate(time, elapsedTime);
+        elapsedTime = System.nanoTime() - start;
         statsObserver.onPeriodCompleted(elapsedTime);
-        sleep(timeToSleep);
+        return System.nanoTime() - start;
     }
 
     private void sleep(long timeToSleep) {

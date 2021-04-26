@@ -48,7 +48,7 @@ class EdgeCasesTests {
         sleep(M);
 
         scheduler.resumeAll();
-        System.out.println("\nprint both 1 and 2");
+        System.out.println("\nprint both 1 and 0");
 
         sleep(M);
 
