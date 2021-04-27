@@ -13,7 +13,7 @@ class MovieCenterTest {
     MovieCenter movieCenter = new MovieCenter();
     @Test
     void search() {
-        Movie[] movies = movieCenter.search("harry");
+        Movie[] movies = movieCenter.search("star wars");
 
         print(movies);
     }

@@ -13,9 +13,15 @@ public class MovieCenter {
     private final MoviesQueryByTitle moviesQueryByTitle = new MoviesQueryByTitle();
 
     public Movie[] search(String title){
+        title = getFixedTitle(title);
         TitleQueryResult result = moviesQueryByTitle.compute(title);
         MovieID[] moviesID = result.getSearch();
         return getMovies(moviesID);
+    }
+
+    private String getFixedTitle(String title) {
+        title = title.trim();
+        return title.replace(' ', '+');
     }
 
     private Movie[] getMovies(MovieID[] moviesID) {
