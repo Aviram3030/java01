@@ -21,7 +21,6 @@ public class MovieCenter {
         return instance;
     }
 
-
     public Movie[] search(String title){
         title = getFixedTitle(title);
         TitleQueryResult result = moviesQueryByTitle.compute(title);

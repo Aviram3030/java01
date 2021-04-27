@@ -1,5 +1,6 @@
 package experis.ds;
 
+import experis.ds.exceptions.InvalidCodeException;
 import experis.ds.exceptions.MovieNotFoundException;
 import experis.ds.gson.Movie;
 
@@ -24,6 +25,10 @@ public class UserInterface {
             catch(MovieNotFoundException e){
                 e.printStackTrace();
                 System.out.println("Try again");
+            }
+            catch(InvalidCodeException e){
+                e.printStackTrace();
+                break;
             }
         }
         System.out.println("Goodbye");

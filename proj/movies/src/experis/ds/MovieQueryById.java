@@ -1,6 +1,7 @@
 package experis.ds;
 
 import com.google.gson.Gson;
+import experis.ds.exceptions.InvalidCodeException;
 import experis.ds.gson.Movie;
 
 import java.net.HttpURLConnection;
@@ -24,7 +25,7 @@ public class MovieQueryById extends RecursiveTask<Movie> {
             con.connect();
             int responseCode = con.getResponseCode();
             if(responseCode != 200) {
-                throw new RuntimeException("HttpResponseCode: "+responseCode);
+                throw new InvalidCodeException("HttpResponseCode: "+responseCode);
             }
 
             Scanner sc = new Scanner(url.openStream());
