@@ -5,8 +5,8 @@ import experis.ds.gson.Rating;
 
 import java.util.List;
 
-public class Display {
-    public static void print(Movie[] movies){
+public class Display implements Output{
+    public void getOutput(Movie[] movies){
         for(var movie: movies){
             System.out.printf("%s|", movie.getTitle());
             System.out.printf("%s|", movie.getGenre());

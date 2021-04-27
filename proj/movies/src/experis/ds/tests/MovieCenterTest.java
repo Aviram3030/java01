@@ -2,6 +2,7 @@ package experis.ds.tests;
 
 import experis.ds.Display;
 import experis.ds.MovieCenter;
+import experis.ds.Output;
 import experis.ds.gson.Movie;
 import org.junit.jupiter.api.Test;
 
@@ -10,6 +11,7 @@ class MovieCenterTest {
     @Test
     void search() {
         Movie[] movies = movieCenter.search("Star Wars");
-        Display.print(movies);
+        Output output = new Display();
+        output.getOutput(movies);
     }
 }
