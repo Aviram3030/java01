@@ -2,7 +2,7 @@ package experis.ds.gson;
 
 import com.google.gson.annotations.SerializedName;
 
-public class IDQueryRating {
+public class Rating {
     @SerializedName("Source")
     private String source;
 

@@ -5,10 +5,8 @@ import experis.ds.MovieCenter;
 import experis.ds.gson.Movie;
 import org.junit.jupiter.api.Test;
 
-
-
 class MovieCenterTest {
-    MovieCenter movieCenter = MovieCenter.getInstance();
+    MovieCenter movieCenter = MovieCenter.getMovieCenter();
     @Test
     void search() {
         Movie[] movies = movieCenter.search("Star Wars");

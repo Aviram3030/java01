@@ -4,9 +4,9 @@ import com.google.gson.annotations.SerializedName;
 
 public class TitleQueryResult {
     @SerializedName("Search")
-    private MovieID[] search;
+    private MovieID[] moviesIDs;
 
-    public MovieID[] getSearch() {
-        return search;
+    public MovieID[] getMoviesIDs() {
+        return moviesIDs;
     }
 }

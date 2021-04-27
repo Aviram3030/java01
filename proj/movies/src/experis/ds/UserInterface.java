@@ -9,7 +9,7 @@ import java.util.Scanner;
 public class UserInterface {
     public static void start(){
         Scanner reader = new Scanner(System.in);
-        var movieCenter = MovieCenter.getInstance();
+        var movieCenter = MovieCenter.getMovieCenter();
         System.out.print("Hello, Which movie are you looking for? ");
         while(true){
             System.out.println("\ntype '.' to exit");
@@ -18,6 +18,7 @@ public class UserInterface {
             if(input.equals(".")){
                 break;
             }
+
             try {
                 Movie[] movies = movieCenter.search(input);
                 Display.print(movies);

@@ -10,21 +10,21 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.Future;
 
 public class MovieCenter {
+    private static MovieCenter movieCenter = new MovieCenter();
     private final ForkJoinPool forkJoinPool = new ForkJoinPool();
     private final MoviesQueryByTitle moviesQueryByTitle = new MoviesQueryByTitle();
-    private static MovieCenter instance = new MovieCenter();
 
     private MovieCenter(){
     }
 
-    public static MovieCenter getInstance(){
-        return instance;
+    public static MovieCenter getMovieCenter(){
+        return movieCenter;
     }
 
     public Movie[] search(String title){
         title = getFixedTitle(title);
         TitleQueryResult result = moviesQueryByTitle.compute(title);
-        MovieID[] moviesID = result.getSearch();
+        MovieID[] moviesID = result.getMoviesIDs();
         if(moviesID == null){
             throw new MovieNotFoundException("Couldn't find a movie with this specific name");
         }

@@ -12,7 +12,7 @@ public class Movie {
         private String genre;
 
         @SerializedName("Ratings")
-        private List<IDQueryRating> ratings;
+        private List<Rating> ratings;
 
         @SerializedName("Runtime")
         private String runtime;
@@ -31,7 +31,7 @@ public class Movie {
                 return genre;
         }
 
-        public List<IDQueryRating> getRatings() {
+        public List<Rating> getRatings() {
                 return ratings;
         }
 

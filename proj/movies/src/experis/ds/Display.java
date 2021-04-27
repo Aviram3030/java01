@@ -1,7 +1,7 @@
 package experis.ds;
 
-import experis.ds.gson.IDQueryRating;
 import experis.ds.gson.Movie;
+import experis.ds.gson.Rating;
 
 import java.util.List;
 
@@ -10,8 +10,8 @@ public class Display {
         for(var movie: movies){
             System.out.printf("%s|", movie.getTitle());
             System.out.printf("%s|", movie.getGenre());
-            List<IDQueryRating> ratings = movie.getRatings();
-            for(IDQueryRating rating: ratings){
+            List<Rating> ratings = movie.getRatings();
+            for(Rating rating: ratings){
                 System.out.printf("%s: %s, ", rating.getSource(), rating.getValue());
             }
             System.out.printf("|%s|", movie.getRuntime());
