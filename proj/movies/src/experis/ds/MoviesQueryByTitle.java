@@ -8,6 +8,11 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Scanner;
 
+/**
+ *  The class MovieQueryById make a query request by title to omdbapi
+ *  and gets a string in json format and with the help
+ *  of Gson make Object of TitleQueryResult class with the data in the string.
+ */
 public class MoviesQueryByTitle {
     private final Gson gson = new Gson();
 

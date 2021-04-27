@@ -9,6 +9,13 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.Future;
 
+/**
+ *  The MovieCenter class connects between the information
+ *  of two different classes that uses omdbapi.
+ *  Using thread pool for calling MovieQueryByID.
+ *  The object is singleton.
+ */
+
 public class MovieCenter {
     private static MovieCenter movieCenter = new MovieCenter();
     private final ForkJoinPool forkJoinPool = new ForkJoinPool();
@@ -21,6 +28,12 @@ public class MovieCenter {
         return movieCenter;
     }
 
+    /**
+     *  The function searches for movies with name
+     *  that contains title.
+     *  Returns array that contains the data of every movie
+     *  that got selected.
+     */
     public Movie[] search(String title){
         title = getFixedTitle(title);
         TitleQueryResult result = moviesQueryByTitle.compute(title);
@@ -31,11 +44,22 @@ public class MovieCenter {
         return getMovies(moviesID);
     }
 
+    /**
+     *  Changing the title so we can use the query
+     *  in the right way.
+     */
     private String getFixedTitle(String title) {
         title = title.trim();
         return title.replace(' ', '+');
     }
 
+
+    /**
+     *  Waits for each thread to finish his operation and sending
+     *  the data of the selected movies.
+     *  Returns array that contains the data of every movie
+     *  that got selected.
+     */
     private Movie[] getMovies(MovieID[] moviesID) {
         Movie[] movies = new Movie[moviesID.length];
         Future<Movie>[] futures = getFutures(moviesID);
@@ -50,6 +74,9 @@ public class MovieCenter {
         return movies;
     }
 
+    /**
+     *  Adding tasks to the thread pool of type MovieQueryByID.
+     */
     private Future<Movie>[] getFutures (MovieID[] moviesID){
         Future<Movie>[] futures = new Future[moviesID.length];
         for(int i = 0; i < futures.length; i++){

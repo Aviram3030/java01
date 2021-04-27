@@ -4,6 +4,11 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
+/**
+ *  The Movie class contains the data required
+ *  that we need to present in the project.
+ *  The object is created by Gson.
+ */
 public class Movie {
         @SerializedName("Title")
         private String title;
