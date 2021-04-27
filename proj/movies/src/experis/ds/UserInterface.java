@@ -1,5 +1,6 @@
 package experis.ds;
 
+import experis.ds.exceptions.MovieNotFoundException;
 import experis.ds.gson.Movie;
 
 import java.util.Scanner;
@@ -16,8 +17,14 @@ public class UserInterface {
             if(input.equals(".")){
                 break;
             }
-            Movie[] movies = movieCenter.search(input);
-            Display.print(movies);
+            try {
+                Movie[] movies = movieCenter.search(input);
+                Display.print(movies);
+            }
+            catch(MovieNotFoundException e){
+                e.printStackTrace();
+                System.out.println("Try again");
+            }
         }
         System.out.println("Goodbye");
     }

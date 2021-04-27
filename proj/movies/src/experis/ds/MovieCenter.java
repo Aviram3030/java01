@@ -1,5 +1,6 @@
 package experis.ds;
 
+import experis.ds.exceptions.MovieNotFoundException;
 import experis.ds.gson.Movie;
 import experis.ds.gson.MovieID;
 import experis.ds.gson.TitleQueryResult;
@@ -25,6 +26,9 @@ public class MovieCenter {
         title = getFixedTitle(title);
         TitleQueryResult result = moviesQueryByTitle.compute(title);
         MovieID[] moviesID = result.getSearch();
+        if(moviesID == null){
+            throw new MovieNotFoundException("Couldn't find a movie with this specific name");
+        }
         return getMovies(moviesID);
     }
 
