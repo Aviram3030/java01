@@ -11,6 +11,15 @@ import java.util.concurrent.Future;
 public class MovieCenter {
     private final ForkJoinPool forkJoinPool = new ForkJoinPool();
     private final MoviesQueryByTitle moviesQueryByTitle = new MoviesQueryByTitle();
+    private static MovieCenter instance = new MovieCenter();
+
+    private MovieCenter(){
+    }
+
+    public static MovieCenter getInstance(){
+        return instance;
+    }
+
 
     public Movie[] search(String title){
         title = getFixedTitle(title);
@@ -25,7 +34,7 @@ public class MovieCenter {
     }
 
     private Movie[] getMovies(MovieID[] moviesID) {
-        Movie[] movies = new Movie[moviesID.length - 1];
+        Movie[] movies = new Movie[moviesID.length];
         Future<Movie>[] futures = getFutures(moviesID);
 
         for(int i = 0; i < futures.length; i++){
@@ -39,7 +48,7 @@ public class MovieCenter {
     }
 
     private Future<Movie>[] getFutures (MovieID[] moviesID){
-        Future<Movie>[] futures = new Future[moviesID.length - 1];
+        Future<Movie>[] futures = new Future[moviesID.length];
         for(int i = 0; i < futures.length; i++){
             String ID = moviesID[i].getImdbID();
             MovieQueryById queryById = new MovieQueryById(ID);
