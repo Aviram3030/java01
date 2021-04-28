@@ -5,8 +5,9 @@ import experis.ds.domainentities.Rating;
 
 import java.util.List;
 
-public class DisplayMovie {
-    public void print(Movie movie){
+public class DisplayMovie implements Display<Movie>{
+    @Override
+    public void getOutput(Movie movie){
         System.out.printf("%s|", movie.getTitle());
         System.out.printf("%s|", movie.getGenre());
         List<Rating> ratings = movie.getRatings();
@@ -17,4 +18,5 @@ public class DisplayMovie {
         System.out.printf("%s|", movie.getDirector());
         System.out.printf("%s\n", movie.getActors());
     }
+
 }

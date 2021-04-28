@@ -23,6 +23,7 @@ public class MovieCenter implements Callable<Observer> {
     private final Observer observer = new Observer();
     private final ExecutorService executor;
     private String title;
+    private Boolean alive = true;
 
     public MovieCenter(int numOfThreads, String title){
         executor = Executors.newFixedThreadPool(numOfThreads);
@@ -73,14 +74,14 @@ public class MovieCenter implements Callable<Observer> {
         Movie[] movies = new Movie[moviesID.length];
         DisplayMovie displayMovie = new DisplayMovie();
 
-        while(!futures.isEmpty()){
+        while(!futures.isEmpty() && alive){
             for(int i = 0; i < futures.size(); i++){
                 Future<Movie> future = futures.get(i);
                 if(future.isDone()){
                     try {
                         Movie movie = future.get();
                         observer.addMovie(movie);
-                        displayMovie.print(movie);
+                        displayMovie.getOutput(movie);
                         futures.remove(future);
                     } catch (InterruptedException | ExecutionException e) {
                         e.printStackTrace();
@@ -102,6 +103,14 @@ public class MovieCenter implements Callable<Observer> {
             futures.add(executor.submit(queryById));
         }
         return futures;
+    }
+
+    public void stop(){
+        alive = false;
+    }
+
+    public String getTitle(){
+        return title;
     }
 
 

@@ -3,53 +3,36 @@ package experis.ds.userinterface;
 import experis.ds.logic.MovieCenter;
 import experis.ds.logic.Observer;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 
 public class TaskManager {
-    private List<Observer> observerList = new ArrayList<>();
-    private List<Future<Observer>> futures = new ArrayList<>();
+    private ConcurrentHashMap<String, Observer> observerList = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<String, Future<Observer>> futures = new ConcurrentHashMap<>();
     private final ExecutorService executor = Executors.newFixedThreadPool(4);
 
-    public void execute(String data){
-        Future<Observer> future = executor.submit(new MovieCenter(4, data));
-        futures.add(future);
+    public void execute(String query){
+        var movieCenter = new MovieCenter(4, query);
+        Future<Observer> future = executor.submit(movieCenter);
+        futures.put(query, future);
     }
 
     public void checkFuture() throws ExecutionException, InterruptedException {
-        for (Future<Observer> observerFuture : futures) {
-            Future<Observer> future = observerFuture;
+        for (String query : futures.keySet()) {
+            Future<Observer> future = futures.get(query);
             if (future.isDone()) {
-                observerList.add(future.get());
+                observerList.put(query, future.get());
+                futures.remove(future);
+                System.out.printf("The Query for the title '%s' is done\n", query);
             }
         }
     }
 
-    public void addFuture(Future<Observer> future){
-        futures.add(future);
+    public void stop(String query){
+        Future<Observer> future = futures.get(query);
+        future.cancel(true);
     }
 
-    public void addObserver(Observer observer){
-        observerList.add(observer);
-    }
-
-    public void removeFuture(int index){
-        futures.remove(index);
-    }
-
-    public void removeObserver(int index){
-        observerList.remove(index);
-    }
-
-    public Observer getObserver(int index){
-        return observerList.get(index);
-    }
-
-    public Future<Observer> getFuture(int index){
-        return futures.get(index);
+    public Observer getObserver(String query){
+        return observerList.get(query);
     }
 }
