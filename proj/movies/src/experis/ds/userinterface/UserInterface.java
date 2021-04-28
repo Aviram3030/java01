@@ -2,21 +2,24 @@ package experis.ds.userinterface;
 
 import experis.ds.exceptions.InvalidCodeException;
 import experis.ds.exceptions.MovieNotFoundException;
-import experis.ds.domainentities.Movie;
 import experis.ds.logic.MovieCenter;
+import experis.ds.logic.Observer;
 import experis.ds.userinterface.input.ConsoleInput;
 import experis.ds.userinterface.output.Display;
 import experis.ds.userinterface.output.DisplayConsole;
 import experis.ds.userinterface.input.Input;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 
 public class UserInterface {
     private final ExecutorService executor = Executors.newFixedThreadPool(4);
     private Input input;
     private Display display ;
+    private List<Observer> observerList = new ArrayList<>();
+    private List<Future<Observer>> futures = new ArrayList<>();
 
     public void start(){
         Scanner reader = new Scanner(System.in);
@@ -38,11 +41,11 @@ public class UserInterface {
             }
 
             System.out.println("Which movie are you looking for?");
-            String data = input.getData();
+            String data = input.getInput();
 
             try {
-                executor.submit(new MovieCenter(4, data));
-                //Movie[] movies = movieCenter.search(data);
+                Future<Observer> future = executor.submit(new MovieCenter(4, data));
+                futures.add(future);
                 outputInterface();
                 switch(reader.nextLine()){
                     case "1" : {
@@ -54,7 +57,13 @@ public class UserInterface {
                         continue;
                     }
                 }
-                //display.getOutput(movies);
+
+                for(int i = 0; i < futures.size(); i++){
+                    future = futures.get(i);
+                    if(future.isDone()){
+                        observerList.add(future.get());
+                    }
+                }
             }
             catch(MovieNotFoundException e){
                 e.printStackTrace();
@@ -63,6 +72,8 @@ public class UserInterface {
             catch(InvalidCodeException e){
                 e.printStackTrace();
                 break;
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
             }
         }
         System.out.println("Goodbye");
