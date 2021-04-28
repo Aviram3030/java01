@@ -1,4 +1,4 @@
-package experis.ds.gson;
+package experis.ds.data;
 
 import com.google.gson.annotations.SerializedName;
 

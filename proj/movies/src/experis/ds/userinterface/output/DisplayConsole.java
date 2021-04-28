@@ -1,11 +1,11 @@
-package experis.ds;
+package experis.ds.userinterface.output;
 
-import experis.ds.gson.Movie;
-import experis.ds.gson.Rating;
+import experis.ds.data.Movie;
+import experis.ds.data.Rating;
 
 import java.util.List;
 
-public class Display implements Output{
+public class DisplayConsole implements Display {
     public void getOutput(Movie[] movies){
         for(var movie: movies){
             System.out.printf("%s|", movie.getTitle());
@@ -14,6 +14,7 @@ public class Display implements Output{
             for(Rating rating: ratings){
                 System.out.printf("%s: %s, ", rating.getSource(), rating.getValue());
             }
+            System.out.print("\b\b");
             System.out.printf("|%s|", movie.getRuntime());
             System.out.printf("%s|", movie.getDirector());
             System.out.printf("%s\n", movie.getActors());

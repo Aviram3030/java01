@@ -1,13 +1,12 @@
-package experis.ds;
+package experis.ds.logic;
 
+import com.google.gson.Gson;
 import experis.ds.exceptions.MovieNotFoundException;
-import experis.ds.gson.Movie;
-import experis.ds.gson.MovieID;
-import experis.ds.gson.TitleQueryResult;
+import experis.ds.data.Movie;
+import experis.ds.data.MovieID;
+import experis.ds.data.TitleQueryResult;
 
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 
 /**
  *  The MovieCenter class connects between the information
@@ -17,15 +16,11 @@ import java.util.concurrent.Future;
  */
 
 public class MovieCenter {
-    private static MovieCenter movieCenter = new MovieCenter();
-    private final ForkJoinPool forkJoinPool = new ForkJoinPool();
-    private final MoviesQueryByTitle moviesQueryByTitle = new MoviesQueryByTitle();
+    private final static Gson gson = new Gson();
+    private final ExecutorService executor;
 
-    private MovieCenter(){
-    }
-
-    public static MovieCenter getMovieCenter(){
-        return movieCenter;
+    public MovieCenter(int numOfThreads){
+        executor = Executors.newFixedThreadPool(numOfThreads);
     }
 
     /**
@@ -35,8 +30,15 @@ public class MovieCenter {
      *  that got selected.
      */
     public Movie[] search(String title){
+        if(title == null){
+            throw new MovieNotFoundException("Input can't be null");
+        }
         title = getFixedTitle(title);
-        TitleQueryResult result = moviesQueryByTitle.compute(title);
+        MovieSearcher titleQuery = new MovieSearcher("s", title);
+
+        String moviesByTitle = titleQuery.call();
+        TitleQueryResult result = gson.fromJson(moviesByTitle, TitleQueryResult.class);
+
         MovieID[] moviesID = result.getMoviesIDs();
         if(moviesID == null){
             throw new MovieNotFoundException("Couldn't find a movie with this specific name");
@@ -53,7 +55,6 @@ public class MovieCenter {
         return title.replace(' ', '+');
     }
 
-
     /**
      *  Waits for each thread to finish his operation and sending
      *  the data of the selected movies.
@@ -62,11 +63,12 @@ public class MovieCenter {
      */
     private Movie[] getMovies(MovieID[] moviesID) {
         Movie[] movies = new Movie[moviesID.length];
-        Future<Movie>[] futures = getFutures(moviesID);
+        Future<String>[] futures = getFutures(moviesID);
 
         for(int i = 0; i < futures.length; i++){
             try {
-                movies[i] = futures[i].get();
+                String moviesByID = futures[i].get();
+                movies[i] = gson.fromJson(moviesByID, Movie.class);
             } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();
             }
@@ -75,14 +77,14 @@ public class MovieCenter {
     }
 
     /**
-     *  Adding tasks to the thread pool of type MovieQueryByID.
+     *  Adding tasks to the thread pool of type query by id.
      */
-    private Future<Movie>[] getFutures (MovieID[] moviesID){
-        Future<Movie>[] futures = new Future[moviesID.length];
+    private Future<String>[] getFutures (MovieID[] moviesID){
+        Future<String>[] futures = new Future[moviesID.length];
         for(int i = 0; i < futures.length; i++){
-            String ID = moviesID[i].getImdbID();
-            MovieQueryById queryById = new MovieQueryById(ID);
-            futures[i] = forkJoinPool.submit(queryById);
+            String id = moviesID[i].getImdbID();
+            MovieSearcher queryById = new MovieSearcher("i", id);
+            futures[i] = executor.submit(queryById);
         }
         return futures;
     }

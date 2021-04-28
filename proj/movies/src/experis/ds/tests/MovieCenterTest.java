@@ -1,17 +1,24 @@
 package experis.ds.tests;
 
-import experis.ds.Display;
-import experis.ds.MovieCenter;
-import experis.ds.Output;
-import experis.ds.gson.Movie;
+import experis.ds.logic.MovieCenter;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 class MovieCenterTest {
-    MovieCenter movieCenter = MovieCenter.getMovieCenter();
+    MovieCenter movieCenter = new MovieCenter(4);
+
     @Test
     void search() {
-        Movie[] movies = movieCenter.search("Star Wars");
-        Output output = new Display();
-        output.getOutput(movies);
+        var movies = movieCenter.search("Star Wars");
+        assertEquals("Star Wars: Episode IV - A New Hope", movies[0].getTitle());
+        assertEquals("Star Wars: Episode V - The Empire Strikes Back", movies[1].getTitle());
+        assertEquals("Star Wars: Episode VI - Return of the Jedi", movies[2].getTitle());
+        assertEquals("Star Wars: Episode VII - The Force Awakens", movies[3].getTitle());
+
+        assertEquals("Action, Adventure, Fantasy, Sci-Fi", movies[0].getGenre());
+        assertEquals("Action, Adventure, Fantasy, Sci-Fi", movies[1].getGenre());
+        assertEquals("Action, Adventure, Fantasy, Sci-Fi", movies[2].getGenre());
+        assertEquals("Action, Adventure, Sci-Fi", movies[3].getGenre());
     }
 }

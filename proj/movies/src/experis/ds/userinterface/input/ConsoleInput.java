@@ -1,11 +1,13 @@
-package experis.ds;
+package experis.ds.userinterface.input;
+
+import experis.ds.userinterface.output.Input;
 
 import java.util.Scanner;
 
-public class ScannerInput implements Input{
+public class ConsoleInput implements Input {
     private Scanner reader;
 
-    public ScannerInput(Scanner reader){
+    public ConsoleInput(Scanner reader){
         this.reader = reader;
     }
 

@@ -1,4 +1,4 @@
-package experis.ds.gson;
+package experis.ds.data;
 
 /**
  *  The MovieID class contains the information required
