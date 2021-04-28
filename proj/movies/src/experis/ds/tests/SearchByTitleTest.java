@@ -15,6 +15,8 @@ class SearchByTitleTest {
     void call(){
         String data = movieSearcher.call();
         TitleQueryResult result = gson.fromJson(data, TitleQueryResult.class);
+        assertEquals(10, result.getMoviesIDs().length);
+
         assertEquals("tt1201607",result.getMoviesIDs()[0].getImdbID());
         assertEquals("tt0241527",result.getMoviesIDs()[1].getImdbID());
         assertEquals("tt0295297",result.getMoviesIDs()[2].getImdbID());

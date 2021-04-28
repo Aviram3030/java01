@@ -38,8 +38,8 @@ public class MovieCenter {
 
         String moviesByTitle = titleQuery.call();
         TitleQueryResult result = gson.fromJson(moviesByTitle, TitleQueryResult.class);
-
         MovieID[] moviesID = result.getMoviesIDs();
+
         if(moviesID == null){
             throw new MovieNotFoundException("Couldn't find a movie with this specific name");
         }
@@ -62,8 +62,8 @@ public class MovieCenter {
      *  that got selected.
      */
     private Movie[] getMovies(MovieID[] moviesID) {
-        Movie[] movies = new Movie[moviesID.length];
         Future<String>[] futures = getFutures(moviesID);
+        Movie[] movies = new Movie[moviesID.length];
 
         for(int i = 0; i < futures.length; i++){
             try {

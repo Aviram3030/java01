@@ -12,21 +12,21 @@ import java.util.concurrent.Callable;
  *  and gets a string in json format.
  */
 public class MovieSearcher implements Callable<String> {
+    private final StringBuilder sb = new StringBuilder();
     private final String urlText;
 
     public MovieSearcher(String type, String query){
-        StringBuilder sb = new StringBuilder();
         sb.append("http://www.omdbapi.com/?apikey=b31ba527&");
         sb.append(type);
         sb.append("=");
         sb.append(query);
         sb.append("&");
         urlText = sb.toString();
+        sb.setLength(0);
     }
 
     @Override
     public String call(){
-        StringBuilder inLine = new StringBuilder();
         try {
             URL url = new URL(urlText);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
@@ -39,11 +39,11 @@ public class MovieSearcher implements Callable<String> {
 
             Scanner sc = new Scanner(url.openStream());
             while (sc.hasNext()) {
-                inLine.append(sc.nextLine());
+                sb.append(sc.nextLine());
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return inLine.toString();
+        return sb.toString();
     }
 }

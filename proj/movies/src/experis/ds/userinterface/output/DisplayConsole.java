@@ -14,8 +14,7 @@ public class DisplayConsole implements Display {
             for(Rating rating: ratings){
                 System.out.printf("%s: %s, ", rating.getSource(), rating.getValue());
             }
-            System.out.print("\b\b");
-            System.out.printf("|%s|", movie.getRuntime());
+            System.out.printf("\b\b|%s|", movie.getRuntime());
             System.out.printf("%s|", movie.getDirector());
             System.out.printf("%s\n", movie.getActors());
         }
