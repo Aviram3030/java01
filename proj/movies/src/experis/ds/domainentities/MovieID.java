@@ -1,4 +1,4 @@
-package experis.ds.data;
+package experis.ds.domainentities;
 
 /**
  *  The MovieID class contains the information required

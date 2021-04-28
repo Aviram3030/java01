@@ -1,4 +1,4 @@
-package experis.ds.userinterface.output;
+package experis.ds.userinterface.input;
 
 public interface Input {
     public String getData();

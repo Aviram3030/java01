@@ -1,20 +1,20 @@
 package experis.ds.tests;
 
 import com.google.gson.Gson;
-import experis.ds.data.TitleQueryResult;
-import experis.ds.logic.MovieSearcher;
+import experis.ds.data.MovieSearcherByTitle;
+import experis.ds.domainentities.TitleQueryResult;
+import experis.ds.data.MovieSearcher;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class SearchByTitleTest {
     Gson gson = new Gson();
-    MovieSearcher movieSearcher = new MovieSearcher("s", "harry+potter");
+    MovieSearcherByTitle movieSearcher = new MovieSearcherByTitle("harry+potter");
 
     @Test
     void call(){
-        String data = movieSearcher.call();
-        TitleQueryResult result = gson.fromJson(data, TitleQueryResult.class);
+        TitleQueryResult result = movieSearcher.call();
         assertEquals(10, result.getMoviesIDs().length);
 
         assertEquals("tt1201607",result.getMoviesIDs()[0].getImdbID());

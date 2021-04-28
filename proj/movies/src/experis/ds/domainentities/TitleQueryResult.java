@@ -1,6 +1,7 @@
-package experis.ds.data;
+package experis.ds.domainentities;
 
 import com.google.gson.annotations.SerializedName;
+import experis.ds.domainentities.MovieID;
 
 /**
  *  Contains

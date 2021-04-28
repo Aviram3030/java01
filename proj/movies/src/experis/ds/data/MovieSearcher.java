@@ -1,32 +1,22 @@
-package experis.ds.logic;
+package experis.ds.data;
 
+import com.google.gson.Gson;
 import experis.ds.exceptions.InvalidCodeException;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Scanner;
-import java.util.concurrent.Callable;
 
 /**
  *  The class MovieSearch make a query request by type to omdbapi
  *  and gets a string in json format.
  */
-public class MovieSearcher implements Callable<String> {
-    private final StringBuilder sb = new StringBuilder();
-    private final String urlText;
+abstract public class MovieSearcher{
+    protected String urlText;
+    protected Gson gson = new Gson();
 
-    public MovieSearcher(String type, String query){
-        sb.append("http://www.omdbapi.com/?apikey=b31ba527&");
-        sb.append(type);
-        sb.append("=");
-        sb.append(query);
-        sb.append("&");
-        urlText = sb.toString();
-        sb.setLength(0);
-    }
-
-    @Override
-    public String call(){
+    public String execute() {
+        StringBuilder sb = new StringBuilder();
         try {
             URL url = new URL(urlText);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
@@ -46,4 +36,5 @@ public class MovieSearcher implements Callable<String> {
         }
         return sb.toString();
     }
+
 }

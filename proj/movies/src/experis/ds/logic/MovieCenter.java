@@ -1,11 +1,15 @@
 package experis.ds.logic;
 
-import com.google.gson.Gson;
+import experis.ds.data.MovieSearcherByID;
+import experis.ds.data.MovieSearcherByTitle;
+import experis.ds.domainentities.Movie;
+import experis.ds.domainentities.MovieID;
+import experis.ds.domainentities.TitleQueryResult;
 import experis.ds.exceptions.MovieNotFoundException;
-import experis.ds.data.Movie;
-import experis.ds.data.MovieID;
-import experis.ds.data.TitleQueryResult;
+import experis.ds.userinterface.output.DisplayMovie;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.*;
 
 /**
@@ -15,12 +19,14 @@ import java.util.concurrent.*;
  *  The object is singleton.
  */
 
-public class MovieCenter {
-    private final static Gson gson = new Gson();
+public class MovieCenter implements Callable<Observer> {
+    private final Observer observer = new Observer();
     private final ExecutorService executor;
+    private String title;
 
-    public MovieCenter(int numOfThreads){
+    public MovieCenter(int numOfThreads, String title){
         executor = Executors.newFixedThreadPool(numOfThreads);
+        this.title = title;
     }
 
     /**
@@ -29,28 +35,29 @@ public class MovieCenter {
      *  Returns array that contains the data of every movie
      *  that got selected.
      */
-    public Movie[] search(String title){
+    @Override
+    public Observer call(){
         if(title == null){
             throw new MovieNotFoundException("Input can't be null");
         }
-        title = getFixedTitle(title);
-        MovieSearcher titleQuery = new MovieSearcher("s", title);
+        title = urlEscape(title);
+        MovieSearcherByTitle movieSearcherByTitle = new MovieSearcherByTitle(title);
 
-        String moviesByTitle = titleQuery.call();
-        TitleQueryResult result = gson.fromJson(moviesByTitle, TitleQueryResult.class);
+        TitleQueryResult result  = movieSearcherByTitle.call();  //getMoviesIDsByTitle
         MovieID[] moviesID = result.getMoviesIDs();
 
         if(moviesID == null){
-            throw new MovieNotFoundException("Couldn't find a movie with this specific name");
+            return null;
         }
-        return getMovies(moviesID);
+        getMovies(moviesID);
+        return observer;
     }
 
     /**
      *  Changing the title so we can use the query
      *  in the right way.
      */
-    private String getFixedTitle(String title) {
+    private String urlEscape(String title) {
         title = title.trim();
         return title.replace(' ', '+');
     }
@@ -61,31 +68,42 @@ public class MovieCenter {
      *  Returns array that contains the data of every movie
      *  that got selected.
      */
-    private Movie[] getMovies(MovieID[] moviesID) {
-        Future<String>[] futures = getFutures(moviesID);
+    private void getMovies(MovieID[] moviesID) {
+        List<Future<Movie>> futures = getFutures(moviesID);
         Movie[] movies = new Movie[moviesID.length];
+        DisplayMovie displayMovie = new DisplayMovie();
 
-        for(int i = 0; i < futures.length; i++){
-            try {
-                String moviesByID = futures[i].get();
-                movies[i] = gson.fromJson(moviesByID, Movie.class);
-            } catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
+        while(!futures.isEmpty()){
+            for(int i = 0; i < futures.size(); i++){
+                Future<Movie> future = futures.get(i);
+                if(future.isDone()){
+                    try {
+                        Movie movie = future.get();
+                        observer.addMovie(movie);
+                        displayMovie.print(movie);
+                        futures.remove(future);
+                    } catch (InterruptedException | ExecutionException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
+            observer.finished();
         }
-        return movies;
     }
 
     /**
      *  Adding tasks to the thread pool of type query by id.
      */
-    private Future<String>[] getFutures (MovieID[] moviesID){
-        Future<String>[] futures = new Future[moviesID.length];
-        for(int i = 0; i < futures.length; i++){
+    private List<Future<Movie>> getFutures (MovieID[] moviesID){
+        List<Future<Movie>> futures = new ArrayList<>();
+        for(int i = 0; i < moviesID.length ; i++) {
             String id = moviesID[i].getImdbID();
-            MovieSearcher queryById = new MovieSearcher("i", id);
-            futures[i] = executor.submit(queryById);
+            MovieSearcherByID queryById = new MovieSearcherByID(id);
+            futures.add(executor.submit(queryById));
         }
         return futures;
     }
+
+
+
 }

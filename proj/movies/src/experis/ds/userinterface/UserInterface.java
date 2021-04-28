@@ -2,17 +2,19 @@ package experis.ds.userinterface;
 
 import experis.ds.exceptions.InvalidCodeException;
 import experis.ds.exceptions.MovieNotFoundException;
-import experis.ds.data.Movie;
+import experis.ds.domainentities.Movie;
 import experis.ds.logic.MovieCenter;
 import experis.ds.userinterface.input.ConsoleInput;
 import experis.ds.userinterface.output.Display;
 import experis.ds.userinterface.output.DisplayConsole;
-import experis.ds.userinterface.output.Input;
+import experis.ds.userinterface.input.Input;
 
 import java.util.Scanner;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class UserInterface {
-    private final MovieCenter movieCenter = new MovieCenter(4);
+    private final ExecutorService executor = Executors.newFixedThreadPool(4);
     private Input input;
     private Display display ;
 
@@ -39,7 +41,8 @@ public class UserInterface {
             String data = input.getData();
 
             try {
-                Movie[] movies = movieCenter.search(data);
+                executor.submit(new MovieCenter(4, data));
+                //Movie[] movies = movieCenter.search(data);
                 outputInterface();
                 switch(reader.nextLine()){
                     case "1" : {
@@ -51,7 +54,7 @@ public class UserInterface {
                         continue;
                     }
                 }
-                display.getOutput(movies);
+                //display.getOutput(movies);
             }
             catch(MovieNotFoundException e){
                 e.printStackTrace();

@@ -1,6 +1,6 @@
 package experis.ds.userinterface.output;
 
-import experis.ds.data.Movie;
+import experis.ds.domainentities.Movie;
 
 public interface Display {
     public void getOutput(Movie[] movies);

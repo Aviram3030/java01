@@ -1,7 +1,5 @@
 package experis.ds.userinterface.input;
 
-import experis.ds.userinterface.output.Input;
-
 import java.util.Scanner;
 
 public class ConsoleInput implements Input {
