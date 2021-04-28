@@ -18,6 +18,7 @@ public class UserInterface {
     private final ExecutorService executor = Executors.newFixedThreadPool(4);
     private Input input;
     private Display display ;
+    private TaskManager taskManager = new TaskManager();
     private List<Observer> observerList = new ArrayList<>();
     private List<Future<Observer>> futures = new ArrayList<>();
 
@@ -44,8 +45,7 @@ public class UserInterface {
             String data = input.getInput();
 
             try {
-                Future<Observer> future = executor.submit(new MovieCenter(4, data));
-                futures.add(future);
+                taskManager.execute(data);
                 outputInterface();
                 switch(reader.nextLine()){
                     case "1" : {
@@ -58,12 +58,7 @@ public class UserInterface {
                     }
                 }
 
-                for(int i = 0; i < futures.size(); i++){
-                    future = futures.get(i);
-                    if(future.isDone()){
-                        observerList.add(future.get());
-                    }
-                }
+                taskManager.checkFuture();
             }
             catch(MovieNotFoundException e){
                 e.printStackTrace();
