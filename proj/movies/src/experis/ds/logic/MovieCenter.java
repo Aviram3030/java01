@@ -8,6 +8,8 @@ import experis.ds.domainentities.TitleQueryResult;
 import experis.ds.exceptions.MovieNotFoundException;
 import experis.ds.userinterface.output.DisplayMovie;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
@@ -44,7 +46,7 @@ public class MovieCenter implements Callable<Observer> {
         title = urlEscape(title);
         MovieSearcherByTitle movieSearcherByTitle = new MovieSearcherByTitle(title);
 
-        TitleQueryResult result  = movieSearcherByTitle.call();  //getMoviesIDsByTitle
+        TitleQueryResult result  = movieSearcherByTitle.call();
         MovieID[] moviesID = result.getMoviesIDs();
 
         if(moviesID == null){
@@ -60,7 +62,7 @@ public class MovieCenter implements Callable<Observer> {
      */
     private String urlEscape(String title) {
         title = title.trim();
-        return title.replace(' ', '+');
+        return URLEncoder.encode(title.strip(), StandardCharsets.UTF_8);
     }
 
     /**
@@ -71,7 +73,6 @@ public class MovieCenter implements Callable<Observer> {
      */
     private void getMovies(MovieID[] moviesID) {
         List<Future<Movie>> futures = getFutures(moviesID);
-        Movie[] movies = new Movie[moviesID.length];
         DisplayMovie displayMovie = new DisplayMovie();
 
         while(!futures.isEmpty() && alive){

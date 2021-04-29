@@ -52,4 +52,8 @@ public class Movie {
                 return actors;
         }
 
+        public String toString(){
+                return null;
+        }
+
 }

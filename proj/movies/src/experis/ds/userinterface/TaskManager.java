@@ -10,7 +10,7 @@ public class TaskManager {
     private ConcurrentHashMap<String, Future<Observer>> futures = new ConcurrentHashMap<>();
     private final ExecutorService executor = Executors.newFixedThreadPool(4);
 
-    public void execute(String query){
+    public void execute(String query) {
         var movieCenter = new MovieCenter(4, query);
         Future<Observer> future = executor.submit(movieCenter);
         futures.put(query, future);
@@ -27,12 +27,12 @@ public class TaskManager {
         }
     }
 
-    public void stop(String query){
+    public void stop(String query) {
         Future<Observer> future = futures.get(query);
         future.cancel(true);
     }
 
-    public Observer getObserver(String query){
+    public Observer getObserver(String query) {
         return observerList.get(query);
     }
 }

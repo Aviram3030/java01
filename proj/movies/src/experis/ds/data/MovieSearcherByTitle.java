@@ -7,9 +7,7 @@ public class MovieSearcherByTitle extends MovieSearcher {
 
     public MovieSearcherByTitle(String title){
         StringBuilder sb = new StringBuilder();
-        sb.append("http://www.omdbapi.com/?apikey=b31ba527&");
-        sb.append("s");
-        sb.append("=");
+        sb.append("http://www.omdbapi.com/?apikey=b31ba527&s=");
         sb.append(title);
         sb.append("&");
         urlText = sb.toString();

@@ -12,7 +12,6 @@ class MovieCenterTest {
     @Test
     void call() {
         List<MovieCenter> list = makeList();
-
     }
 
     List<MovieCenter> makeList(){
