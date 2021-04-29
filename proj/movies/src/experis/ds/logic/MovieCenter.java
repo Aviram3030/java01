@@ -5,8 +5,7 @@ import experis.ds.data.MovieSearcherByTitle;
 import experis.ds.domainentities.Movie;
 import experis.ds.domainentities.MovieID;
 import experis.ds.domainentities.TitleQueryResult;
-import experis.ds.exceptions.MovieNotFoundException;
-import experis.ds.userinterface.output.DisplayMovie;
+import experis.ds.userinterface.output.Display;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -26,10 +25,12 @@ public class MovieCenter implements Callable<Observer> {
     private final ExecutorService executor;
     private String title;
     private Boolean alive = true;
+    private Display display;
 
-    public MovieCenter(int numOfThreads, String title){
+    public MovieCenter(int numOfThreads, String title, Display display){
         executor = Executors.newFixedThreadPool(numOfThreads);
         this.title = title;
+        this.display = display;
     }
 
     /**
@@ -41,7 +42,7 @@ public class MovieCenter implements Callable<Observer> {
     @Override
     public Observer call(){
         if(title == null){
-            throw new MovieNotFoundException("Input can't be null");
+            throw new NullPointerException("Input can't be null");
         }
         title = urlEscape(title);
         MovieSearcherByTitle movieSearcherByTitle = new MovieSearcherByTitle(title);
@@ -73,7 +74,6 @@ public class MovieCenter implements Callable<Observer> {
      */
     private void getMovies(MovieID[] moviesID) {
         List<Future<Movie>> futures = getFutures(moviesID);
-        DisplayMovie displayMovie = new DisplayMovie();
 
         while(!futures.isEmpty() && alive){
             for(int i = 0; i < futures.size(); i++){
@@ -82,7 +82,7 @@ public class MovieCenter implements Callable<Observer> {
                     try {
                         Movie movie = future.get();
                         observer.addMovie(movie);
-                        displayMovie.getOutput(movie);
+                        display.getOutput(movie);
                         futures.remove(future);
                     } catch (InterruptedException | ExecutionException e) {
                         e.printStackTrace();
@@ -109,11 +109,5 @@ public class MovieCenter implements Callable<Observer> {
     public void stop(){
         alive = false;
     }
-
-    public String getTitle(){
-        return title;
-    }
-
-
 
 }

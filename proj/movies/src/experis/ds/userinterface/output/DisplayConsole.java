@@ -1,14 +1,8 @@
 package experis.ds.userinterface.output;
 
-import experis.ds.domainentities.Movie;
-
-public class DisplayConsole implements Display<Movie[]> {
-    DisplayMovie displayMovie = new DisplayMovie();
-
+public class DisplayConsole<T> implements Display {
     @Override
-    public void getOutput(Movie[] movies){
-        for(var movie: movies){
-            displayMovie.getOutput(movie);
-        }
+    public void getOutput(Object data) {
+        System.out.println(data.toString());
     }
 }

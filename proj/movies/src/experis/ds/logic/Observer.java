@@ -22,8 +22,8 @@ public class Observer {
 
         public String toString() {
             return "Observer{" +
-                    "\n Movies =" + movies.toString() +
-                    "\n length =" + length +
+                    "\n Movies = " + movies.toString() +
+                    "\n length = " + length +
                     "\n isRunning =" + isRunning +
                     '}';
         }

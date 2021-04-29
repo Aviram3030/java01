@@ -53,7 +53,7 @@ public class Movie {
         }
 
         public String toString(){
-                return null;
+                return title + "|" +ratings + "|" + ratings.toString()+ "|" + runtime + "|" + director+ "|" + actors;
         }
 
 }

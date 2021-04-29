@@ -16,4 +16,8 @@ public class Rating {
     public String getValue() {
         return value;
     }
+
+    public String toString(){
+        return source + ":" + value;
+    }
 }

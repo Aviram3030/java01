@@ -1,11 +1,10 @@
 package experis.ds.userinterface;
 
 import experis.ds.exceptions.InvalidCodeException;
-import experis.ds.exceptions.MovieNotFoundException;
 import experis.ds.logic.Observer;
 import experis.ds.userinterface.input.ConsoleInput;
 import experis.ds.userinterface.input.Input;
-import experis.ds.userinterface.output.DisplayObserverConsole;
+import experis.ds.userinterface.output.DisplayConsole;
 
 import java.util.Scanner;
 import java.util.concurrent.*;
@@ -15,22 +14,46 @@ public class UserInterface {
     private final Scanner reader = new Scanner(System.in);
     private Input input;
     private final ConsoleInput consoleInput = new ConsoleInput(reader);
-    private DisplayObserverConsole displayObserverConsole;
+    private final DisplayConsole<Observer> displayConsole = new DisplayConsole();
     private boolean present = true;
 
     public void start() {
+        String data = null;
         while (present) {
-            inputInterface();
+            System.out.println("Type 1 to insert input");
+            System.out.println("Type 2 to stop task");
+            System.out.println("Type 3 to get the data for task that has finished");
+            System.out.println("Type any to exit");
+            System.out.print("> ");
+            switch (reader.nextLine()) {
+                case "1": {
+                    inputInterface();
+                    System.out.println("Which movie are you looking for?");
+                    data = input.getInput();
+                    break;
+                }
+                case "2": {
+                    stopTask();
+                    continue;
+                }
+                case "3": {
+                    getData();
+                    continue;
+                }
+                default:{
+                    present = false;
+                    continue;
+                }
+            }
             if(!present){
-                continue;
+                System.out.println("HELLO");
+                break;
             }
 
-            System.out.println("Which movie are you looking for?");
-            String data = input.getInput();
             try {
                 taskManager.execute(data);
                 taskManager.checkFuture();
-            } catch (MovieNotFoundException e) {
+            } catch (NullPointerException e) {
                 e.printStackTrace();
                 System.out.println("Try again");
             } catch (InvalidCodeException e) {
@@ -39,8 +62,6 @@ public class UserInterface {
             } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();
             }
-
-            userRequestInterface();
         }
 
         System.out.println("Goodbye");
@@ -58,21 +79,6 @@ public class UserInterface {
         }
     }
 
-    private void userRequestInterface() {
-        System.out.println("Type 1 to stop task");
-        System.out.println("Type 2 to get the data for task that has finished");
-        System.out.println("Type any to move on");
-        System.out.print("> ");
-        switch (reader.nextLine()) {
-            case "1": {
-                stopTask();
-            }
-            case "2": {
-                getData();
-            }
-        }
-    }
-
 
     private void stopTask() {
         System.out.println("Enter the name of query you want to stop");
@@ -87,7 +93,7 @@ public class UserInterface {
         System.out.print("> ");
 
         if ("1".equals(reader.nextLine())) {
-            displayObserverConsole.getOutput(observer);
+            displayConsole.getOutput(observer);
         } else {
             present = false;
         }
