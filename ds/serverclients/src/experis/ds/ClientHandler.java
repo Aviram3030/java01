@@ -24,7 +24,7 @@ public class ClientHandler implements Runnable{
     @Override
     public void run() {
         try {
-            while (true) {
+            while (!client.isClosed()) {
                 String msg = input.readLine();
                 printToAll(msg);
             }

@@ -16,8 +16,8 @@ public class Client {
     private final Scanner reader;
 
 
-    public Client(String ip, String port, String name, Scanner reader) throws IOException {
-        socket = new Socket(ip, Integer.parseInt(port));
+    public Client(String ip, int port, String name, Scanner reader) throws IOException {
+        socket = new Socket(ip, port);
 
         serverHandler = new ServerHandler(socket);
         output = new PrintWriter(socket.getOutputStream(), true);
@@ -43,16 +43,11 @@ public class Client {
 
     public static void main(String[] args) throws IOException {
         Scanner reader = new Scanner(System.in);
-        System.out.println("Enter server IP:");
-        String ip = reader.nextLine();
-
-        System.out.println("Enter server port:");
-        String port = reader.nextLine();
 
         System.out.println("Enter your name");
         String name = reader.nextLine();
 
-        var client = new Client(ip, port, name, reader);
+        var client = new Client("127.0.0.1", 7777, name, reader);
         client.execute();
 
     }
