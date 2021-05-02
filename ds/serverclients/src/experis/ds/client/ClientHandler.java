@@ -1,24 +1,28 @@
-package experis.ds;
+package experis.ds.client;
+
+import experis.ds.ICommandExecutor;
+import experis.ds.Room;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.List;
 
 public class ClientHandler implements Runnable{
     private final Socket client;
     private final BufferedReader input;
     private final PrintWriter output;
-    private final List<ClientHandler> clients;
+    private final ClientUser clientUser;
+    private final ICommandExecutor commandExecutor;
 
-    public ClientHandler(Socket client, List<ClientHandler> clients) throws IOException {
+    public ClientHandler(Socket client, Room lobby, ICommandExecutor commandExecutor) throws IOException {
         this.client = client;
         var inputStream = new InputStreamReader(client.getInputStream());
         input = new BufferedReader(inputStream);
         output = new PrintWriter(client.getOutputStream(), true);
-        this.clients = clients;
+        clientUser = new ClientUser(client, lobby);
+        this.commandExecutor = commandExecutor;
     }
 
     @Override
@@ -26,7 +30,7 @@ public class ClientHandler implements Runnable{
         try {
             while (!client.isClosed()) {
                 String msg = input.readLine();
-                printToAll(msg);
+                commandExecutor.execute(clientUser, msg);
             }
         }catch(IOException e){
             e.printStackTrace();
@@ -39,11 +43,5 @@ public class ClientHandler implements Runnable{
         }
         output.close();
 
-    }
-
-    private void printToAll(String msg) {
-        for(ClientHandler clientHandler: clients){
-            clientHandler.output.println(msg);
-        }
     }
 }

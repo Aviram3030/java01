@@ -1,14 +1,14 @@
-package experis.ds;
+package experis.ds.client;
+
+import experis.ds.server.ServerHandler;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
 
-public class Client {
+public class ClientConnection {
 
-    //ip = "127.0.0.1";
-    //port = 7777;
     private final Socket socket;
     private final ServerHandler serverHandler;
     private final PrintWriter output;
@@ -16,16 +16,16 @@ public class Client {
     private final Scanner reader;
 
 
-    public Client(String ip, int port, String name, Scanner reader) throws IOException {
+    public ClientConnection(String ip, int port, String name, Scanner reader) throws IOException {
         socket = new Socket(ip, port);
-
         serverHandler = new ServerHandler(socket);
         output = new PrintWriter(socket.getOutputStream(), true);
         this.name = name;
+        output.println(name);
         this.reader = reader;
     }
 
-    public void execute() throws IOException {
+    public void start() throws IOException {
         new Thread(serverHandler).start();
         System.out.println("You are in chat now");
 
@@ -34,7 +34,7 @@ public class Client {
             if(command.equals("quit")){
                 break;
             }
-            output.println(name + " says: " +command);
+            output.println(command);
         }
 
         socket.close();
@@ -47,8 +47,8 @@ public class Client {
         System.out.println("Enter your name");
         String name = reader.nextLine();
 
-        var client = new Client("127.0.0.1", 7777, name, reader);
-        client.execute();
+        var client = new ClientConnection("127.0.0.1", 7777, name, reader);
+        client.start();
 
     }
 }
