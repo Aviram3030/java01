@@ -12,20 +12,20 @@ public class ClientConnection {
     private final Socket socket;
     private final ServerHandler serverHandler;
     private final PrintWriter output;
-    private final String name;
     private final Scanner reader;
 
-
-    public ClientConnection(String ip, int port, String name, Scanner reader) throws IOException {
+    public ClientConnection(String ip, int port, Scanner reader) throws IOException {
         socket = new Socket(ip, port);
         serverHandler = new ServerHandler(socket);
         output = new PrintWriter(socket.getOutputStream(), true);
-        this.name = name;
-        output.println(name);
         this.reader = reader;
     }
 
     public void start() throws IOException {
+        System.out.println("Enter your name");
+        String name = reader.nextLine();
+        output.println(name);
+
         new Thread(serverHandler).start();
         System.out.println("You are in chat now");
 
@@ -44,10 +44,8 @@ public class ClientConnection {
     public static void main(String[] args) throws IOException {
         Scanner reader = new Scanner(System.in);
 
-        System.out.println("Enter your name");
-        String name = reader.nextLine();
 
-        var client = new ClientConnection("127.0.0.1", 7777, name, reader);
+        var client = new ClientConnection("127.0.0.1", 7777, reader);
         client.start();
 
     }

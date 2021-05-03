@@ -1,7 +1,8 @@
 package experis.ds.client;
 
-import experis.ds.ICommandExecutor;
-import experis.ds.Room;
+import experis.ds.executors.ICommandExecutor;
+import experis.ds.commands.CommandTypeFactory;
+import experis.ds.particpants.ParticipantUser;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,15 +14,16 @@ public class ClientHandler implements Runnable{
     private final Socket client;
     private final BufferedReader input;
     private final PrintWriter output;
-    private final ClientUser clientUser;
+    private final ParticipantUser clientUser;
     private final ICommandExecutor commandExecutor;
+    private final CommandTypeFactory commandTypeFactory = new CommandTypeFactory();
 
-    public ClientHandler(Socket client, Room lobby, ICommandExecutor commandExecutor) throws IOException {
+    public ClientHandler(Socket client, ICommandExecutor commandExecutor, ParticipantUser clientUser) throws IOException {
         this.client = client;
+        this.clientUser = clientUser;
         var inputStream = new InputStreamReader(client.getInputStream());
         input = new BufferedReader(inputStream);
         output = new PrintWriter(client.getOutputStream(), true);
-        clientUser = new ClientUser(client, lobby);
         this.commandExecutor = commandExecutor;
     }
 
@@ -30,15 +32,11 @@ public class ClientHandler implements Runnable{
         try {
             while (!client.isClosed()) {
                 String msg = input.readLine();
-                commandExecutor.execute(clientUser, msg);
+                var type = commandTypeFactory.getType(msg);
+                commandExecutor.execute(clientUser, msg, type);
             }
-        }catch(IOException e){
-            e.printStackTrace();
-        }
-
-        try {
             input.close();
-        } catch (IOException e) {
+        }catch(IOException e){
             e.printStackTrace();
         }
         output.close();
