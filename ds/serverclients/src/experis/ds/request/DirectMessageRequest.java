@@ -19,8 +19,8 @@ public class DirectMessageRequest implements Request {
             return;
         }
 
-        synchronized (this.participants) {
-            receiver = this.participants.get(nameOfReceiver);
+        synchronized (participants) {
+            receiver = participants.get(nameOfReceiver);
         }
         if(receiver.getRoom() == participant.getRoom()){
             participant.sendMessageToOne(receiver, txt);

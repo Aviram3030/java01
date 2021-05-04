@@ -15,10 +15,12 @@ public class RoomListRequest implements Request{
     @Override
     public void makeRequest(ParticipantUser participantUser, String msg) {
         StringBuilder sb = new StringBuilder();
+        sb.append("Rooms name: ");
         for(var room: rooms) {
             sb.append(room.getName());
-            sb.append("\t");
+            sb.append(", ");
         }
+        sb.append("\b\b");
         participantUser.printMessage(sb.toString());
     }
 }

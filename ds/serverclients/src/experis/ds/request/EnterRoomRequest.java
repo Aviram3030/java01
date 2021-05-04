@@ -17,14 +17,15 @@ public class EnterRoomRequest implements Request {
         changeRoom(participantUser, msg);
     }
 
-    private synchronized void  changeRoom(ParticipantUser clientUser, String msg){
-
-        Room room = getRoom(msg);
-        if(room == null){
-            room = new Room(msg);
-            rooms.add(room);
+    private void changeRoom(ParticipantUser clientUser, String msg){
+        synchronized (rooms) {
+            Room room = getRoom(msg);
+            if (room == null) {
+                room = new Room(msg);
+                rooms.add(room);
+            }
+            clientUser.setRoom(room);
         }
-        clientUser.setRoom(room);
     }
 
     private Room getRoom(String msg) {

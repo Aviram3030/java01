@@ -3,7 +3,7 @@ package experis.ds.client;
 import experis.ds.commands.Transformation;
 import experis.ds.executors.ICommandExecutor;
 import experis.ds.commands.CommandTypeFactory;
-import experis.ds.executors.Timer;
+import experis.ds.executors.TimeOut;
 import experis.ds.particpants.ParticipantUser;
 
 import java.io.BufferedReader;
@@ -21,7 +21,7 @@ public class ClientHandler implements Runnable{
     private final ICommandExecutor commandExecutor;
     private final CommandTypeFactory commandTypeFactory = new CommandTypeFactory();
     private final Transformation transformation = new Transformation();
-    private final Timer timer = new Timer(TimeUnit.SECONDS, 30);
+    private final TimeOut timer;
 
     public ClientHandler(Socket client, ICommandExecutor commandExecutor, ParticipantUser participantUser) throws IOException {
         this.client = client;
@@ -30,20 +30,20 @@ public class ClientHandler implements Runnable{
         input = new BufferedReader(inputStream);
         output = new PrintWriter(client.getOutputStream(), true);
         this.commandExecutor = commandExecutor;
+        timer = new TimeOut(client, TimeUnit.SECONDS, 30);
     }
 
     @Override
     public void run() {
         try {
-            while (!client.isClosed()) {
+            while (true) {
                 long start = System.nanoTime();
                 String msg = input.readLine();
                 long elapsedTime = System.nanoTime() - start;
-                if(timer.checkTimeOut(elapsedTime)){
-                    client.close();
+                timer.start(elapsedTime);
+                if(!client.isClosed()){
                     break;
                 }
-
                 var type = commandTypeFactory.getType(msg);
                 msg = transformation.transform(msg, type);
                 commandExecutor.execute(participantUser, msg, type);

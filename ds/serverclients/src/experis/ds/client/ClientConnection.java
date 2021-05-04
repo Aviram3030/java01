@@ -40,8 +40,6 @@ public class ClientConnection {
 
     public static void main(String[] args) throws IOException {
         Scanner reader = new Scanner(System.in);
-
-
         var client = new ClientConnection("127.0.0.1", 7777, reader);
         client.start();
 
