@@ -1,18 +1,21 @@
 package experis.ds.particpants;
 
-import experis.ds.client.Room;
+import experis.ds.rooms.Lobby;
+import experis.ds.rooms.Room;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.Socket;
 
 public class ParticipantUser implements Participant {
     private String name;
+    private final Socket socket;
     private final PrintWriter output;
-    private Room room;
+    private Room room = Lobby.getLobby();
 
-    public ParticipantUser(PrintWriter output, Room room, String name) throws IOException {
-        this.output = output;
-        this.room = room;
+    public ParticipantUser(Socket socket, String name) throws IOException {
+        this.socket = socket;
+        output = new PrintWriter(socket.getOutputStream(), true);
         this.name = name;
         room.addParticipant(this);
     }
@@ -23,7 +26,7 @@ public class ParticipantUser implements Participant {
     }
 
     public void sendMessageToOne(ParticipantUser clientUser, String msg){
-        clientUser.printMessage(msg);
+        clientUser.printMessage(name + "(private) says: " + msg);
     }
 
     public void printMessage(String msg){
@@ -46,5 +49,9 @@ public class ParticipantUser implements Participant {
 
     public Room getRoom(){
         return room;
+    }
+
+    public void close() throws IOException {
+        socket.close();
     }
 }

@@ -8,7 +8,6 @@ import java.net.Socket;
 import java.util.Scanner;
 
 public class ClientConnection {
-
     private final Socket socket;
     private final ServerHandler serverHandler;
     private final PrintWriter output;
@@ -26,14 +25,12 @@ public class ClientConnection {
         String name = reader.nextLine();
         output.println(name);
 
-        new Thread(serverHandler).start();
+        Thread thread = new Thread(serverHandler);
+        thread.start();
         System.out.println("You are in chat now");
 
-        while(true) {
+        while(!socket.isClosed()) {
             String command = reader.nextLine();
-            if(command.equals("quit")){
-                break;
-            }
             output.println(command);
         }
 

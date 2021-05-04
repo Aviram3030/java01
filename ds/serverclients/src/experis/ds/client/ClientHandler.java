@@ -1,7 +1,9 @@
 package experis.ds.client;
 
+import experis.ds.commands.Transformation;
 import experis.ds.executors.ICommandExecutor;
 import experis.ds.commands.CommandTypeFactory;
+import experis.ds.executors.Timer;
 import experis.ds.particpants.ParticipantUser;
 
 import java.io.BufferedReader;
@@ -9,18 +11,21 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.concurrent.TimeUnit;
 
 public class ClientHandler implements Runnable{
     private final Socket client;
     private final BufferedReader input;
     private final PrintWriter output;
-    private final ParticipantUser clientUser;
+    private final ParticipantUser participantUser;
     private final ICommandExecutor commandExecutor;
     private final CommandTypeFactory commandTypeFactory = new CommandTypeFactory();
+    private final Transformation transformation = new Transformation();
+    private final Timer timer = new Timer(TimeUnit.SECONDS, 30);
 
-    public ClientHandler(Socket client, ICommandExecutor commandExecutor, ParticipantUser clientUser) throws IOException {
+    public ClientHandler(Socket client, ICommandExecutor commandExecutor, ParticipantUser participantUser) throws IOException {
         this.client = client;
-        this.clientUser = clientUser;
+        this.participantUser = participantUser;
         var inputStream = new InputStreamReader(client.getInputStream());
         input = new BufferedReader(inputStream);
         output = new PrintWriter(client.getOutputStream(), true);
@@ -31,9 +36,17 @@ public class ClientHandler implements Runnable{
     public void run() {
         try {
             while (!client.isClosed()) {
+                long start = System.nanoTime();
                 String msg = input.readLine();
+                long elapsedTime = System.nanoTime() - start;
+                if(timer.checkTimeOut(elapsedTime)){
+                    client.close();
+                    break;
+                }
+
                 var type = commandTypeFactory.getType(msg);
-                commandExecutor.execute(clientUser, msg, type);
+                msg = transformation.transform(msg, type);
+                commandExecutor.execute(participantUser, msg, type);
             }
             input.close();
         }catch(IOException e){

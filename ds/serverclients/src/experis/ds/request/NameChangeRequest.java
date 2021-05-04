@@ -3,15 +3,15 @@ package experis.ds.request;
 import experis.ds.particpants.ParticipantUser;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class NameRequest implements Request {
+public class NameChangeRequest implements Request {
     private final ConcurrentHashMap<String, ParticipantUser> participants;
 
-    public NameRequest(ConcurrentHashMap<String, ParticipantUser> participants) {
+    public NameChangeRequest(ConcurrentHashMap<String, ParticipantUser> participants) {
         this.participants = participants;
     }
 
     @Override
-    public void request(ParticipantUser participantUser, String msg) {
+    public void makeRequest(ParticipantUser participantUser, String msg) {
         if (msg == null) {
             return;
         }

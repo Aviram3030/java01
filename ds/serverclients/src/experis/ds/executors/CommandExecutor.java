@@ -1,54 +1,30 @@
 package experis.ds.executors;
 
 import experis.ds.particpants.ParticipantUser;
-import experis.ds.client.Room;
+import experis.ds.request.*;
+import experis.ds.rooms.Room;
 import experis.ds.commands.CommandType;
-import experis.ds.request.DirectMessageRequest;
-import experis.ds.request.NameRequest;
-import experis.ds.request.RoomRequest;
 
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class CommandExecutor implements ICommandExecutor {
-    private final RoomRequest roomRequest;
-    private final DirectMessageRequest directMessageRequest;
-    private final NameRequest nameRequest;
+    private final ConcurrentHashMap<CommandType, Request> requests = new ConcurrentHashMap<>();
 
     public CommandExecutor(List<Room> rooms, ConcurrentHashMap<String, ParticipantUser> users) {
-        roomRequest = new RoomRequest(rooms);
-        directMessageRequest = new DirectMessageRequest(users);
-        nameRequest = new NameRequest(users);
+        requests.put(CommandType.ENTER_ROOM, new EnterRoomRequest(rooms));
+        requests.put(CommandType.LEAVE_ROOM, new LeaveRequest());
+        requests.put(CommandType.ROOMS_LIST, new RoomListRequest(rooms));
+        requests.put(CommandType.NICK, new NameChangeRequest(users));
+        requests.put(CommandType.MESSAGE_USER, new DirectMessageRequest(users));
+        requests.put(CommandType.REGULAR_MESSAGE, new MessageForRoom());
+        requests.put(CommandType.QUIT, new QuitRequest());
     }
 
     @Override
     public void execute(ParticipantUser participantUser, String msg, CommandType type){
-        switch(type){
-            case QUIT -> {
-            }
-            case ENTER_ROOM -> {
-                roomRequest.request(participantUser, getWithoutFirstWord(msg));
-            }
-            case LEAVE_ROOM -> {
-                roomRequest.lobby(participantUser);
-            }
-            case ROOMS_LIST -> {
-                roomRequest.getRoomsList(participantUser);
-            }
-            case NICK -> {
-                nameRequest.request(participantUser, getWithoutFirstWord(msg));
-            }
-            case MESSAGE_USER -> {
-                directMessageRequest.request(participantUser, getWithoutFirstWord(msg));
-            }
-            default -> {
-                participantUser.sendMessage(msg);
-            }
-        }
+        Request request = requests.get(type);
+        request.makeRequest(participantUser, msg);
     }
 
-    private String getWithoutFirstWord(String msg){
-        int pos = msg.indexOf(' ');
-        return msg.substring(pos);
-    }
 }

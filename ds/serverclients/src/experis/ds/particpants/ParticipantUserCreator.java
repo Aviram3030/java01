@@ -1,6 +1,4 @@
-package experis.ds.client;
-
-import experis.ds.particpants.ParticipantUser;
+package experis.ds.particpants;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -10,13 +8,13 @@ import java.net.Socket;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ParticipantUserCreator {
-    private ConcurrentHashMap<String, ParticipantUser> participants;
+    private final ConcurrentHashMap<String, ParticipantUser> participants;
 
     public ParticipantUserCreator(ConcurrentHashMap<String, ParticipantUser> participants){
         this.participants = participants;
     }
 
-    public ParticipantUser create(Socket client, Room room) throws IOException {
+    public ParticipantUser create(Socket client) throws IOException {
         var inputStream = new InputStreamReader(client.getInputStream());
         var input = new BufferedReader(inputStream);
         ParticipantUser clientUser;
@@ -27,7 +25,7 @@ public class ParticipantUserCreator {
             }
             else{
                 var output = new PrintWriter(client.getOutputStream(), true);
-                clientUser = new ParticipantUser(output, room, name);
+                clientUser = new ParticipantUser(client, name);
                 participants.put(name, clientUser);
             }
         }

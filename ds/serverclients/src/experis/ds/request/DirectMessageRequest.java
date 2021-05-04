@@ -11,8 +11,8 @@ public class DirectMessageRequest implements Request {
     }
 
     @Override
-    public void request(ParticipantUser participant, String msg) {
-        String nameOfReceiver = getReceiver(msg);
+    public void makeRequest(ParticipantUser participant, String msg) {
+        String nameOfReceiver = getFirstWord(msg);
         String txt = getMessage(msg);
         ParticipantUser receiver;
         if(txt == null){
@@ -27,14 +27,20 @@ public class DirectMessageRequest implements Request {
         }
     }
 
-    private String getReceiver(String msg) {
+    private String getFirstWord(String msg) {
         int pos = msg.indexOf(' ');
+        if(pos == -1){
+            pos = msg.length();
+        }
         return msg.substring(0, pos);
     }
 
     private String getMessage(String msg){
         int pos = msg.indexOf(' ');
-        return msg.substring(pos);
+        if(pos == -1){
+            return null;
+        }
+        return msg.substring(pos).trim();
     }
 
 }
