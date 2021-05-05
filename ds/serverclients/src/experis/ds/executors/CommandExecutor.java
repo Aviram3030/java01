@@ -1,7 +1,7 @@
 package experis.ds.executors;
 
 import experis.ds.particpants.ParticipantUser;
-import experis.ds.request.*;
+import experis.ds.request.other.*;
 import experis.ds.rooms.Room;
 import experis.ds.commands.CommandType;
 

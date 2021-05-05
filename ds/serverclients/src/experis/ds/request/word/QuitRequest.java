@@ -1,8 +1,9 @@
-package experis.ds.request;
+package experis.ds.request.word;
 
 import experis.ds.particpants.ParticipantUser;
+import experis.ds.request.word.OneWordRequest;
 
-public class QuitRequest implements OneWordRequest{
+public class QuitRequest implements OneWordRequest {
 
     @Override
     public void makeRequest(ParticipantUser participantUser) {

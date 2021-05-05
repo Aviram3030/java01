@@ -1,11 +1,12 @@
-package experis.ds.request;
+package experis.ds.request.word;
 
 import experis.ds.particpants.ParticipantUser;
+import experis.ds.request.word.OneWordRequest;
 import experis.ds.rooms.Room;
 
 import java.util.List;
 
-public class RoomListRequest implements OneWordRequest{
+public class RoomListRequest implements OneWordRequest {
     private final List<Room> rooms;
 
     public RoomListRequest(List<Room> rooms) {

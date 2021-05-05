@@ -1,4 +1,4 @@
-package experis.ds.request;
+package experis.ds.request.other;
 
 import experis.ds.rooms.Room;
 import experis.ds.particpants.ParticipantUser;

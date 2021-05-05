@@ -1,6 +1,7 @@
-package experis.ds.request;
+package experis.ds.request.other;
 
 import experis.ds.particpants.ParticipantUser;
+
 import java.util.concurrent.ConcurrentHashMap;
 
 public class DirectMessageRequest implements Request {

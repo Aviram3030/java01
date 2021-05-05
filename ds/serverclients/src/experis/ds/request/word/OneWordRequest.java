@@ -1,4 +1,4 @@
-package experis.ds.request;
+package experis.ds.request.word;
 
 import experis.ds.particpants.ParticipantUser;
 
