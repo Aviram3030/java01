@@ -3,10 +3,11 @@ package experis.ds.particpants;
 import java.util.Arrays;
 import java.util.List;
 
-public class Moderator {
+public class Moderator implements IModerator{
     private final List<String> curses = Arrays.asList("C", "C++", "python", "static", "switch");
     private int numOfCurses = 0;
 
+    @Override
     public String getWithoutCurses(String msg){
         String newMessage = msg;
         for(String curse: curses){
@@ -18,6 +19,7 @@ public class Moderator {
         return newMessage;
     }
 
+    @Override
     public boolean shouldBeBanned(int limit){
         return numOfCurses >= limit;
     }

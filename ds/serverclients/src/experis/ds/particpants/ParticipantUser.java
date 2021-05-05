@@ -5,19 +5,18 @@ import experis.ds.rooms.Room;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.Socket;
 
 public class ParticipantUser implements Participant {
     private final int LIMIT = 5;
     private String name;
-    private final Socket socket;
     private final PrintWriter output;
     private Room room = Lobby.getLobby();
-    private Moderator moderator = new Moderator();
+    private final IModerator moderator;
+    private boolean alive = true;
 
-    public ParticipantUser(Socket socket, String name) throws IOException {
-        this.socket = socket;
-        output = new PrintWriter(socket.getOutputStream(), true);
+    public ParticipantUser(PrintWriter output, String name, Moderator moderator) throws IOException {
+        this.moderator = moderator;
+        this.output = output;
         this.name = name;
         room.addParticipant(this);
     }
@@ -55,9 +54,12 @@ public class ParticipantUser implements Participant {
     }
 
     public void setRoom(Room room){
-        this.room.removeParticipant(this);
-        this.room = room;
-        room.addParticipant(this);
+        synchronized (room) {
+            this.room.removeParticipant(this);
+            this.room = room;
+            room.addParticipant(this);
+        }
+        output.println("You have entered the room: " + room.getName());
     }
 
     public Room getRoom(){
@@ -65,10 +67,10 @@ public class ParticipantUser implements Participant {
     }
 
     public void close() {
-        try {
-            socket.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        alive = false;
+    }
+
+    public boolean isAlive(){
+        return alive;
     }
 }

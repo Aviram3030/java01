@@ -12,6 +12,7 @@ public class DirectMessageRequest implements Request {
 
     @Override
     public void makeRequest(ParticipantUser participant, String msg) {
+        System.out.println(msg);
         String nameOfReceiver = getFirstWord(msg);
         String txt = getMessage(msg);
         ParticipantUser receiver;
@@ -20,8 +21,13 @@ public class DirectMessageRequest implements Request {
         }
 
         synchronized (participants) {
+            System.out.println(nameOfReceiver);
             receiver = participants.get(nameOfReceiver);
         }
+        if(receiver == null){
+            return;
+        }
+
         if(receiver.getRoom() == participant.getRoom()){
             participant.sendMessageToOne(receiver, txt);
         }

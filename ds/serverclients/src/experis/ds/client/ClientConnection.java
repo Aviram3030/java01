@@ -20,7 +20,7 @@ public class ClientConnection {
         this.reader = reader;
     }
 
-    public void start() throws IOException {
+    public void start() {
         System.out.println("Enter your name");
         String name = reader.nextLine();
         output.println(name);
@@ -34,7 +34,6 @@ public class ClientConnection {
             output.println(command);
         }
 
-        socket.close();
         System.exit(0);
     }
 

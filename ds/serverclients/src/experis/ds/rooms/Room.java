@@ -19,11 +19,11 @@ public class Room {
         }
     }
 
-    public void addParticipant(ParticipantUser ParticipantUser){
+    public synchronized void addParticipant(ParticipantUser ParticipantUser){
         participants.add(ParticipantUser);
     }
 
-    public void removeParticipant(ParticipantUser ParticipantUser){
+    public synchronized void removeParticipant(ParticipantUser ParticipantUser){
         participants.remove(ParticipantUser);
     }
 

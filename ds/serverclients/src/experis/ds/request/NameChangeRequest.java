@@ -22,7 +22,7 @@ public class NameChangeRequest implements Request {
         add(participantUser, msg);
     }
 
-    public void add(ParticipantUser clientUser, String clientRequestName) {
+    private void add(ParticipantUser clientUser, String clientRequestName) {
         String clientNewName = clientRequestName;
         int i = 2;
         synchronized (participants) {

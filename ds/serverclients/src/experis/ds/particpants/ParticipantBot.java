@@ -6,9 +6,9 @@ import experis.ds.rooms.Room;
 import java.util.concurrent.TimeUnit;
 
 public class ParticipantBot implements Participant, Runnable{
-    private long period;
-    private TimeUnit timeUnit;
-    private Room room = Lobby.getLobby();
+    private final long period;
+    private final TimeUnit timeUnit;
+    private final Room room = Lobby.getLobby();
 
     public ParticipantBot(TimeUnit timeUnit, long period){
        this.period = period;
@@ -28,7 +28,7 @@ public class ParticipantBot implements Participant, Runnable{
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            sendMessage("HELLO EVERYONE");
+            sendMessage("Hello everyone");
         }
     }
 }

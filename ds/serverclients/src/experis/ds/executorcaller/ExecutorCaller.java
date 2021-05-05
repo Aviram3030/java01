@@ -1,0 +1,39 @@
+package experis.ds.executorcaller;
+
+import experis.ds.commands.CommandType;
+import experis.ds.executors.CommandExecutor;
+import experis.ds.executors.ICommandExecutor;
+import experis.ds.executors.OneWordExecutor;
+import experis.ds.particpants.ParticipantUser;
+import experis.ds.rooms.Room;
+
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+
+public class ExecutorCaller {
+    private final ConcurrentHashMap<CommandType, ICommandExecutor> executor = new ConcurrentHashMap<>();
+
+    public ExecutorCaller(List<Room> rooms, ConcurrentHashMap<String, ParticipantUser> users){
+        fillCommandExecutor(new CommandExecutor(rooms, users));
+        fillOneWordCommandExecutor(new OneWordExecutor(rooms));
+    }
+
+    private void fillCommandExecutor(CommandExecutor commandExecutor){
+        executor.put(CommandType.NICK, commandExecutor);
+        executor.put(CommandType.MESSAGE_USER, commandExecutor);
+        executor.put(CommandType.ENTER_ROOM, commandExecutor);
+        executor.put(CommandType.REGULAR_MESSAGE, commandExecutor);
+    }
+
+    private void fillOneWordCommandExecutor(OneWordExecutor oneWordExecutor){
+        executor.put(CommandType.QUIT, oneWordExecutor);
+        executor.put(CommandType.LEAVE_ROOM, oneWordExecutor);
+        executor.put(CommandType.ROOMS_LIST, oneWordExecutor);
+    }
+
+    public void execute(ParticipantUser participantUser, String msg, CommandType type){
+        ICommandExecutor commandExecutor = executor.get(type);
+        commandExecutor.execute(participantUser, msg, type);
+    }
+
+}

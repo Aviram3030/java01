@@ -13,12 +13,9 @@ public class CommandExecutor implements ICommandExecutor {
 
     public CommandExecutor(List<Room> rooms, ConcurrentHashMap<String, ParticipantUser> users) {
         requests.put(CommandType.ENTER_ROOM, new EnterRoomRequest(rooms));
-        requests.put(CommandType.LEAVE_ROOM, new LeaveRequest());
-        requests.put(CommandType.ROOMS_LIST, new RoomListRequest(rooms));
         requests.put(CommandType.NICK, new NameChangeRequest(users));
         requests.put(CommandType.MESSAGE_USER, new DirectMessageRequest(users));
         requests.put(CommandType.REGULAR_MESSAGE, new MessageForRoom());
-        requests.put(CommandType.QUIT, new QuitRequest());
     }
 
     @Override

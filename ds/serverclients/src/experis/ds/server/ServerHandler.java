@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
+import java.util.Scanner;
 
 public class ServerHandler implements Runnable{
     private final Socket server;
@@ -29,6 +30,7 @@ public class ServerHandler implements Runnable{
         }
 
         try {
+            server.close();
             input.close();
         } catch (IOException e) {
             e.printStackTrace();
