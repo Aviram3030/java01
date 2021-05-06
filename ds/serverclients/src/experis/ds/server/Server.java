@@ -43,8 +43,7 @@ public class Server {
                 Socket client = serverSocket.accept();
                 System.out.println("Server connected to client");
 
-                var inputStream = new InputStreamReader(client.getInputStream());
-                var input = new BufferedReader(inputStream);
+                var input = createReader(client);
                 String name = input.readLine();
                 var output = new PrintWriter(client.getOutputStream(), true);
                 ParticipantUser participantUserUser = participantUserCreator.create(output, name);
@@ -61,6 +60,11 @@ public class Server {
                 e.printStackTrace();
             }
         }
+    }
+
+    private BufferedReader createReader(Socket client) throws IOException {
+        var inputStream = new InputStreamReader(client.getInputStream());
+        return new BufferedReader(inputStream);
     }
 
     private ExecutorCaller makeExecutorCaller(ConcurrentHashMap<String, ParticipantUser> users) {
