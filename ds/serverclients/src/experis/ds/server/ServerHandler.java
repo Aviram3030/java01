@@ -4,9 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
-import java.util.Scanner;
 
-public class ServerHandler implements Runnable{
+public class ServerHandler implements Runnable {
     private final Socket server;
     private final BufferedReader input;
 
@@ -17,23 +16,23 @@ public class ServerHandler implements Runnable{
 
     @Override
     public void run() {
-        while(true){
-            try {
+        try {
+            while (true) {
                 String msg = input.readLine();
                 if(msg == null){
                     break;
                 }
                 System.out.println(msg);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                input.close();
+                server.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
-
-        try {
-            server.close();
-            input.close();
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 }

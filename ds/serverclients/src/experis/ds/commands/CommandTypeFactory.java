@@ -26,7 +26,7 @@ public class CommandTypeFactory {
     public CommandType getType(String msg){
         String firstWord = getFirstWord(msg);
         CommandType type;
-        if(is_word(msg)){
+        if(is_word(msg, firstWord)){
             type = oneWordCommandTypes.get(firstWord);
         }
         else {
@@ -46,8 +46,8 @@ public class CommandTypeFactory {
         return msg.substring(0, pos);
     }
 
-    private boolean is_word(String msg) {
-        return (msg.length() > 0 && msg.split("\\s+").length == 1);
+    private boolean is_word(String msg, String firstWord) {
+        return msg.equals(firstWord);
     }
 
 }

@@ -23,7 +23,7 @@ public class NameChangeRequest implements Request {
         add(participantUser, msg);
     }
 
-    private void add(ParticipantUser clientUser, String clientRequestName) {
+    private void add(ParticipantUser participantUser, String clientRequestName) {
         String clientNewName = clientRequestName;
         int i = 2;
         synchronized (participants) {
@@ -34,8 +34,8 @@ public class NameChangeRequest implements Request {
                 clientNewName = sb.toString();
                 i++;
             }
-            clientUser.setName(clientNewName);
-            participants.put(clientNewName, clientUser);
+            participantUser.setName(clientNewName);
+            participants.put(clientNewName, participantUser);
         }
     }
 }

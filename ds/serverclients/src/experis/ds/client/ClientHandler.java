@@ -1,6 +1,6 @@
 package experis.ds.client;
 
-import experis.ds.commands.Transformation;
+import experis.ds.commands.ITransformation;
 import experis.ds.executorcaller.ExecutorCaller;
 import experis.ds.commands.CommandTypeFactory;
 import experis.ds.executors.TimeOut;
@@ -19,37 +19,52 @@ public class ClientHandler implements Runnable{
     private final ParticipantUser participantUser;
     private final ExecutorCaller executorCaller;
     private final CommandTypeFactory commandTypeFactory = new CommandTypeFactory();
-    private final Transformation transformation = new Transformation();
+    private final ITransformation transformation;
     private final TimeOut timer = new TimeOut(TimeUnit.SECONDS, 30);
 
     public ClientHandler(Socket client, ExecutorCaller executorCaller, ParticipantUser participantUser,
-                         BufferedReader input, PrintWriter output) {
+                         BufferedReader input, PrintWriter output, ITransformation transformation) {
         this.client = client;
         this.participantUser = participantUser;
         this.input = input;
         this.output = output;
         this.executorCaller = executorCaller;
+        this.transformation = transformation;
     }
 
     @Override
     public void run() {
         try {
-            while (participantUser.isAlive() && timer.isAlive()) {
+            while (true) {
                 long start = System.nanoTime();
                 String msg = input.readLine();
                 long elapsedTime = System.nanoTime() - start;
                 timer.checkTimeOut(elapsedTime);
+                if(!timer.isAlive()){
+                    break;
+                }
 
-                var type = commandTypeFactory.getType(msg);
-                msg = transformation.transform(msg, type);
-                executorCaller.execute(participantUser, msg, type);
+                executeCommands(msg);
+                if(!participantUser.isAlive()){
+                    break;
+                }
             }
-            client.close();
-            input.close();
+            output.println("Good bye");
+            close();
         }catch(IOException e){
             e.printStackTrace();
         }
-        output.close();
+    }
 
+    private void executeCommands(String msg){
+        var type = commandTypeFactory.getType(msg);
+        msg = transformation.transform(msg, type);
+        executorCaller.execute(participantUser, msg, type);
+    }
+
+    private void close() throws IOException {
+        output.close();
+        input.close();
+        client.close();
     }
 }

@@ -12,16 +12,14 @@ public class ParticipantUserCreator {
     }
 
     public ParticipantUser create(PrintWriter output, String name) throws IOException {
-        ParticipantUser clientUser;
+        ParticipantUser participantUser;
         synchronized (participants) {
             if (participants.containsKey(name)) {
-                return null;
+                name = "Anonymous";
             }
-            else{
-                clientUser = new ParticipantUser(output, name, new Moderator());
-                participants.put(name, clientUser);
-            }
+            participantUser = new ParticipantUser(output, name, new Moderator());
+            participants.put(name, participantUser);
         }
-        return clientUser;
+        return participantUser;
     }
 }

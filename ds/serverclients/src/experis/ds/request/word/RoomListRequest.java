@@ -1,7 +1,6 @@
 package experis.ds.request.word;
 
 import experis.ds.particpants.ParticipantUser;
-import experis.ds.request.word.OneWordRequest;
 import experis.ds.rooms.Room;
 
 import java.util.List;

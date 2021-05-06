@@ -1,7 +1,7 @@
 package experis.ds.commands;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class Transformation {
+public class Transformation implements ITransformation{
     private final ConcurrentHashMap<CommandType,Func> transformer = new ConcurrentHashMap<>();
 
     public Transformation(){
@@ -22,6 +22,7 @@ public class Transformation {
         transformer.put(CommandType.REGULAR_MESSAGE, doNothing);
     }
 
+    @Override
     public String transform(String msg, CommandType type){
         Func func = transformer.get(type);
         return func.apply(msg);

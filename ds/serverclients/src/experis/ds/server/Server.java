@@ -1,5 +1,6 @@
 package experis.ds.server;
 
+import experis.ds.commands.Transformation;
 import experis.ds.executorcaller.ExecutorCaller;
 import experis.ds.particpants.ParticipantBot;
 import experis.ds.rooms.Lobby;
@@ -34,7 +35,7 @@ public class Server {
         executorCaller = makeExecutorCaller(users);
     }
 
-    public void execute() throws IOException {
+    public void execute() {
         pool.execute(bot);
         System.out.println("Waiting for clients");
         try {
@@ -47,13 +48,18 @@ public class Server {
                 String name = input.readLine();
                 var output = new PrintWriter(client.getOutputStream(), true);
                 ParticipantUser participantUserUser = participantUserCreator.create(output, name);
-                ClientHandler clientHandler = new ClientHandler(client, executorCaller, participantUserUser, input, output);
+                ClientHandler clientHandler = new ClientHandler(client, executorCaller, participantUserUser, input, output,
+                                                                new Transformation());
                 pool.execute(clientHandler);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            shutdownAndAwaitTermination();
         } finally {
-            serverSocket.close();
+            try {
+                serverSocket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -63,8 +69,23 @@ public class Server {
         return new ExecutorCaller(rooms, users);
     }
 
+    private void shutdownAndAwaitTermination() {
+        pool.shutdown();
+        try {
+            if (!pool.awaitTermination(60, TimeUnit.SECONDS)) {
+                pool.shutdownNow();
+                if (!pool.awaitTermination(60, TimeUnit.SECONDS))
+                    System.err.println("Pool did not terminate");
+            }
+        } catch (InterruptedException ie) {
+            pool.shutdownNow();
+            Thread.currentThread().interrupt();
+        }
+    }
+
     public static void main(String[] args) throws IOException {
         Server server = new Server(7777);
         server.execute();
     }
+
 }

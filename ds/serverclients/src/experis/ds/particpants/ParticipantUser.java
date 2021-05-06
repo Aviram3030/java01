@@ -5,6 +5,7 @@ import experis.ds.rooms.Room;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Date;
 
 public class ParticipantUser implements Participant {
     private final int LIMIT = 5;
@@ -13,6 +14,7 @@ public class ParticipantUser implements Participant {
     private Room room = Lobby.getLobby();
     private final IModerator moderator;
     private boolean alive = true;
+    private final Date date = new Date();
 
     public ParticipantUser(PrintWriter output, String name, Moderator moderator) throws IOException {
         this.moderator = moderator;
@@ -24,13 +26,13 @@ public class ParticipantUser implements Participant {
     @Override
     public void sendMessage(String msg){
         msg = checkCurses(msg);
-        room.printInRoom(name + " says: " + msg);
+        room.printInRoom("[" + date.toString() + "] "+ name + " says: " + msg);
     }
 
-    public void sendMessageToOne(ParticipantUser clientUser, String msg){
+    public void sendMessageToOne(ParticipantUser participantUser, String msg){
         msg = checkCurses(msg);
         moderator.shouldBeBanned(LIMIT);
-        clientUser.printMessage(name + "(private) says: " + msg);
+        participantUser.printMessage("[" + date.toString() + "] "+ name + "(private) says: " + msg);
     }
 
     private String checkCurses(String msg) {
