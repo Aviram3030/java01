@@ -4,10 +4,10 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class ParticipantUserCreator {
+public class ParticipantUserProducer {
     private final ConcurrentHashMap<String, ParticipantUser> participants;
 
-    public ParticipantUserCreator(ConcurrentHashMap<String, ParticipantUser> participants){
+    public ParticipantUserProducer(ConcurrentHashMap<String, ParticipantUser> participants){
         this.participants = participants;
     }
 
@@ -17,8 +17,7 @@ public class ParticipantUserCreator {
             if (participants.containsKey(name)) {
                 name = "Anonymous";
             }
-            participantUser = new ParticipantUser(output, name, new Moderator());
-            participants.put(name, participantUser);
+            participantUser = new ParticipantUser(output, name, new Moderator(), participants);
         }
         return participantUser;
     }

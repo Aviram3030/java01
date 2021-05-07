@@ -1,5 +1,6 @@
 package experis.ds.request.other;
 
+import experis.ds.particpants.Participant;
 import experis.ds.particpants.ParticipantUser;
 
 public interface Request {

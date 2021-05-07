@@ -20,6 +20,8 @@ public class Transformation implements ITransformation{
         transformer.put(CommandType.NICK, getWithoutFirstWord);
         transformer.put(CommandType.MESSAGE_USER, getWithoutFirstWord);
         transformer.put(CommandType.REGULAR_MESSAGE, doNothing);
+        transformer.put(CommandType.BAN, getWithoutFirstWord);
+        transformer.put(CommandType.SHUT_DOWN, doNothing);
     }
 
     @Override

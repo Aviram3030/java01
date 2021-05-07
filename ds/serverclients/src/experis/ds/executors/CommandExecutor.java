@@ -1,5 +1,6 @@
 package experis.ds.executors;
 
+import experis.ds.particpants.Participant;
 import experis.ds.particpants.ParticipantUser;
 import experis.ds.request.other.*;
 import experis.ds.rooms.Room;
@@ -14,8 +15,9 @@ public class CommandExecutor implements ICommandExecutor {
     public CommandExecutor(List<Room> rooms, ConcurrentHashMap<String, ParticipantUser> users) {
         requests.put(CommandType.ENTER_ROOM, new EnterRoomRequest(rooms));
         requests.put(CommandType.NICK, new NameChangeRequest(users));
-        requests.put(CommandType.MESSAGE_USER, new DirectMessageRequest(users));
+        requests.put(CommandType.MESSAGE_USER, new DirectMessageRequest());
         requests.put(CommandType.REGULAR_MESSAGE, new MessageForRoom());
+        requests.put(CommandType.BAN, new BanUserRequest());
     }
 
     @Override

@@ -15,12 +15,15 @@ public class CommandTypeFactory {
         commandTypes.put("nick",CommandType.NICK);
         commandTypes.put("msg",CommandType.MESSAGE_USER);
         commandTypes.put("room",CommandType.ENTER_ROOM);
+        commandTypes.put("ban",CommandType.BAN);
     }
 
     private void fillOneWordCommandType(){
         oneWordCommandTypes.put("quit",CommandType.QUIT);
         oneWordCommandTypes.put("leave",CommandType.LEAVE_ROOM);
         oneWordCommandTypes.put("list",CommandType.ROOMS_LIST);
+        oneWordCommandTypes.put("shutdown",CommandType.SHUT_DOWN);
+
     }
 
     public CommandType getType(String msg){

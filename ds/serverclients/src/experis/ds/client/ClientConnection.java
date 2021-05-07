@@ -27,7 +27,7 @@ public class ClientConnection {
 
         Thread thread = new Thread(serverHandler);
         thread.start();
-        System.out.println("You are in chat now");
+        System.out.println("Connected to server");
 
         while(!socket.isClosed()) {
             String command = reader.nextLine();
