@@ -26,7 +26,9 @@ public class ParticipantAdmin extends ParticipantUser{
     public void banUser(String name){
         synchronized (participants) {
             ParticipantUser participantUser = participants.getUser(name);
-            participantUser.close();
+            if(participantUser != null) {
+                participantUser.close();
+            }
         }
     }
 }

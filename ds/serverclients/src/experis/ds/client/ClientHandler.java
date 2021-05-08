@@ -30,7 +30,7 @@ public class ClientHandler implements Runnable{
         this.output = output;
         this.executorCaller = executorCaller;
         this.transformation = transformation;
-        timer = new TimeOut(TimeUnit.SECONDS, 30, client);
+        timer = new TimeOut(TimeUnit.SECONDS, 5, client);
     }
 
     @Override

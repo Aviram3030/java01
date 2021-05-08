@@ -13,7 +13,6 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -97,10 +96,10 @@ public class Server {
     private void shutdownAndAwaitTermination() {
         pool.shutdown();
         try {
-            if (!pool.awaitTermination(10, TimeUnit.SECONDS)) {
+            if (!pool.awaitTermination(5, TimeUnit.SECONDS)) {
                 pool.shutdownNow();
                 closeAllClients();
-                if (!pool.awaitTermination(10, TimeUnit.SECONDS)) {
+                if (!pool.awaitTermination(5, TimeUnit.SECONDS)) {
                     System.err.println("Pool did not terminate");
                 }
             }

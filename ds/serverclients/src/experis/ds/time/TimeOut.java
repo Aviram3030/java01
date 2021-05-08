@@ -1,14 +1,17 @@
 package experis.ds.time;
 import java.net.Socket;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class TimeOut implements Runnable{
     private final TimeUnit timeUnit;
     private final long time;
-    private boolean alive = true;
     private boolean running = false;
     private final Socket client;
-    private Thread currentThread;
+    private final Lock timerLock = new ReentrantLock();
+    private final Condition condition = timerLock.newCondition();
 
     public TimeOut(TimeUnit timeUnit, long time, Socket client) {
         this.timeUnit = timeUnit;
@@ -18,20 +21,20 @@ public class TimeOut implements Runnable{
 
     @Override
     public void run() {
-        currentThread = Thread.currentThread();
         try {
             while (true) {
-                synchronized (currentThread) {
-                    currentThread.wait(timeUnit.toMillis(time));
-                }
+                timerLock.lock();
+                condition.await(time, timeUnit);
+                timerLock.unlock();
                 if (!running) {
                     client.close();
                     break;
                 }
                 running = false;
-                synchronized (currentThread) {
-                    currentThread.wait();
-                }
+                timerLock.lock();
+                condition.await();
+                timerLock.unlock();
+
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -39,9 +42,9 @@ public class TimeOut implements Runnable{
     }
 
     public void wakeUp(){
-        synchronized (currentThread){
-            currentThread.notify();
-        }
+        timerLock.lock();
+        condition.signal();
+        timerLock.unlock();
     }
 
     public void setRunning(){
@@ -49,3 +52,4 @@ public class TimeOut implements Runnable{
         wakeUp();
     }
 }
+
