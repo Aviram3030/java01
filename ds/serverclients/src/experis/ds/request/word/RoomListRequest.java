@@ -4,12 +4,13 @@ import experis.ds.particpants.Participant;
 import experis.ds.particpants.ParticipantUser;
 import experis.ds.rooms.Room;
 
+import java.util.HashSet;
 import java.util.List;
 
 public class RoomListRequest implements OneWordRequest {
-    private final List<Room> rooms;
+    private final HashSet<Room> rooms;
 
-    public RoomListRequest(List<Room> rooms) {
+    public RoomListRequest(HashSet<Room> rooms) {
         this.rooms = rooms;
     }
 

@@ -4,12 +4,13 @@ import experis.ds.particpants.Participant;
 import experis.ds.rooms.Room;
 import experis.ds.particpants.ParticipantUser;
 
+import java.util.HashSet;
 import java.util.List;
 
 public class EnterRoomRequest implements Request {
-    private final List<Room> rooms;
+    private final HashSet<Room> rooms;
 
-    public EnterRoomRequest(List<Room> rooms) {
+    public EnterRoomRequest(HashSet<Room> rooms) {
         this.rooms = rooms;
     }
 

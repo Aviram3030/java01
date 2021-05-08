@@ -6,7 +6,6 @@ import experis.ds.rooms.Room;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Date;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class ParticipantUser implements Participant {
     private final int LIMIT = 5;
@@ -16,17 +15,17 @@ public class ParticipantUser implements Participant {
     private final IModerator moderator;
     private boolean alive = true;
     private final Date date = new Date();
-    protected final ConcurrentHashMap<String, ParticipantUser> participants;
+    protected final ParticipantsNames participants;
 
     public ParticipantUser(PrintWriter output, String name, Moderator moderator,
-                           ConcurrentHashMap<String, ParticipantUser> participants) throws IOException {
+                           ParticipantsNames participants) throws IOException {
         this.moderator = moderator;
         this.output = output;
         this.name = name;
         room.addParticipant(this);
         this.participants = participants;
         synchronized (participants){
-            participants.put(name, this);
+            participants.add(name, this);
         }
     }
 
@@ -43,12 +42,14 @@ public class ParticipantUser implements Participant {
         if(participantUser == null){
             return;
         }
-        participantUser.printMessage("[" + date.toString() + "] "+ name + "(private) says: " + msg);
+        msg = "[" + date.toString() + "] "+ name + "(private) says: " + msg;
+        participantUser.printMessage(msg);
+        printMessage(msg);
     }
 
     private ParticipantUser getUser(String name){
         synchronized (participants) {
-            return participants.get(name);
+            return participants.getUser(name);
         }
     }
 
@@ -69,6 +70,10 @@ public class ParticipantUser implements Participant {
     }
 
     public void setName(String name){
+        if(name.length() > 15){
+            output.println("Name is too long");
+            return;
+        }
         this.name = name;
     }
 
@@ -86,6 +91,7 @@ public class ParticipantUser implements Participant {
     }
 
     public void close() {
+        output.println("Good bye");
         synchronized (participants) {
             participants.remove(name);
         }

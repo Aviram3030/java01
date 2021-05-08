@@ -14,14 +14,11 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.HashSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Server {
     private final ServerSocket serverSocket;
@@ -34,10 +31,10 @@ public class Server {
 
     public Server(int port) throws IOException {
         serverSocket = new ServerSocket(port);
-        ConcurrentHashMap<String, ParticipantUser> users = new ConcurrentHashMap<>();
-        participantUserProducer = new ParticipantUserProducer(users);
-        participantAdminProducer = new ParticipantAdminProducer(users);
-        executorCaller = makeExecutorCaller(users);
+        ParticipantsNames participants = new ParticipantsNames();
+        participantUserProducer = new ParticipantUserProducer(participants);
+        participantAdminProducer = new ParticipantAdminProducer(participants);
+        executorCaller = makeExecutorCaller(participants);
     }
 
     public void execute() {
@@ -52,25 +49,22 @@ public class Server {
                 var input = createReader(client);
                 String name = input.readLine();
                 interfaceUserOrAdmin(output);
-                ParticipantUser participantUser = getUser(input, output, name);
+                var participantUser = getUser(input, output, name);
                 if (participantUser == null) {
                     client.close();
                     continue;
                 }
                 clients.put(client, participantUser);
-                ClientHandler clientHandler = new ClientHandler(client, executorCaller, participantUser, input, output,
+                var clientHandler = new ClientHandler(client, executorCaller, participantUser, input, output,
                         new Transformation());
                 pool.execute(clientHandler);
             }
         } catch (IOException ignored) {
         } finally {
-            try {
-                shutdownAndAwaitTermination();
-                serverSocket.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            shutdownAndAwaitTermination();
+
         }
+        System.exit(0);
     }
 
     private void interfaceUserOrAdmin(PrintWriter output) {
@@ -94,10 +88,10 @@ public class Server {
         return new BufferedReader(inputStream);
     }
 
-    private ExecutorCaller makeExecutorCaller(ConcurrentHashMap<String, ParticipantUser> users) {
-        ArrayList<Room> rooms = new ArrayList<>();
+    private ExecutorCaller makeExecutorCaller(ParticipantsNames participants) {
+        HashSet<Room> rooms = new HashSet<>();
         rooms.add(Lobby.getLobby());
-        return new ExecutorCaller(rooms, users);
+        return new ExecutorCaller(rooms, participants);
     }
 
     private void shutdownAndAwaitTermination() {
@@ -116,7 +110,7 @@ public class Server {
     }
 
     private void closeAllClients() {
-        for(Socket client: clients.keySet()){
+        for (Socket client : clients.keySet()) {
             try {
                 clients.get(client).printMessage("Server shutting down");
                 client.close();

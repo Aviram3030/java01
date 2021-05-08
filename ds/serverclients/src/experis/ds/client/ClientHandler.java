@@ -3,8 +3,7 @@ package experis.ds.client;
 import experis.ds.commands.ITransformation;
 import experis.ds.executorcaller.ExecutorCaller;
 import experis.ds.commands.CommandTypeFactory;
-import experis.ds.executors.TimeOut;
-import experis.ds.particpants.Participant;
+import experis.ds.time.TimeOut;
 import experis.ds.particpants.ParticipantUser;
 
 import java.io.BufferedReader;
@@ -40,9 +39,7 @@ public class ClientHandler implements Runnable{
         timerThread.start();
         try {
             while (true) {
-                String msg = input.readLine();
-                timer.setRunning();
-                executeCommands(msg);
+                executeCommands();
                 if(!participantUser.isAlive()){
                     break;
                 }
@@ -59,7 +56,9 @@ public class ClientHandler implements Runnable{
         }
     }
 
-    private void executeCommands(String msg){
+    private void executeCommands() throws IOException {
+        String msg = input.readLine();
+        timer.setRunning();
         var type = commandTypeFactory.getType(msg);
         msg = transformation.transform(msg, type);
         executorCaller.execute(participantUser, msg, type);
@@ -71,27 +70,4 @@ public class ClientHandler implements Runnable{
         client.close();
     }
 
-    /* @Override
-    public void run() {
-        try {
-            while (true) {
-                long start = System.nanoTime();
-                String msg = input.readLine();
-                long elapsedTime = System.nanoTime() - start;
-                timer.checkTimeOut(elapsedTime);
-                if(!timer.isAlive()){
-                    break;
-                }
-
-                executeCommands(msg);
-                if(!participantUser.isAlive()){
-                    break;
-                }
-            }
-            output.println("Good bye");
-            close();
-        }catch(IOException e){
-            e.printStackTrace();
-        }
-    }*/
 }

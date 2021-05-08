@@ -6,13 +6,14 @@ import experis.ds.particpants.ParticipantUser;
 import experis.ds.request.word.*;
 import experis.ds.rooms.Room;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class OneWordExecutor implements ICommandExecutor{
     private final ConcurrentHashMap<CommandType, OneWordRequest> requests = new ConcurrentHashMap<>();
 
-    public OneWordExecutor(List<Room> rooms) {
+    public OneWordExecutor(HashSet<Room> rooms) {
         requests.put(CommandType.LEAVE_ROOM, new LeaveRequest());
         requests.put(CommandType.ROOMS_LIST, new RoomListRequest(rooms));
         requests.put(CommandType.QUIT, new QuitRequest());

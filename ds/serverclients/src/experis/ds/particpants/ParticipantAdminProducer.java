@@ -8,10 +8,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ParticipantAdminProducer {
-    private final ConcurrentHashMap<String, ParticipantUser> participants;
+    private final ParticipantsNames participants;
     private final String password = "1234";
 
-    public ParticipantAdminProducer(ConcurrentHashMap<String, ParticipantUser> participants) {
+    public ParticipantAdminProducer(ParticipantsNames participants) {
         this.participants = participants;
     }
 
@@ -22,9 +22,7 @@ public class ParticipantAdminProducer {
 
         ParticipantAdmin participantAdmin;
         synchronized (participants) {
-            if (participants.containsKey(name)) {
-                name = "AnonymousAdmin";
-            }
+            name = participants.nameRequest(name);
             participantAdmin = new ParticipantAdmin(output, name, new Moderator(), participants, server);
         }
         return participantAdmin;

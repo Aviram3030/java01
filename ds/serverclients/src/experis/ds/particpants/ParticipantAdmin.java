@@ -1,18 +1,15 @@
 package experis.ds.particpants;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
-import java.net.Socket;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ParticipantAdmin extends ParticipantUser{
     private final ServerSocket server;
 
     public ParticipantAdmin(PrintWriter output, String name, Moderator moderator,
-                            ConcurrentHashMap<String, ParticipantUser> participants,
+                            ParticipantsNames participants,
                             ServerSocket server) throws IOException {
         super(output, name, moderator, participants);
         this.server = server;
@@ -28,7 +25,7 @@ public class ParticipantAdmin extends ParticipantUser{
 
     public void banUser(String name){
         synchronized (participants) {
-            ParticipantUser participantUser = participants.get(name);
+            ParticipantUser participantUser = participants.getUser(name);
             participantUser.close();
         }
     }

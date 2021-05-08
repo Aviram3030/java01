@@ -12,7 +12,6 @@ public class DirectMessageRequest implements Request {
         if(txt == null){
             return;
         }
-
         participantUser.sendMessageToOne(nameOfReceiver, txt);
 
     }

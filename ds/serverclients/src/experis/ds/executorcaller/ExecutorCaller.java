@@ -6,16 +6,18 @@ import experis.ds.executors.ICommandExecutor;
 import experis.ds.executors.OneWordExecutor;
 import experis.ds.particpants.Participant;
 import experis.ds.particpants.ParticipantUser;
+import experis.ds.particpants.ParticipantsNames;
 import experis.ds.rooms.Room;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ExecutorCaller {
     private final ConcurrentHashMap<CommandType, ICommandExecutor> executor = new ConcurrentHashMap<>();
 
-    public ExecutorCaller(List<Room> rooms, ConcurrentHashMap<String, ParticipantUser> users){
-        fillCommandExecutor(new CommandExecutor(rooms, users));
+    public ExecutorCaller(HashSet<Room> rooms, ParticipantsNames participants){
+        fillCommandExecutor(new CommandExecutor(rooms, participants));
         fillOneWordCommandExecutor(new OneWordExecutor(rooms));
     }
 
