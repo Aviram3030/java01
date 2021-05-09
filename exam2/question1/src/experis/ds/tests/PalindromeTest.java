@@ -11,7 +11,7 @@ class PalindromeTest {
     @Test
     void palindrome_test() {
         Palindrome palindrome = new Palindrome();
-        BigNumber num = new BigNumber("523325");
+        BigNumber num = new BigNumber("-523325");
         assertTrue(palindrome.isPalindrome(num));
 
         BigNumber num2 = new BigNumber("51225");

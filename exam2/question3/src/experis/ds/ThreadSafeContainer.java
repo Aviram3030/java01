@@ -7,7 +7,6 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class ThreadSafeContainer<T>{
-
     private final ConcurrentHashMap<Thread, List<T>> container= new ConcurrentHashMap<>();
     private final HashSet<Thread> twoItemsContainers = new HashSet<>();
     private final HashSet<Condition> waitingThreads = new HashSet<>();
