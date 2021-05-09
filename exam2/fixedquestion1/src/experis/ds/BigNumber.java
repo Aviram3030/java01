@@ -135,8 +135,9 @@ public class BigNumber {
 
 
     public static BigNumber multiply(BigNumber first, BigNumber second) {
+        List<Integer> finalResultList = new ArrayList<>();
         List<Integer> result = new ArrayList<>();
-        BigNumber finalResult = new BigNumber(new ArrayList<>(), true);
+        BigNumber finalResult;
         List<Integer> a = first.getList();
         List<Integer> b = second.getList();
 
@@ -166,11 +167,11 @@ public class BigNumber {
                 result.add(0, factor);
             }
 
-            var finalResultList = addNumbers(finalResult.getList(), result);
-            finalResult = new BigNumber(finalResultList, isPositive);
+            finalResultList = addNumbers(finalResultList, result);
             result.clear();
         }
 
+        finalResult = new BigNumber(finalResultList, isPositive);
         if (factor != 0) {
             result.add(factor);
         }

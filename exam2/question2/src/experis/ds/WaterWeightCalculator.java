@@ -12,7 +12,7 @@ public class WaterWeightCalculator {
         int start = 0;
         for(int i = 1; i < v.length; i++){
             if(v[start] < v[i]){
-                sum += calculateWeightBetween(v, start, i);
+                sum += measureFromLeft(v, start, i);
                 start = i;
             }
         }
@@ -20,34 +20,35 @@ public class WaterWeightCalculator {
         if(start == 0){
             return 0;
         }
-        else if(start != v.length - 1){
-            sum += calculateTheRest(v, start);
+        else if(start < v.length - 2){
+            sum += measureTheRest(v, start);
         }
         return sum;
     }
 
-    private static int calculateTheRest(int[] v, int start) {
-        int end = findTheMaxFromTheEnd(v, start);
+    private static int measureTheRest(int[] v, int start) {
+        int end = v.length - 1;
         int sum = 0;
-        for(int i = end - 1; i > start; i--){
+        for(int i = v.length - 2; i >= start; i--){
+            if(v[end] < v[i]) {
+                sum += measureFromRight(v, i, end);
+                end = i;
+            }
+        }
+        return sum;
+    }
+
+    private static int measureFromRight(int[] v, int start, int end) {
+        int sum = 0;
+        for(int i = end; i > start; i--){
             sum += v[end] - v[i];
         }
 
         return sum;
     }
 
-    private static int findTheMaxFromTheEnd(int[] v, int start) {
-        int maxIndex = start + 1;
-        for(int i = v.length - 1; i > start + 1; i--){
-            if(v[i] > v[maxIndex]){
-                maxIndex = i;
-            }
-        }
 
-        return maxIndex;
-    }
-
-    private static int calculateWeightBetween(int[] v, int start, int end) {
+    private static int measureFromLeft(int[] v, int start, int end) {
         int sum = 0;
         for(int i = start; i < end; i++){
             sum += v[start] - v[i];
