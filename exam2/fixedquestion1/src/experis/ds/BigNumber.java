@@ -7,36 +7,35 @@ public class BigNumber {
     private final List<Integer> list;
     private final boolean positive;
 
-    public BigNumber(List<Integer> list, boolean positive){
+    public BigNumber(List<Integer> list, boolean positive) {
         this.list = list;
         this.positive = positive;
     }
 
-    public BigNumber(String word){
+    public BigNumber(String word) {
         list = new ArrayList<>();
         int i = 0;
-        if(word.charAt(0) == '-'){
+        if (word.charAt(0) == '-') {
             positive = false;
             i++;
-        }
-        else{
+        } else {
             positive = true;
         }
-        for(;i < word.length(); i++){
+        for (; i < word.length(); i++) {
             char c = word.charAt(i);
             int digit = c - '0';
             list.add(digit);
         }
     }
 
-    public String getString(){
+    public String getString() {
         int i = 0;
         StringBuilder sb = new StringBuilder();
-        if(!positive){
+        if (!positive) {
             sb.append('-');
         }
 
-        for(;i < list.size(); i++){
+        for (; i < list.size(); i++) {
             int digit = list.get(i);
             char c = Character.forDigit(digit, 10);
             sb.append(c);
@@ -45,25 +44,24 @@ public class BigNumber {
         return sb.toString();
     }
 
-    public int getValue(){
-        int value = list.size() - 1;
+    public int getValue() {
+        int value = list.get(list.size() - 1);
         int previousValue = 0;
         int multiplyByTen = 10;
-        for(int i = list.size() - 2; i > 0; i--){
-            value = list.get(i) * multiplyByTen;
+        for (int i = list.size() - 2; i >= 0; i--) {
+            value += list.get(i) * multiplyByTen;
             multiplyByTen *= 10;
-            if(previousValue > value){
+            if (previousValue > value) {
                 value = Integer.MAX_VALUE;
                 break;
             }
             previousValue = value;
         }
 
-        if(!positive){
-            if(value == Integer.MAX_VALUE){
+        if (!positive) {
+            if (value == Integer.MAX_VALUE) {
                 value = Integer.MIN_VALUE;
-            }
-            else {
+            } else {
                 value = value * -1;
             }
         }
@@ -71,72 +69,143 @@ public class BigNumber {
         return value;
     }
 
-    public BigNumber add(BigNumber first, BigNumber second){
-        List<Integer> result = new ArrayList<>();
+    public static BigNumber add(BigNumber first, BigNumber second) {
         List<Integer> a = first.getList();
         List<Integer> b = second.getList();
-        int factor = 0;
         boolean didSwap = false;
 
-        if(a.size() < b.size()){
-            swap(a,b);
+        if (a.size() < b.size()) {
+            List<Integer> temp = a;
+            a = b;
+            b = temp;
             didSwap = true;
         }
 
+        boolean isPositive = true;
+        if ((didSwap && !second.isPositive()) || (!didSwap && !first.isPositive())) {
+            isPositive = false;
+        }
+
+        List<Integer> result = addNumbers(a, b);
+        return new BigNumber(result, isPositive);
+    }
+
+    private static List<Integer> addNumbers(List<Integer> a, List<Integer> b) {
+        if (a.size() < b.size()) {
+            List<Integer> temp = a;
+            a = b;
+            b = temp;
+        }
+
+        List<Integer> result = new ArrayList<>();
+        int factor = 0;
         int i = a.size() - 1;
         int j = b.size() - 1;
-        while(i >= 0){
+
+        if (a.isEmpty()) {
+            return new ArrayList<>(b);
+        }
+        if (b.isEmpty()) {
+            return new ArrayList<>(a);
+        }
+
+        while (i >= 0) {
             int firstDigit = a.get(i);
             int secondDigit = 0;
-            if(j > 0) {
-                secondDigit = a.get(j);
+            if (j >= 0) {
+                secondDigit = b.get(j);
             }
 
             int sum = firstDigit + secondDigit + factor;
-            if(sum > 0){
-                factor = 1;
-            }
-            result.add(result.size(), sum);
+            factor = sum / 10;
+            sum = sum % 10;
+
+            result.add(0, sum);
 
             i--;
             j--;
         }
+
+        if (factor == 1) {
+            result.add(1);
+        }
+
+        return result;
+    }
+
+
+    public static BigNumber multiply(BigNumber first, BigNumber second) {
+        List<Integer> result = new ArrayList<>();
+        BigNumber finalResult = new BigNumber(new ArrayList<>(), true);
+        List<Integer> a = first.getList();
+        List<Integer> b = second.getList();
+
+        int factor = 0;
+
         boolean isPositive = true;
-        if((didSwap && second.isPositive()) || (!didSwap && first.isPositive())){
+        if ((!second.isPositive() && first.isPositive()) || (!first.isPositive() && second.isPositive())) {
             isPositive = false;
         }
-        return new BigNumber(result, isPositive);
+
+        int numOfZeroes = 0;
+        for (int i = a.size() - 1; i >= 0; i--) {
+            factor = 0;
+            int firstDigit = a.get(i);
+            fillWithZeroes(result, numOfZeroes);
+            numOfZeroes++;
+            for (int j = b.size() - 1; j >= 0; j--) {
+                int secondDigit = b.get(j);
+
+                int sum = firstDigit * secondDigit + factor;
+                factor = sum / 10;
+                sum = sum % 10;
+
+                result.add(0, sum);
+            }
+            if (factor != 0) {
+                result.add(0, factor);
+            }
+
+            var finalResultList = addNumbers(finalResult.getList(), result);
+            finalResult = new BigNumber(finalResultList, isPositive);
+            result.clear();
+        }
+
+        if (factor != 0) {
+            result.add(factor);
+        }
+
+        return finalResult;
     }
 
-    private void swap(List<Integer> a, List<Integer> b){
-        List<Integer> temp = a;
-        a = b;
-        b = temp;
+    private static void fillWithZeroes(List<Integer> result, int numOfZeroes) {
+        for (int i = 0; i < numOfZeroes; i++) {
+            result.add(0);
+        }
     }
 
-    public List<Integer> getList(){
+
+    public List<Integer> getList() {
         return list;
     }
 
-    public Boolean isPositive(){
+    public Boolean isPositive() {
         return positive;
     }
 
-    public Boolean isPalindrome(){
+    public Boolean isPalindrome() {
         return check(0, list.size() - 1);
     }
 
-    private Boolean check(int start, int end){
-        if(start >= end){
+    private Boolean check(int start, int end) {
+        if (start >= end) {
             return true;
         }
-        if(!list.get(start).equals(list.get(end))){
+        if (!list.get(start).equals(list.get(end))) {
             return false;
         }
 
         return check(++start, --end);
     }
-
-
 
 }
