@@ -6,24 +6,6 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-class ThreadCondition {
-    private Thread thread;
-    private Condition active;
-
-    public Thread getThread() {
-        return thread;
-    }
-
-    public Condition getActive() {
-        return active;
-    }
-
-    public ThreadCondition(Thread thread, Condition active) {
-        this.thread = thread;
-        this.active = active;
-    }
-}
-
 public class ThreadSafeContainer<T>{
 
     private final ConcurrentHashMap<Thread, List<T>> container= new ConcurrentHashMap<>();
