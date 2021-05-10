@@ -36,8 +36,12 @@ public class BigNumber {
             sb.append('-');
         }
 
-        for (; i < list.size(); i++) {
-            int digit = list.get(i);
+        return buildString(sb, i);
+    }
+
+    private String buildString(StringBuilder sb, int i){
+        while(i < list.size()) {
+            int digit = list.get(i++);
             char c = Character.forDigit(digit, 10);
             sb.append(c);
         }
@@ -121,7 +125,6 @@ public class BigNumber {
             sum = sum % 10;
 
             result.add(0, sum);
-
             i--;
             j--;
         }
@@ -154,18 +157,7 @@ public class BigNumber {
             int firstDigit = a.get(i);
             fillWithZeroes(result, numOfZeroes);
             numOfZeroes++;
-            for (int j = b.size() - 1; j >= 0; j--) {
-                int secondDigit = b.get(j);
-
-                int sum = firstDigit * secondDigit + factor;
-                factor = sum / 10;
-                sum = sum % 10;
-
-                result.add(0, sum);
-            }
-            if (factor != 0) {
-                result.add(0, factor);
-            }
+            factor = multiplyOneDigit(b, result, factor, firstDigit);
 
             finalResultList = addLists(finalResultList, result);
             result.clear();
@@ -185,16 +177,33 @@ public class BigNumber {
         }
     }
 
+    private static int multiplyOneDigit(List<Integer> b, List<Integer> result, int factor, int firstDigit){
+        for (int j = b.size() - 1; j >= 0; j--) {
+            int secondDigit = b.get(j);
 
-    public Boolean isPositive() {
+            int sum = firstDigit * secondDigit + factor;
+            factor = sum / 10;
+            sum = sum % 10;
+
+            result.add(0, sum);
+        }
+        if (factor != 0) {
+            result.add(0, factor);
+        }
+
+        return factor;
+    }
+
+
+    public boolean isPositive() {
         return positive;
     }
 
-    public Boolean isPalindrome() {
-        return check(0, list.size() - 1);
+    public boolean isPalindrome() {
+        return checkPalindrome(0, list.size() - 1);
     }
 
-    private Boolean check(int start, int end) {
+    private boolean checkPalindrome(int start, int end) {
         if (start >= end) {
             return true;
         }
@@ -202,7 +211,7 @@ public class BigNumber {
             return false;
         }
 
-        return check(++start, --end);
+        return checkPalindrome(++start, --end);
     }
 
 }

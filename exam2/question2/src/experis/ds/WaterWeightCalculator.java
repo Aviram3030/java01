@@ -17,12 +17,7 @@ public class WaterWeightCalculator {
             }
         }
 
-        if(start == 0){
-            return 0;
-        }
-        else if(start < v.length - 2){
-            sum += measureTheRest(v, start);
-        }
+        sum += measureTheRest(v, start);
         return sum;
     }
 
@@ -38,20 +33,20 @@ public class WaterWeightCalculator {
         return sum;
     }
 
-    private static int measureFromRight(int[] v, int start, int end) {
-        int sum = 0;
-        for(int i = end; i > start; i--){
-            sum += v[end] - v[i];
-        }
-
-        return sum;
-    }
-
 
     private static int measureFromLeft(int[] v, int start, int end) {
         int sum = 0;
         for(int i = start; i < end; i++){
             sum += v[start] - v[i];
+        }
+
+        return sum;
+    }
+
+    private static int measureFromRight(int[] v, int start, int end) {
+        int sum = 0;
+        for(int i = end; i > start; i--){
+            sum += v[end] - v[i];
         }
 
         return sum;
