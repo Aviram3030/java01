@@ -13,7 +13,6 @@ public class BigNumber {
     }
 
     public BigNumber(String word) {
-        list = new ArrayList<>();
         int i = 0;
         if (word.charAt(0) == '-') {
             positive = false;
@@ -21,6 +20,8 @@ public class BigNumber {
         } else {
             positive = true;
         }
+
+        list = new ArrayList<>();
         for (; i < word.length(); i++) {
             char c = word.charAt(i);
             int digit = c - '0';
@@ -40,7 +41,6 @@ public class BigNumber {
             char c = Character.forDigit(digit, 10);
             sb.append(c);
         }
-
         return sb.toString();
     }
 
@@ -48,6 +48,7 @@ public class BigNumber {
         int value = list.get(list.size() - 1);
         int previousValue = 0;
         int multiplyByTen = 10;
+
         for (int i = list.size() - 2; i >= 0; i--) {
             value += list.get(i) * multiplyByTen;
             multiplyByTen *= 10;
@@ -65,13 +66,12 @@ public class BigNumber {
                 value = value * -1;
             }
         }
-
         return value;
     }
 
     public static BigNumber add(BigNumber first, BigNumber second) {
-        List<Integer> a = first.getList();
-        List<Integer> b = second.getList();
+        List<Integer> a = first.list;
+        List<Integer> b = second.list;
         boolean didSwap = false;
 
         if (a.size() < b.size()) {
@@ -86,11 +86,11 @@ public class BigNumber {
             isPositive = false;
         }
 
-        List<Integer> result = addNumbers(a, b);
+        List<Integer> result = addLists(a, b);
         return new BigNumber(result, isPositive);
     }
 
-    private static List<Integer> addNumbers(List<Integer> a, List<Integer> b) {
+    private static List<Integer> addLists(List<Integer> a, List<Integer> b) {
         if (a.size() < b.size()) {
             List<Integer> temp = a;
             a = b;
@@ -138,8 +138,8 @@ public class BigNumber {
         List<Integer> finalResultList = new ArrayList<>();
         List<Integer> result = new ArrayList<>();
         BigNumber finalResult;
-        List<Integer> a = first.getList();
-        List<Integer> b = second.getList();
+        List<Integer> a = first.list;
+        List<Integer> b = second.list;
 
         int factor = 0;
 
@@ -167,7 +167,7 @@ public class BigNumber {
                 result.add(0, factor);
             }
 
-            finalResultList = addNumbers(finalResultList, result);
+            finalResultList = addLists(finalResultList, result);
             result.clear();
         }
 
@@ -185,10 +185,6 @@ public class BigNumber {
         }
     }
 
-
-    public List<Integer> getList() {
-        return list;
-    }
 
     public Boolean isPositive() {
         return positive;
