@@ -8,8 +8,8 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class ThreadSafeContainer<T> {
     private final ConcurrentHashMap<Thread, Queue<T>> container = new ConcurrentHashMap<>();
-    private final Queue<Queue<T>> twoItemsContainers = new LinkedList<>();
-    private final Queue<Condition> waitingThreads = new LinkedList<>();
+    private final Queue<Queue<T>> twoItemsOrMoreContainers = new LinkedList<>();
+    private final Queue<Condition> waitingConditions = new LinkedList<>();
     private final Lock guard = new ReentrantLock();
     private final Lock getLock = new ReentrantLock();
 
@@ -24,29 +24,33 @@ public class ThreadSafeContainer<T> {
         }
         queue.add(item);
 
-        if (queue.size() >= 2) {
-            if(queue.size() == 2) {
-                twoItemsContainers.add(queue);
-            }
-            if (!waitingThreads.isEmpty()) {
-                wakeNextWaitingThread();
-            }
-        }
+        checkSize(queue);
         guard.unlock();
     }
 
+    private void checkSize(Queue<T> queue){
+        if (queue.size() >= 2) {
+            if(queue.size() == 2) {
+                twoItemsOrMoreContainers.add(queue);
+            }
+            if (!waitingConditions.isEmpty()) {
+                wakeNextWaitingThread();
+            }
+        }
+    }
+
     private void wakeNextWaitingThread() {
-        Condition active = waitingThreads.poll();
+        Condition active = waitingConditions.poll();
         active.signal();
     }
 
     public Pair<T> get() {
         getLock.lock();
         guard.lock();
-        if (twoItemsContainers.isEmpty()) {
+        if (twoItemsOrMoreContainers.isEmpty()) {
             try {
                 Condition active = guard.newCondition();
-                waitingThreads.add(active);
+                waitingConditions.add(active);
                 active.await();
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -60,11 +64,11 @@ public class ThreadSafeContainer<T> {
     }
 
     private Pair<T> getPair() {
-        Queue<T> queue = twoItemsContainers.peek();
+        Queue<T> queue = twoItemsOrMoreContainers.peek();
         Pair<T> pair = getFirstTwoItems(queue);
 
         if (queue.size() < 2) {
-            twoItemsContainers.poll();
+            twoItemsOrMoreContainers.poll();
         }
         return pair;
     }
