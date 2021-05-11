@@ -33,7 +33,6 @@ public class WaterWeightCalculator {
         return sum;
     }
 
-
     private static int measureFromLeft(int[] v, int start, int end) {
         int sum = 0;
         for(int i = start; i < end; i++){
