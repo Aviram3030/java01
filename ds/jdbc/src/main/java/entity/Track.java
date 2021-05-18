@@ -23,6 +23,10 @@ public class Track {
         this.unitPrice = unitPrice;
     }
 
+    public int getTrackId() {
+        return trackId;
+    }
+
     public String getName() {
         return name;
     }
@@ -67,7 +71,7 @@ public class Track {
                 ", milliSeconds=" + milliSeconds +
                 ", bytes=" + bytes +
                 ", unitPrice=" + unitPrice +
-                '}';
+                "}\n";
     }
 
 }

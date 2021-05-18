@@ -29,6 +29,6 @@ public class Album {
                 "albumId=" + albumId +
                 ", title='" + title + '\'' +
                 ", artistId=" + artistId +
-                '}';
+                "}\n";
     }
 }

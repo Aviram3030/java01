@@ -20,6 +20,7 @@ public class InsertInvoice {
     }
 
     private void setPreparedStatement(PreparedStatement preparedStatement, Customer customer, double price) throws SQLException {
+        int customerId = customer.getCustomerId();
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDateTime now = LocalDateTime.now();
         String address = customer.getAddress();
@@ -27,7 +28,6 @@ public class InsertInvoice {
         String state = customer.getState();
         String country = customer.getCountry();
         String postalCode =customer.getPostalCode();
-        int customerId = customer.getCustomerId();
 
         preparedStatement.setInt(1, customerId);
         preparedStatement.setString(2, dtf.format(now));

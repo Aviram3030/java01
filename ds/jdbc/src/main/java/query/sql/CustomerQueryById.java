@@ -16,6 +16,7 @@ public class CustomerQueryById {
     }
 
     private Customer createUserDetails(ResultSet rs) throws SQLException {
+        int customerId = rs.getInt("CustomerId");
         String firstName = rs.getString("FirstName");
         String lastName = rs.getString("LastName");
         String email = rs.getString("Email");
@@ -28,7 +29,6 @@ public class CustomerQueryById {
         String phone = rs.getString("Phone");
         String fax = rs.getString("Fax");
         String supportRepId = rs.getString("SupportRepId");
-        int customerId = rs.getInt("CustomerId");
 
         return new Customer(customerId, firstName, lastName, email, city, company, address, state, country, postalCOde,
                 phone, fax, supportRepId);

@@ -1,4 +1,5 @@
-import entity.Customer;
+package ui;
+
 import entity.User;
 import output.ConsoleDisplay;
 import input.ConsoleInput;
@@ -28,12 +29,11 @@ public class UserInterface {
             return;
         }
 
-        Customer customer = taskManager.getCustomer();
-        if(customer == null){
-            System.out.println("Customer not found");
+        User user = taskManager.getUser();
+        if(user == null){
+            System.out.println("User not found");
             return;
         }
-        User user = getUser(customer);
         consoleDisplay.print(user);
 
         boolean running = true;
@@ -46,13 +46,6 @@ public class UserInterface {
         System.out.println("Good bye");
     }
 
-    private User getUser(Customer customer){
-        String firstName = customer.getFirstName();
-        String lastName = customer.getLastName();
-        String email = customer.getEmail();
-        String city = customer.getCity();
-        return new User(firstName, lastName, email, city);
-    }
 }
 
 

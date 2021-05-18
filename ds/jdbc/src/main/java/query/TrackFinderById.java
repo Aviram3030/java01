@@ -10,22 +10,23 @@ public class TrackFinderById {
         return searchById(tracks, id);
     }
 
+    //binary search
     private Track searchById(List<Track> tracks, int requestedId) {
         int first = 0;
         int last = tracks.size() - 1;
-        int mid = (first + last) / 2;
+        int mid;
         while(first <= last){
+            mid = (first + last) / 2;
             Track track = tracks.get(mid);
-            int albumId = track.getAlbumId();
+            int trackID = track.getTrackId();
 
-            if (albumId == requestedId){
+            if (trackID == requestedId){
                 return track;
-            }else if (albumId < requestedId){
+            }else if (trackID < requestedId){
                 first = mid + 1;
             }else{
                 last = mid - 1;
             }
-            mid = (first + last) / 2;
         }
         return null;
     }

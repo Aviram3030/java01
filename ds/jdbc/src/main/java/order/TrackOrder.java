@@ -12,7 +12,7 @@ public class TrackOrder {
     private final PriceCalculator priceCalculator = new PriceCalculator();
     private final TrackFinderById trackFinderById = new TrackFinderById();
 
-    public double orderTracks(List<Track> tracks, Display display, Input input) throws SQLException {
+    public double order(List<Track> tracks, Display display, Input input) throws SQLException {
         String answer;
         display.print("Enter trackId, type 'done' when you finish");
         while (true) {

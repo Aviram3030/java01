@@ -6,7 +6,7 @@ import java.sql.*;
 import java.util.LinkedList;
 import java.util.List;
 
-public class TrackQueryByAlbumId {
+public class TracksQueryByAlbumId {
     private final String sqlPattern = "SELECT * FROM tracks WHERE AlbumId = ?";
 
     public List<Track> execute(Connection connection, String query) throws SQLException {

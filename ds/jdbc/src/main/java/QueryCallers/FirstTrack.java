@@ -61,8 +61,9 @@ public class FirstTrack implements TrackCaller {
         display.print("Y for yes");
         String answer = input.getLine();
         if(answer.equalsIgnoreCase("y")){
-            double price = trackOrder.orderTracks(tracks, display, input);
+            double price = trackOrder.order(tracks, display, input);
             if(price != 0) {
+                display.print("Price: " + price);
                 insertInvoice.execute(connection, customer, price);
             }
         }

@@ -8,11 +8,11 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class QuerySql {
-    private final TrackQueryByAlbumId trackQueryByAlbumId = new TrackQueryByAlbumId();
+    private final TracksQueryByAlbumId tracksQueryByAlbumId = new TracksQueryByAlbumId();
     private final AlbumQueryByArtist albumQueryByArtist = new AlbumQueryByArtist();
 
     public List<Track> startAlbumIdQuery(Connection connection, String data) throws SQLException {
-        return trackQueryByAlbumId.execute(connection, data);
+        return tracksQueryByAlbumId.execute(connection, data);
     }
 
     public List<Album> startAlbumQueryByArtist(Connection connection, String data) throws SQLException {
