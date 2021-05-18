@@ -19,8 +19,20 @@ public class UserInterface {
     public void start(){
         System.out.println("Hello, insert your id:");
         String id = consoleInput.getLine();
-        TaskManager taskManager = new TaskManager(sqlConnection, consoleDisplay, consoleInput, id);
+        TaskManager taskManager;
+
+        try {
+            taskManager = new TaskManager(sqlConnection, consoleDisplay, consoleInput, id);
+        } catch (SQLException throwables) {
+            System.out.println("Connection not found");
+            return;
+        }
+
         Customer customer = taskManager.getCustomer();
+        if(customer == null){
+            System.out.println("Customer not found");
+            return;
+        }
         User user = getUser(customer);
         consoleDisplay.print(user);
 

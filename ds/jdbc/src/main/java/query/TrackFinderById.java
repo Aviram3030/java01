@@ -15,11 +15,11 @@ public class TrackFinderById {
         int last = tracks.size() - 1;
         int mid = (first + last) / 2;
         while(first <= last){
-            Track currentTrack = tracks.get(mid);
-            int albumId = currentTrack.getAlbumId();
+            Track track = tracks.get(mid);
+            int albumId = track.getAlbumId();
 
             if (albumId == requestedId){
-                return currentTrack;
+                return track;
             }else if (albumId < requestedId){
                 first = mid + 1;
             }else{

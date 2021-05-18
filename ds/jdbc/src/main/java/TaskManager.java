@@ -4,27 +4,27 @@ import entity.Customer;
 import output.Display;
 import input.Input;
 import query.sql.SqlConnection;
-import query.sql.UserQueryById;
+import query.sql.CustomerQueryById;
 
+import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.HashMap;
 
 public class TaskManager {
     private final HashMap<String, TrackCaller> queryCaller = new HashMap<>();
-    private final UserQueryById userQueryById = new UserQueryById();
-    private final Statement stmt;
+    private final CustomerQueryById customerQueryById = new CustomerQueryById();
+    private final Connection connection;
     private Customer customer;
 
-    public TaskManager(SqlConnection sqlConnection, Display display, Input input, String id){
-        stmt = sqlConnection.start();
+    public TaskManager(SqlConnection sqlConnection, Display display, Input input, String id) throws SQLException {
+        connection = sqlConnection.connect();
         makeCustomer(id);
-        queryCaller.put("1", new FirstTrack(customer, display, input, stmt));
+        queryCaller.put("1", new FirstTrack(customer, display, input, connection));
     }
 
-    public void makeCustomer(String id) {
+    private void makeCustomer(String id) {
         try {
-            customer = userQueryById.execute(stmt, id);
+            customer = customerQueryById.execute(connection, id);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -42,5 +42,4 @@ public class TaskManager {
         }
         return false;
     }
-
 }

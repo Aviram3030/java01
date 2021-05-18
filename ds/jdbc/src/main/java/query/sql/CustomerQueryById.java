@@ -3,16 +3,16 @@ import entity.Customer;
 
 import java.sql.*;
 
-public class UserQueryById{
+public class CustomerQueryById {
     private final String sqlPattern = "SELECT * " +
             "FROM customers " +
-            "WHERE CustomerId = '%s'";
+            "WHERE CustomerId = ?";
 
-    public Customer execute(Statement stmt, String id) throws SQLException {
-        String sqlTitles = String.format(sqlPattern, id);
-        var rs = stmt.executeQuery(sqlTitles);
-        Customer userDetails = createUserDetails(rs);
-        return userDetails;
+    public Customer execute(Connection connection, String id) throws SQLException {
+        PreparedStatement preparedStatement = connection.prepareStatement(sqlPattern);
+        preparedStatement.setString(1, id);
+        var rs = preparedStatement.executeQuery();
+        return createUserDetails(rs);
     }
 
     private Customer createUserDetails(ResultSet rs) throws SQLException {

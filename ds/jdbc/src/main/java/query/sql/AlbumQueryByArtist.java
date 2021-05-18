@@ -7,12 +7,14 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class AlbumQueryByArtist {
-    private final String sqlPattern = "SELECT * FROM albums WHERE ArtistId in (SELECT ArtistId FROM artists WHERE Name like '%s')";
+    private final String sqlPattern = "SELECT * FROM albums WHERE ArtistId in (SELECT ArtistId FROM artists WHERE Name like ?)";
 
-    public List<Album> execute(Statement stmt, String name) throws SQLException {
+    public List<Album> execute(Connection connection, String query) throws SQLException {
+        PreparedStatement prepareStatement = connection.prepareStatement(sqlPattern);
+        prepareStatement.setString(1, query);
+
         List<Album> albums = new LinkedList<>();
-        String sqlTitles = String.format(sqlPattern, name);
-        var rs = stmt.executeQuery(sqlTitles);
+        var rs = prepareStatement.executeQuery();
         while (rs.next()) {
             var album = createAlbum(rs);
             albums.add(album);
