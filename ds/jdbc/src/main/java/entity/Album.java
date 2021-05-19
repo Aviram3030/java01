@@ -1,6 +1,6 @@
 package entity;
 
-public class Album {
+public class Album implements Model{
     private final int albumId;
     private final String title;
     private final int artistId;
@@ -29,6 +29,7 @@ public class Album {
                 "albumId=" + albumId +
                 ", title='" + title + '\'' +
                 ", artistId=" + artistId +
-                "}\n";
+                "}";
     }
+
 }

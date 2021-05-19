@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="SqlDialectMappings">
-    <file url="file://$PROJECT_DIR$/src/main/java/insert/InsertInvoice.java" dialect="GenericSQL" />
     <file url="file://$PROJECT_DIR$/src/main/java/query/sql/AlbumQueryByArtist.java" dialect="GenericSQL" />
     <file url="file://$PROJECT_DIR$/src/main/java/query/sql/CustomerQueryById.java" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/src/main/java/query/sql/InsertInvoice.java" dialect="GenericSQL" />
     <file url="file://$PROJECT_DIR$/src/main/java/query/sql/UserQueryByID.java" dialect="GenericSQL" />
   </component>
 </project>

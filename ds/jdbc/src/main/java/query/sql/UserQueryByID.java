@@ -1,6 +1,5 @@
 package query.sql;
 
-import entity.Customer;
 import entity.User;
 
 import java.sql.Connection;

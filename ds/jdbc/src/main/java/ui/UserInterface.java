@@ -11,7 +11,6 @@ import java.util.Scanner;
 public class UserInterface {
     private final ConsoleInput consoleInput;
     private final ConsoleDisplay consoleDisplay = new ConsoleDisplay();
-    private final SqlConnection sqlConnection = new SqlConnection();
 
     public UserInterface(Scanner reader) {
         consoleInput = new ConsoleInput(reader);
@@ -23,7 +22,7 @@ public class UserInterface {
         TaskManager taskManager;
 
         try {
-            taskManager = new TaskManager(sqlConnection, consoleDisplay, consoleInput, id);
+            taskManager = new TaskManager(consoleDisplay, consoleInput, id);
         } catch (SQLException throwables) {
             System.out.println("Connection not found");
             return;
@@ -34,7 +33,7 @@ public class UserInterface {
             System.out.println("User not found");
             return;
         }
-        consoleDisplay.print(user);
+        consoleDisplay.displayModel(user);
 
         boolean running = true;
         while(running){

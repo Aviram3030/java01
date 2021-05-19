@@ -1,5 +1,8 @@
 package output;
 
+import entity.Model;
+
 public interface Display {
-    <T> void print(T obj);
+    void displayModel(Model obj);
+    void printMessage(String txt);
 }

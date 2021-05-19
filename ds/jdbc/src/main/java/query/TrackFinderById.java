@@ -1,13 +1,14 @@
 package query;
 
 import entity.Track;
-
 import java.util.List;
 
 public class TrackFinderById {
+
     public Track getTrack(List<Track> tracks, String data){
         int id = Integer.parseInt(data);
-        return searchById(tracks, id);
+        Track track = searchById(tracks, id);
+        return track;
     }
 
     //binary search
@@ -22,12 +23,15 @@ public class TrackFinderById {
 
             if (trackID == requestedId){
                 return track;
-            }else if (trackID < requestedId){
+            }
+            else if (trackID < requestedId){
                 first = mid + 1;
-            }else{
+            }
+            else{
                 last = mid - 1;
             }
         }
         return null;
     }
+
 }

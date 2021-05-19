@@ -1,6 +1,6 @@
 package entity;
 
-public class User {
+public class User implements Model{
     private final String firstName;
     private final String lastName;
     private final String email;

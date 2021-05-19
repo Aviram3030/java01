@@ -1,6 +1,6 @@
 package entity;
 
-public class Track {
+public class Track implements Model{
     private final int trackId;
     private final String name;
     private final int albumId;
@@ -71,7 +71,7 @@ public class Track {
                 ", milliSeconds=" + milliSeconds +
                 ", bytes=" + bytes +
                 ", unitPrice=" + unitPrice +
-                "}\n";
+                "}";
     }
 
 }
