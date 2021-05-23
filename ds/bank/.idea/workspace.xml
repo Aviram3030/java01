@@ -47,7 +47,7 @@
     <property name="com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary" value="JUnit4" />
     <property name="com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit4" value="" />
     <property name="com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5" value="" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../jdbc" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../exam3" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.15" />
@@ -111,6 +111,7 @@
       <workItem from="1621723516936" duration="595000" />
       <workItem from="1621724424153" duration="5000" />
       <workItem from="1621748601681" duration="33000" />
+      <workItem from="1621798343090" duration="8000" />
     </task>
     <servers />
   </component>
