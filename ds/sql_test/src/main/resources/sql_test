@@ -1,0 +1,122 @@
+--Question 1
+--SELECT CategoryName, Description
+--FROM Category
+--ORDER BY CategoryName
+
+--Question 2
+--SELECT ContactName, CompanyName, ContactTitle, Phone
+--FROM Customer
+--ORDER BY Phone
+
+--Question3
+--SELECT upper(FirstName) as FirstName, upper(LastName) as LastName, HireDate
+--FROM Employee
+--ORDER BY HireDate ASC
+
+--Question4
+--SELECT Id, OrderDate, ShippedDate, CustomerId, Freight
+--FROM "Order"
+--ORDER BY Freight DESC
+--LIMIT 10
+
+--Question 5
+--SELECT ContactName, Address, City
+--FROM Customer
+--WHERE Country NOT IN ('Germany', 'Mexico', 'Spain')
+
+--Question 6
+--SELECT EmployeeID, Id, CustomerID, RequiredDate, ShippedDate
+--FROM "Order"
+--WHERE ShippedDate > RequiredDate
+
+--Question 7
+--SELECT City, CompanyName, ContactName
+--FROM Customer
+--WHERE City LIKE 'A%' OR City LIKE 'B%'
+
+--Question 8
+--SELECT CompanyName, ContactName
+--FROM Customer
+--WHERE FAX IS NULL
+
+--Question 9
+--SELECT OrderId, count(OrderId) as NumberofOrders
+--FROM OrderDetail
+--GROUP BY OrderId
+--ORDER BY NumberofOrders DESC
+
+--Question 10
+--SELECT p.SupplierID, p.ProductName, s.CompanyName
+--FROM Product as p
+--INNER JOIN Supplier s on p.SupplierId = s.Id
+--WHERE s.CompanyName IN ('Exotic Liquids', 'Specialty Biscuits, Ltd.', 'Escargots Nouveaux')
+--ORDER BY p.SupplierId
+
+--Question 11
+--SELECT CompanyName, ContactTitle, City, Country
+--FROM Customer
+--WHERE Country = 'Mexico'
+--OR (Country = 'Spain' AND NOT City = 'Madrid')
+
+--Question 12
+--SELECT CEIL(avg(UnitPrice)) as AveragePrice, SUM(UnitsInStock) as TotalStock, MAX(UnitsOnOrder) as MaxOrder
+--From Product
+
+--Question 13
+--SELECT p.SupplierID, s.CompanyName, c.CategoryName, p.ProductName, p.UnitPrice
+--FROM Product as p
+--INNER JOIN Supplier as s ON s.Id = p.SupplierId
+--INNER JOIN Category c on c.Id = p.CategoryId
+
+--Question 14
+--SELECT CustomerID, SUM(Freight) as SumOfFreight
+--FROM "Order"
+--GROUP BY CustomerID
+--HAVING SumOfFreight > 200
+
+--Question 15
+--SELECT od.OrderID, c.ContactName, od.UnitPrice, od.Quantity, od.Discount
+--FROM OrderDetail od
+--INNER JOIN "Order" as o ON o.Id = od.OrderId
+--INNER JOIN Customer as c ON c.Id = o.CustomerId
+
+--Question 16
+--SELECT e.id, e.LastName, e.FirstName, em.LastName as ManagerLastName, em.FirstName ManagerFirstName
+--FROM Employee as e
+--INNER JOIN Employee as em ON em.Id = e.ReportsTo
+--ORDER BY e.Id
+
+--Question 17
+--SELECT e.id, e.LastName, e.FirstName, em.LastName as ManagerLastName, em.FirstName ManagerFirstName
+--FROM Employee as e
+--LEFT JOIN Employee as em ON em.Id = e.ReportsTo
+--ORDER BY e.Id
+
+--Question 18
+--SELECT s.CompanyName ,p.ProductName
+--FROM Product as p
+--INNER JOIN Category as c ON c.Id = p.CategoryId
+--INNER JOIN Supplier as s ON s.Id = p.SupplierId
+--WHERE c.CategoryName = 'Seafood'
+
+--Question 19
+--SELECT p.CategoryID, s.CompanyName, p.ProductName
+--FROM Product as p
+--INNER JOIN Supplier as s ON s.Id = p.SupplierId
+--WHERE p.CategoryId = '5'
+
+--Question 20
+--SELECT c.CompanyName ,count(c.Id) as OrdersByCustomer
+--FROM Customer as c
+--INNER JOIN "Order" as o ON o.CustomerId = c.Id
+--GROUP BY c.Id
+--HAVING o.OrderDate > '1994-12-31' AND OrdersByCustomer > 10
+
+
+
+
+
+
+
+
+
