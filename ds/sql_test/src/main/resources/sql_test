@@ -8,12 +8,12 @@
 --FROM Customer
 --ORDER BY Phone
 
---Question3
+--Question 3
 --SELECT upper(FirstName) as FirstName, upper(LastName) as LastName, HireDate
 --FROM Employee
 --ORDER BY HireDate ASC
 
---Question4
+--Question 4
 --SELECT Id, OrderDate, ShippedDate, CustomerId, Freight
 --FROM "Order"
 --ORDER BY Freight DESC
