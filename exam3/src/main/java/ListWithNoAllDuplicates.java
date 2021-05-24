@@ -3,6 +3,10 @@ import java.util.LinkedList;
 
 public class ListWithNoAllDuplicates {
     public static <T> void deleteAllDuplicates(LinkedList<T> list){
+        if(list == null){
+            return;
+        }
+
         HashMap<T, Boolean> noDuplicates = new HashMap<>();
         int i = 0;
         while(i < list.size()){
