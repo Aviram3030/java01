@@ -1,0 +1,4 @@
+SELECT r.Name, s.Title, m.Title, r.DateCreated, r.CallSign
+FROM robot as r
+INNER JOIN model m on m.ModelId = r.ModelId
+INNER JOIN robot_state as s on s.StateId = r.StateId
