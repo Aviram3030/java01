@@ -13,7 +13,11 @@ public class SpringRobotsApplication {
         var app = new AnnotationConfigApplicationContext(AppConfiguration.class);
 
         var fleet = app.getBean("fleet", Fleet.class);
-        fleet.run();
+        try {
+            fleet.run();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
 }

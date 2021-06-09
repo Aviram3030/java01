@@ -1,6 +1,5 @@
 package com.example.springrobots.markers;
 
-import com.example.springrobots.Tools;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 

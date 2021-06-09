@@ -1,4 +1,4 @@
-package com.example.springrobots;
+package com.example.springrobots.markers;
 
 
 import org.springframework.beans.factory.annotation.Qualifier;
