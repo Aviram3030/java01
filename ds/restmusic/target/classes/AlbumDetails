@@ -1,0 +1,5 @@
+SELECT a.*, t.*
+FROM albums as al
+INNER JOIN tracks as t ON al.AlbumId = t.AlbumId
+INNER JOIN artists as a ON al.ArtistId = a.ArtistId
+WHERE al.AlbumId = '5'

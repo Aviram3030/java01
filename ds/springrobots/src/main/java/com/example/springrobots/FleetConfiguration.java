@@ -16,7 +16,6 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @ComponentScan
-@EnableConfigurationProperties
 @Component
 public class FleetConfiguration implements BeanFactoryAware{
     private BeanFactory beanFactory;
